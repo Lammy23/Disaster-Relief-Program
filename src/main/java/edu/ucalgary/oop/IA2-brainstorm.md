@@ -74,6 +74,9 @@ cannot be greater than todays date.
 | testDisasterVictimSetAndGetMedicalRecords        | method should modify medical records        | new MedicalRecord |
 | testDisasterVictimImplementUpdateVictimInterface | class should implement 'UpdateVictim'       | d                 |
 
+
+### If you delete a family members relationship, it should affect the other members as well
+
 Here are some **Personal Tips**
 
 * Throw a __new__ kind of exception
