@@ -4,6 +4,11 @@ package edu.ucalgary.oop;
 
 import org.junit.*;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 /*- firstName: String
@@ -111,17 +116,46 @@ public class PersonTest {
         assertEquals("setFamily should update the family", newFamily, testPerson.getFamily());
     }
 
-    @Test
 
     @Test
     public void testSetAndGetGender() {
-        /* TODO: Implement testSetAndGetGender */
+        /* Check that gender corresponds with at least one of the genders found in genderOptions.txt */
 
+        testPerson.setGender("Boy");
+
+        BufferedReader inputStream;
+        boolean genderFound = false;
+        try {
+            inputStream = new BufferedReader(new FileReader("genderOptions.txt"));
+
+            String line;
+            /* Read the file line by line */
+            while ((line = inputStream.readLine()) != null) {
+                if (line.equals(testPerson.getGender())) {
+                    genderFound = true;
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        assertTrue("Invalid gender", genderFound);
     }
 
     @Test
     public void testSetAndGetDietaryRestrictions() {
-        /* TODO: Implement testSetAndGetDietaryRestrictions */
+        testPerson.setDietaryRestrictions(DietaryRestrictions.AVML);
+        assertEquals("setDietaryRestrictions should update the dietary restrictions", DietaryRestrictions.AVML, testPerson.getDietaryRestrictions());
     }
 
     @Test(expected = IllegalArgumentException.class)
