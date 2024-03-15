@@ -8,44 +8,10 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 
-/*- firstName: String
-- lastName: String
-- dateOfBirth: String
-- comments: String
-- family: Family
-- gender: Gender
-- dietaryRestrictions: DietaryRestrictions
-
-+ Person(firstName: String)
-+ Person(firstName: String, lastName: String)
-
-+ parseDate(date: String, for: String): String
-
-+ getFirstName(): String
-+ getLastName(): String
-+ getDateOfBirth(): String
-+ getComments(): String
-+ getFamily(): Family
-+ getParent(): Person
-+ getGender(): Gender
-+ getDietaryRestrictions(): DietaryRestrictions
-
-+ setFirstName(firstName: String): void
-+ setLastName(lastName: String): void
-+ setDateOfBirth(dateOfBirth: String): void
-+ setComments(comments: String): void
-+ setDietaryRestrictions(restrictions: DietaryRestrictions): void
-
-+ setFamily(family: Family): void
-+ setGender(gender: String): void
-
-+ addFamiIyConnection(famiIyConnection: FamilyReIation): void
-+ removeFamilyConnection(familyConnection: FamilyRelation): void
-
- */
 public class PersonTest {
 
     private Person testPerson;

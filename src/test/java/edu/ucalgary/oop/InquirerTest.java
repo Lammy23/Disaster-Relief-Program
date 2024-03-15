@@ -4,18 +4,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/*
-extends Person
-
-- INFO: String
-- SERVICES_PHONE: String
-
-+ Inquirer(firstName: String, lastName: String, SERVICES_PHONE: String, INFO: String)
-
-+ getInfo(): String
-+ getServicesPhone():String
- */
-
 public class InquirerTest {
 
     private Inquirer testInquirer;

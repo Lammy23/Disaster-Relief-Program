@@ -5,18 +5,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/*
-- occupants: ArrayList<DisasterVictim>
-- supplies: ArrayList<Supply>
-
-+ Shelter(name:String, address:String)
-
-+ getSupplies(): ArrayList<Supply>
-+ setSupplies(supplies: ArrayList<Supply>): void
-
-+ addSupply(supply: Supply): void
-+ removeSupply(supply: Supply): void
- */
 
 public class ShelterTest {
 

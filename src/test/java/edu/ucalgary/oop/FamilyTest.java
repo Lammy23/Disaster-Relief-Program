@@ -5,26 +5,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-/*
-- familyName: String
-- siblings: ArrayList<Person>
-- parents: ArrayList<Person>
-
-+ Family(familyName: String, siblings: ArrayList<Person>, parents: ArrayList<Person>)
-
-+ getFamilyName(): String
-+ getSiblings(): ArrayList<Person>
-+ getParents(): ArrayList<Person>
-
-+ getSiblingsOf(child: Person): ArrayList<Person>
-+ getChildrenOf(parent: Person): ArrayList<Person>
-
-+ addSibling(sibling: Person): void
-+ removeSibling(sibling: Person): void
-
-+ addParent(parent: Person): void
-+ removeParent(parent: Person): void
- */
 
 public class FamilyTest {
 

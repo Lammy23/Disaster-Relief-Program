@@ -8,31 +8,6 @@ import java.time.LocalDate;
 
 import static org.junit.Assert.*;
 
-/*
-- inquirer: Inquirer
-- dateOflnquiry: String
-- missingPersons: PriorityQueue<DisasterVictim>
-- infoProvided: String
-
-+ MissingPersonReliefService(inquirer: Inquirer, missingPersons: PriorityQueue<DisasterVictim>,
-dateOfInquiry:String, infoProvided: String)
-
-+ parseDate(date: String, for: String): String
-
-+ getInquirer(): Inquirer
-+ getMissingPersons(): PriorityQueue<DisasterVictim>
-+ getDateOfInquiry(): String
-+ getInfoProvided(): String
-+ getLogDetails(): String
-
-+ setInquirer(inquirer: Inquirer)
-+ setMissingPerson(missingPerson: DisasterVictim)
-+ setDateOfInquiry(dateOfInquiry: String)
-+ setInfoProvided(infoProvided: String)
-
-+ addMissingPerson(person: DisasterVictim): void
-+ removeMissingPerson(person: DisasterVictim): void
- */
 
 public class MissingPersonReliefServiceTest {
 

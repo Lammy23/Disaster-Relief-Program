@@ -4,18 +4,6 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-/*
-- type: String
-- quantity: int
-
-+ Supply(type: String, quantity: int)
-
-+ getType(): String
-+ getQuantity(): int
-
-+ setType(type: string): void
-+ setQuantity(quantity: int): void
- */
 
 public class SupplyTest {
 

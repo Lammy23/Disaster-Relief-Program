@@ -4,54 +4,6 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
-/*
-- ASSIGNED SOCIAL ID: int
-- medicalRecords: ArrayList<MedicalRecord>
-- ENTRY_DATE: String
-- personalBelongings: ArrayList<Supply>
-- missing: Boolean
-- lastKnownLocation: Location
-- counter: int
-
-+ DisasterVictim(firstName: String, ENTRY_DATE: String)
-
-+ getMedicalRecords(): ArrayList<MedicalRecord>
-+ getEntryDate(): String
-+ getAssignedSociallD(): int
-+ getPersonalBelongings: ArrayList<Supply>
-+ getMissingStatus(): Boolean
-+ getLastKnownLocation(): Location
-
-+ setMedicalRecords(medicalRecords: ArrayList<MedicalRecord>): void
-+ setPersonalBelongings(supplies: ArrayList<Supply>)
-+ setMissingStatus(missing: Boolean): void
-+ setLastKnownLocation(location: Location): void
-
-+ addPersonalBelonging(supply: Supply): void
-+ removePersonalBelonging(supply: Supply): void
-+ addMedicalRecord(medicalRecord:MedicalRecord): void
-+ removeMedicalRecord(medicalRecord: MedicalRecord): void
-
-<<Interface>>
-UpdateVictim
-
-+ getMedicalRecords(): ArrayList<MedicalRecord>
-+ getEntryDate(): String
-+ getAssignedSociallD(): int
-+ getPersonalBelongings: ArrayList<Supply>
-+ getMissingStatus(): Boolean
-
-+ setMedicalRecords(medicalRecords: ArrayList<MedicalRecord>): void
-+ setPersonalBelongings(supplies: ArrayList<Supply>)
-+ setMissingStatus(missing: Boolean): void
-
-+ addPersonalBelonging(supply: Supply): void
-+ removePersonalBelonging(supply: Supply): void
-+ addMedicalRecord(medicalRecord: MedicalRecord): void
-+ removeMedicalRecord(medicalRecord: MedicalRecord): void
-
- */
-
 public class DisasterVictimTest {
 
     private DisasterVictim testDisasterVictim;
@@ -138,15 +90,5 @@ public class DisasterVictimTest {
         testDisasterVictim.addMedicalRecord(medicalRecord);
         testDisasterVictim.removeMedicalRecord(medicalRecord);
         assertEquals("removeMedicalRecord should remove the medical record", 0, testDisasterVictim.getMedicalRecords().size());
-    }
-
-    @Test
-    public void testImplementUpdateVictim() {
-        /* TODO: Implement this test */
-    }
-
-    @Test
-    public void testInheritsPerson() {
-        /* TODO: Implement this test */
     }
 }

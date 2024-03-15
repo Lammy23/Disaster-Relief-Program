@@ -3,6 +3,8 @@ package edu.ucalgary.oop;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.time.LocalDate;
+
 import static org.junit.Assert.*;
 
 public class MedicalRecordTest {
@@ -71,8 +73,11 @@ public class MedicalRecordTest {
     public void testParseDateOfTreatmentInvalidLogic() {
         /* date of treatment cannot be in the future */
         /* Throws an exception if date of treatment is in the future */
+        /* Generate future date */
+        LocalDate futureDate = LocalDate.now().plusDays(1);
 
-        String futureDateOfTreatment = "2022-10-11";
+        /* Convert future date to string in the form yyyy-mm-dd */
+        String futureDateOfTreatment = futureDate.toString();
         testMedicalRecord.setDateOfTreatment(futureDateOfTreatment);
     }
 

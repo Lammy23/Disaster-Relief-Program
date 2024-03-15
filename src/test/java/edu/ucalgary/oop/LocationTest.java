@@ -7,25 +7,6 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
-/*
-- name: String
-- address: String
-- occupants: ArrayList<Person>
-
-+ Location(name:String, address:String)
-
-+ getName(): String
-+ getAddress(): String
-+ getOccupants(): ArrayList<Person>
-
-+ setName(name: String): void
-+ setAddress(address: String): void
-+ setOccupants(occupants: ArrayList<Person>): void
-
-+ addOccupant(occupant:DisasterVictim)
-+ removeOccupant(occupant: DisasterVictim)
-
- */
 public class LocationTest {
 
     private Location testLocation;
