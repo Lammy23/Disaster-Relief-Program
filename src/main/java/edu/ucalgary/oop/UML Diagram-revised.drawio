@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-03-14T23:44:17.091Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0" etag="YtZ6eJW0OAOT3bcJHYRF" version="24.0.5" type="device">
+<mxfile host="app.diagrams.net" modified="2024-03-15T00:02:51.626Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0" etag="txFH0v9bZGgW6PvHOO3B" version="24.0.5" type="device">
   <diagram id="TzoWW7KKMy2ubQKhGPcB" name="Page-1">
     <mxGraphModel dx="868" dy="3046" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="5000" pageHeight="2600" math="0" shadow="0">
       <root>
@@ -43,13 +43,13 @@
         <mxCell id="U78_huqTYP2t_q-OurNE-13" value="Location" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="2230" y="-1680" width="310" height="330" as="geometry" />
         </mxCell>
-        <mxCell id="U78_huqTYP2t_q-OurNE-14" value="&lt;div&gt;- name: String&lt;/div&gt;&lt;div&gt;- address: String&lt;/div&gt;&lt;div&gt;- occupants: ArrayList&amp;lt;Person&amp;gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="U78_huqTYP2t_q-OurNE-13" vertex="1">
+        <mxCell id="U78_huqTYP2t_q-OurNE-14" value="&lt;div&gt;- name: String&lt;/div&gt;&lt;div&gt;- address: String&lt;/div&gt;&lt;div&gt;- occupants: ArrayList&amp;lt;T&amp;gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="U78_huqTYP2t_q-OurNE-13" vertex="1">
           <mxGeometry y="26" width="310" height="94" as="geometry" />
         </mxCell>
         <mxCell id="U78_huqTYP2t_q-OurNE-15" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="U78_huqTYP2t_q-OurNE-13" vertex="1">
           <mxGeometry y="120" width="310" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="U78_huqTYP2t_q-OurNE-16" value="+ Location(name:String, address:String)&lt;div&gt;&lt;br&gt;+ getName(): String&lt;/div&gt;&lt;div&gt;+ getAddress(): String&lt;/div&gt;&lt;div&gt;+ getOccupants(): ArrayList&amp;lt;Person&amp;gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;+ setName(name: String): void&lt;br&gt;+ setAddress(address: String): void&lt;br&gt;+ setOccupants(occupants: ArrayList&amp;lt;Person&amp;gt;): void&lt;/div&gt;&lt;div&gt;&lt;br&gt;+ addOccupant(occupant:DisasterVictim)&lt;br&gt;+ removeOccupant(occupant: DisasterVictim)&lt;br&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="U78_huqTYP2t_q-OurNE-13" vertex="1">
+        <mxCell id="U78_huqTYP2t_q-OurNE-16" value="+ Location(name:String, address:String)&lt;div&gt;&lt;br&gt;+ getName(): String&lt;/div&gt;&lt;div&gt;+ getAddress(): String&lt;/div&gt;&lt;div&gt;+ getOccupants(): ArrayList&amp;lt;T&amp;gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;+ setName(name: String): void&lt;br&gt;+ setAddress(address: String): void&lt;br&gt;+ setOccupants(occupants: ArrayList&amp;lt;T&amp;gt;): void&lt;/div&gt;&lt;div&gt;&lt;br&gt;+ addOccupant(occupant: T)&lt;br&gt;+ removeOccupant(occupant: T)&lt;br&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="U78_huqTYP2t_q-OurNE-13" vertex="1">
           <mxGeometry y="128" width="310" height="202" as="geometry" />
         </mxCell>
         <mxCell id="U78_huqTYP2t_q-OurNE-17" value="Shelter" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -346,12 +346,6 @@
         <mxCell id="U78_huqTYP2t_q-OurNE-118" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="U78_huqTYP2t_q-OurNE-117" vertex="1">
           <mxGeometry y="26" width="200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="U78_huqTYP2t_q-OurNE-119" value="throws" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=-0.001;exitY=0.741;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="U78_huqTYP2t_q-OurNE-39" target="U78_huqTYP2t_q-OurNE-117" edge="1">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="1649" y="-1334" as="sourcePoint" />
-            <mxPoint x="1400" y="-1146" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="U78_huqTYP2t_q-OurNE-120" value="" style="endArrow=block;endFill=1;html=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=top;rounded=0;" parent="1" source="U78_huqTYP2t_q-OurNE-9" target="U78_huqTYP2t_q-OurNE-39" edge="1">
           <mxGeometry x="-1" relative="1" as="geometry">
             <mxPoint x="1530" y="-1350" as="sourcePoint" />
@@ -418,17 +412,17 @@
             <mxPoint x="1580" y="-1320" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="zhFOmnSfMoZi6MDNvv0f-12" value="throws" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=0;exitY=0.051;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="U78_huqTYP2t_q-OurNE-39" target="U78_huqTYP2t_q-OurNE-117">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="1640" y="-1640" as="sourcePoint" />
-            <mxPoint x="1462" y="-1470" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="zhFOmnSfMoZi6MDNvv0f-13" value="set date of birth or age (not both)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="1540" y="-1322" width="200" height="30" as="geometry" />
         </mxCell>
         <mxCell id="zhFOmnSfMoZi6MDNvv0f-14" value="You can imagine that the date parser would return a java date time object" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="1550" y="-1350" width="410" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="zhFOmnSfMoZi6MDNvv0f-16" value="Generic Occupants" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="2535" y="-1622" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="zhFOmnSfMoZi6MDNvv0f-17" value="T" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="2502" y="-1700" width="60" height="50" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

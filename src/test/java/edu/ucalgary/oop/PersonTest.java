@@ -129,7 +129,12 @@ public class PersonTest {
         /* date cannot be in the future */
         /* Throws an exception if date of birth is in the future */
 
-        String futureDateOfBirth = "2022-10-11";
+        /* Generate future date */
+        LocalDate futureDate = LocalDate.now().plusDays(1);
+
+        /* Convert future date to string in the form yyyy-mm-dd */
+        String futureDateOfBirth = futureDate.toString();
+
         testPerson.setDateOfBirth(futureDateOfBirth);
     }
 
