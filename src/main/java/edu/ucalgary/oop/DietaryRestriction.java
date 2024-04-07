@@ -1,6 +1,6 @@
 package edu.ucalgary.oop;
 
-public enum DietaryRestrictions {
+public enum DietaryRestriction {
     AVML,
     DBML,
     GFML,

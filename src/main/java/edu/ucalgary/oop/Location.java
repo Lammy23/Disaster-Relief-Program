@@ -5,17 +5,20 @@ import java.util.ArrayList;
 /* //TODO: fix this
 - name: String
 - address: String
-- occupants: ArrayList<T>
+- occupants: ArrayList<DisasterVictim>                      // Might be useful to know who arrived first at location, we use ArrayList
+- supplies: HashSet<Supply>
 
 + Location(name:String, address:String)
 
 + getName(): String
 + getAddress(): String
-+ getOccupants(): ArrayList<T>
++ getOccupants(): ArrayList<DisasterVictim>
++ getSupplies(): HashSet<Supply>
 
 + setName(name: String): void
 + setAddress(address: String): void
-+ setOccupants(occupants: ArrayList<T>): void
++ setOccupants(occupants: ArrayList<DisasterVictim>): void
++
 
 + addOccupant(occupant: T)
 + removeOccupant(occupant: T)

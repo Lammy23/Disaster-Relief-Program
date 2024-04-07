@@ -20,7 +20,7 @@ import java.util.HashSet;
 - comments: String
 - familyConnections: HashSet<FamilyRelation>
 - gender: String
-- dietaryRestrictions: DietaryRestrictions
+- dietaryRestrictions: HashSet<DietaryRestriction>
 - ASSIGNED_SOCIAL_ID: int
 - medicalRecords: ArrayList<MedicalRecord>
 - ENTRY_DATE: String
@@ -42,7 +42,7 @@ import java.util.HashSet;
 + getComments(): String
 + getFamilyConnections: HashSet<FamilyRelation>
 + getGender(): String
-+ getDietaryRestrictions(): DietaryRestrictions
++ getDietaryRestrictions(): HashSet<DietaryRestriction>
 + getAssignedSocialID(): int
 + getMedicalRecords(): ArrayList<MedicalRecord>
 + getEntryDate(): String
@@ -55,12 +55,14 @@ import java.util.HashSet;
 + setComments(comments: String): void
 + setFamilyConnections(familyConnections: HashSet<FamilyRelation>): void
 + setGender(gender: String): void
-+ setDietaryRestrictions(dietaryRestrictions: DietaryRestrictions): void
++ setDietaryRestrictions(dietaryRestrictions: HashSet<DietaryRestriction>): void
 + setMedicalRecords(medicalRecords: ArrayList<MedicalRecord>): void
 + setPersonalBelongings(supplies: ArrayList<Supply>)
 
 + addFamilyConnection(familyConnection: FamilyRelation): void
 + removeFamilyConnection(familyConnection: FamilyRelation): void
++ addDietaryRestriction(dietaryRestriction: DietaryRestriction): void
++ removeDietaryRestriction(dietaryRestriction: DietaryRestriction): void
 + addMedicalRecord(medicalRecord:MedicalRecord): void
 + removeMedicalRecord(medicalRecord: MedicalRecord): void
 + addPersonalBelonging(supply: Supply): void
@@ -78,7 +80,7 @@ public class DisasterVictim {                                           // TODO:
     private String comments;
     private HashSet<FamilyRelation> familyConnections;
     private String gender;
-    private DietaryRestrictions dietaryRestrictions;
+    private HashSet<DietaryRestriction> dietaryRestrictions;
     private final int ASSIGNED_SOCIAL_ID;                               // Social ID is assigned once and never changed
     private ArrayList<MedicalRecord> medicalRecords;                    // It may be useful to know what the earlier entries are, so we use ArrayList
     private final String ENTRY_DATE;                                    // A victim can only have one date of entry
@@ -123,6 +125,7 @@ public class DisasterVictim {                                           // TODO:
                 LocalDate parsedDate = LocalDate.parse(standardizedDate, formatter);
 
                 // If the date was successfully parsed, then it's valid
+                return true;
             } catch (DateTimeParseException e) {
                 // If the date couldn't be parsed, then it's not valid
                 return false;
@@ -257,7 +260,7 @@ public class DisasterVictim {                                           // TODO:
      *
      * @return the dietary restrictions of the victim
      */
-    public DietaryRestrictions getDietaryRestrictions() {
+    public HashSet<DietaryRestriction> getDietaryRestrictions() {
         return dietaryRestrictions;
     }
 
@@ -378,7 +381,7 @@ public class DisasterVictim {                                           // TODO:
      *
      * @param dietaryRestrictions the dietary restrictions to set
      */
-    public void setDietaryRestrictions(DietaryRestrictions dietaryRestrictions) {
+    public void setDietaryRestrictions(HashSet<DietaryRestriction> dietaryRestrictions) {
         this.dietaryRestrictions = dietaryRestrictions;
     }
 

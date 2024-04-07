@@ -16,14 +16,15 @@ relationshipTo: String, personTwo: DisasterVictim)
 + getPersonTwo(): DisasterVictim
 + setPersonTwo(personTwo: DisasterVictim): void
  */
+
 public class FamilyRelation {
     // TODO: Implement class properly
 
-    private Person personOne;
-    private Person personTwo;
+    private DisasterVictim personOne;
+    private DisasterVictim personTwo;
     private String relationshipTo;
 
-    public FamilyRelation(Person personOne, Person personTwo, String relationshipTo) {
+    public FamilyRelation(DisasterVictim personOne, DisasterVictim personTwo, String relationshipTo) {
 
     }
 }

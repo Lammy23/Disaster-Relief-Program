@@ -79,7 +79,7 @@ public class PersonTest {
 
 
     @Test
-    public void testSetAndGetGender() {
+    public void testSetAndGetGender()
         /* Check that gender corresponds with at least one of the genders found in genderOptions.txt */
 
         testPerson.setGender("Boy");
