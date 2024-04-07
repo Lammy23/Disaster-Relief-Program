@@ -28,16 +28,62 @@ import java.util.HashSet;
  * Class that represents a family relationship of a `DisasterVictim`
  */
 public class FamilyRelation {
-    // TODO: Implement class properly
 
     private DisasterVictim personOne;
     private DisasterVictim personTwo;
     private String relationshipTo;
 
-    // TODO: Overload function with null (or none) parameters
-    public void gladeRecurse(HashSet<DisasterVictim> fellows) {
+    public void recursiveAdderGlance(HashSet<DisasterVictim> fellows) {
+
+        // Adding personOne and personTwo to the set of people who are connected by the same relationship
+        //
         boolean p1Necessary = fellows.add(personOne);
         boolean p2Necessary = fellows.add(personTwo);
+
+        HashSet<DisasterVictim> otherPeople = new HashSet<>(fellows);
+        otherPeople.remove(personOne);
+        otherPeople.remove(personTwo);
+
+        HashSet<DisasterVictim> nextPeople = new HashSet<>();
+        if (p1Necessary) nextPeople.add(personOne);
+        if (p2Necessary) nextPeople.add(personTwo);
+
+        for (DisasterVictim person : nextPeople) {
+            if (person.getFamilyConnections() != null) {
+                for (FamilyRelation connection : person.getFamilyConnections()) {
+                    if (connection.equals(this)) {
+                        for (DisasterVictim otherPerson : otherPeople) {
+                            for (FamilyRelation targetConnection : otherPerson.getFamilyConnections()) {
+                                // Ensuring no redundancy according to REQ 2
+                                if (targetConnection.personOne.equals(person) || targetConnection.personTwo.equals(person)) {
+                                    person.addFamilyConnection(targetConnection, false);
+                                }
+                            }
+                        }
+                    } else if (connection.relationshipTo.equals(this.relationshipTo)) {
+                        connection.recursiveAdderGlance(fellows);
+                    }
+                }
+            } else {
+                HashSet<DisasterVictim> otherThanMyself = new HashSet<>(fellows);
+                otherThanMyself.remove(person);
+
+                for (DisasterVictim otherPersonThanMyself : otherThanMyself) {
+                    for (FamilyRelation targetConnection : otherPersonThanMyself.getFamilyConnections()) {
+                        // Ensuring no redundancy according to REQ 2
+                        if (targetConnection.personOne.equals(person) || targetConnection.personTwo.equals(person)) {
+                            person.addFamilyConnection(targetConnection, false);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void recursiveRemoverGlance(HashSet<DisasterVictim> fellows) {
+        boolean p1Necessary = fellows.add(personOne);
+        boolean p2Necessary = fellows.add(personOne);
 
         HashSet<DisasterVictim> nextPeople = new HashSet<>();
         if (p1Necessary) nextPeople.add(personTwo);
@@ -55,13 +101,16 @@ public class FamilyRelation {
             if (person.getFamilyConnections() != null) {
                 for (FamilyRelation connection : person.getFamilyConnections()) {
                     if (connection.equals(this)) {
-                        // TODO: account for empty otherPeople list
                         for (DisasterVictim otherPerson : otherPeople) {
-                            FamilyRelation newRelation = new FamilyRelation(person, this.relationshipTo, otherPerson);
-                            person.addFamilyConnection(newRelation, false);
+                            for (FamilyRelation targetConnection : otherPerson.getFamilyConnections()) {
+                                // Ensuring no redundancy according to REQ 2
+                                if (targetConnection.personOne.equals(person) || targetConnection.personTwo.equals(person)) {
+                                    otherPerson.removeFamilyConnection(targetConnection, false);
+                                }
+                            }
                         }
                     } else if (connection.relationshipTo.equals(this.relationshipTo)) {
-                        connection.gladeRecurse(fellows);
+                        connection.recursiveRemoverGlance(fellows);
                     }
                 }
             } else {
@@ -69,18 +118,16 @@ public class FamilyRelation {
                 otherThanMyself.remove(person);
 
                 for (DisasterVictim otherPersonThanMyself : otherThanMyself) {
-                    for (FamilyRelation connection: otherPersonThanMyself.getFamilyConnections()) {
+                    for (FamilyRelation targetConnection : otherPersonThanMyself.getFamilyConnections()) {
                         // Ensuring no redundancy according to REQ 2
-                        if (personOne.equals(person) && personTwo.equals(person)) {
-                            person.addFamilyConnection(connection, false);
+                        if (targetConnection.personOne.equals(person) || targetConnection.personTwo.equals(person)) {
+                            otherPersonThanMyself.removeFamilyConnection(targetConnection, false);
                             break;
                         }
                     }
                 }
             }
-
         }
-
     }
 
     /*-----------Constructor----------*/

@@ -449,25 +449,33 @@ public class DisasterVictim {
     /*-----------------Adders/Removers-----------------*/
 
 
+    /**
+     * Adds a family connection to the victim
+     * @param familyConnection the family connection to add
+     */
     public void addFamilyConnection(FamilyRelation familyConnection) {
-
+        familyConnections.add(familyConnection);
+        familyConnection.recursiveAdderGlance(new HashSet<>());
     }
-
 
     /**
      * Adds a family connection to the victim
-     *
      * @param familyConnection the family connection to add
+     * @param withGlance whether to recurse through the family connection to fix any inconsistencies
      */
-    public void addFamilyConnection(FamilyRelation familyConnection, boolean withGlade) {
-        // TODO: Implement function
-
+    public void addFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
         familyConnections.add(familyConnection);
-        familyConnection.gladeRecurse(new HashSet<DisasterVictim>());
+        if (withGlance) familyConnection.recursiveAdderGlance(new HashSet<>());
     }
 
     public void removeFamilyConnection(FamilyRelation familyConnection) {
-        // TODO: Implement function
+        familyConnections.remove(familyConnection);
+        familyConnection.recursiveRemoverGlance(new HashSet<>());
+    }
+
+    public void removeFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
+        familyConnections.remove(familyConnection);
+        if (withGlance) familyConnection.recursiveRemoverGlance(new HashSet<>());
     }
 
     public void addMedicalRecord(MedicalRecord medicalRecord) {
