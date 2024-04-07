@@ -1,7 +1,5 @@
 package edu.ucalgary.oop;
 
-import com.sun.tools.javac.util.DiagnosticSource;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -448,9 +446,9 @@ public class DisasterVictim {
 
     /*-----------------Adders/Removers-----------------*/
 
-
     /**
      * Adds a family connection to the victim
+     *
      * @param familyConnection the family connection to add
      */
     public void addFamilyConnection(FamilyRelation familyConnection) {
@@ -460,16 +458,18 @@ public class DisasterVictim {
 
     /**
      * Adds a family connection to the victim
+     *
      * @param familyConnection the family connection to add
-     * @param withGlance whether to recurse through the family connection to fix any inconsistencies
+     * @param withGlance       whether to recurse through the family connection to fix any inconsistencies
      */
     public void addFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
         familyConnections.add(familyConnection);
         if (withGlance) familyConnection.recursiveAdderGlance(new HashSet<>());
     }
 
-    public void removeFamilyConnection(FamilyRelation familyConnection) {
-        familyConnections.remove(familyConnection);
+    public void removeFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
+        boolean isExisting = familyConnections.remove(familyConnection);
+        if (!isExisting) throw new IllegalArgumentException("Non-existent family connection provided");
         familyConnection.recursiveRemoverGlance(new HashSet<>());
     }
 

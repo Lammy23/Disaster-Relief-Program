@@ -19,6 +19,10 @@ public class DisasterVictimTest {
     private final String expectedValidGender = getValidGender();
     private final String InvalidGender = getInvalidGender();
 
+    private DisasterVictim x;
+    private DisasterVictim y;
+    private DisasterVictim z;
+
     private String getValidGender() {
         String validGender = "";
         BufferedReader inputStream = null;
@@ -70,6 +74,11 @@ public class DisasterVictimTest {
     @Before
     public void setUp() {
         testDisasterVictim = new DisasterVictim(expectedFirstName, expectedValidEntryDate);
+
+        // Testing Relationships
+        x = new DisasterVictim("John", "2024/01/01");
+        y = new DisasterVictim("Bobby", "2024/01/01");
+        z = new DisasterVictim("Mack", "2024/01/01");
     }
 
     @Test
@@ -271,7 +280,6 @@ public class DisasterVictimTest {
     @Test
     public void testSetEmptyPersonalBelongings() {
         ArrayList<Supply> supplies = new ArrayList<>();
-
         testDisasterVictim.setPersonalBelongings(supplies);
 
         assertTrue("Personal belongings list should be empty", testDisasterVictim.getPersonalBelongings().isEmpty());
@@ -281,43 +289,58 @@ public class DisasterVictimTest {
 
     @Test
     public void testAddValidFamilyConnectionToEmpty() {
-        DisasterVictim A = new DisasterVictim("John", "2024/01/01");
-        DisasterVictim B = new DisasterVictim("Bobby", "2024/01/01");
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        testDisasterVictim.addFamilyConnection(r1);
 
-        FamilyRelation expectedValidFamilyConnection = new FamilyRelation(A, "sibling", B);
-
-        testDisasterVictim.addFamilyConnection(expectedValidFamilyConnection);
-
-//        assertEquals("addFamilyConnection should ");
+        assertTrue("addFamilyConnection should add the relation", testDisasterVictim.getFamilyConnections().contains(r1));
     }
 
     @Test
     public void testAddValidFamilyConnectionToPopulated() {
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(x, "sibling", z);
+        testDisasterVictim.addFamilyConnection(r1);
+        testDisasterVictim.addFamilyConnection(r2);
 
+        assertTrue("addFamilyConnection should add the second relation", testDisasterVictim.getFamilyConnections().contains(r2));
     }
 
     @Test
-    public void testAddExistingFamilyConnection() {
-        // FamilyRelation already exists
+    public void testAddDuplicateFamilyConnections() {
+        // FamilyRelation already exists (duplicate test)
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(x, "sibling", y);        // Duplicate
+
+        testDisasterVictim.addFamilyConnection(r1);
+        testDisasterVictim.addFamilyConnection(r2);
+
+        assertEquals("addFamilyConnection should ignore the duplicate", 1, testDisasterVictim.getFamilyConnections().size());
     }
 
     @Test
-    public void testRemoveFamilyConnectionFromEmpty() {
+    public void testRemoveNonExistentFamilyConnectionFromEmpty() {
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        testDisasterVictim.removeFamilyConnection(r1);
 
+        assertFalse("removeFamilyConnection should ignore non-existent relation", testDisasterVictim.getFamilyConnections().contains(r1));
     }
 
     @Test
     public void testRemoveValidFamilyConnectionFromPopulated() {
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(y, "parent", z);
+
+        testDisasterVictim.addFamilyConnection(r1);
+        testDisasterVictim.removeFamilyConnection(r2);                              // Expecting to
+    }
+
+    @Test
+    public void testRemoveNonExistentFamilyConnectionFromPopulated() {
 
     }
 
     @Test
-    public void testRemoveNonExistentFamilyConnection() {
-
-    }
-
-    @Test
-    public void testCompletionOfTwoSidedFamilyConnection() {
+    public void testCompletionOfTwoSidedFamilyConnections() {
         // Symmetric Property
         // if x R y, then y R x
     }
@@ -342,18 +365,25 @@ public class DisasterVictimTest {
     }
 
     @Test
-    public void testDeletingFromOneSideOfTwoSidedFamilyConnection() {
+    public void testDeletingFromOneSideOfTwoSidedFamilyConnections() {
 
     }
 
     @Test
-    public void testDeletingFromOneSideOfThreeSidedFamilyConnection() {
+    public void testDeletingFromOneSideOfThreeSidedFamilyConnections() {
         // Transitive but x no longer relates to z.
     }
 
     @Test
-    public void testDeletingFromOneSideOfComplexFamilyConnection() {
+    public void testDeletingFromOneSideOfComplexFamilyConnections() {
 
+    }
+
+    @Test
+    public void testInvalidThreeSidedFamilyConnections() {
+        // If x R y but y notR z, then x notR z
+        FamilyRelation r1 = new FamilyRelation(x, "parent", y);
+        FamilyRelation r2 = new FamilyRelation(y, "sibling", z);
     }
 
     @Test
