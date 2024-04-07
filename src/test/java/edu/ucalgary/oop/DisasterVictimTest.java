@@ -5,6 +5,7 @@ import org.junit.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +18,6 @@ public class DisasterVictimTest {
     private final int expectedValidApproximateAge = 25;
     private final String expectedValidGender = getValidGender();
     private final String InvalidGender = getInvalidGender();
-
 
     private String getValidGender() {
         String validGender = "";
@@ -213,6 +213,12 @@ public class DisasterVictimTest {
         assertEquals("setGender should update the gender", expectedValidGender, testDisasterVictim.getGender());
     }
 
+    @Test
+    public void testSetAndGetUpperCaseGender() {
+        testDisasterVictim.setGender(expectedValidGender.toUpperCase());
+        assertEquals("setGender shouldn't care that it's upper-case", expectedValidGender.toLowerCase(), testDisasterVictim.getGender());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testSetInvalidGender() {
         testDisasterVictim.setGender(InvalidGender);                // Expecting line to fail
@@ -226,30 +232,129 @@ public class DisasterVictimTest {
     }
 
     @Test
-    public void testSetAndGetMedicalRecords() {
-        MedicalRecord medicalRecord1 = new MedicalRecord(new Location())
+    public void testSetAndGetValidMedicalRecords() {
+        MedicalRecord medicalRecord1 = new MedicalRecord(new Location("Location1", " Address 1"), "Bandage", "2024/01/01");
+        MedicalRecord medicalRecord2 = new MedicalRecord(new Location("Location2", "Address 2"), "Eye-drop", "2023.01.01");
+
+        ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
+        medicalRecords.add(medicalRecord1);
+        medicalRecords.add(medicalRecord2);
+
+        testDisasterVictim.setMedicalRecords(medicalRecords);
+
+        assertEquals("SetMedicalRecords should update the medical records", medicalRecords, testDisasterVictim.getMedicalRecords());
+    }
+
+    @Test
+    public void testSetEmptyMedicalRecords() {
+        ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();
+
+        testDisasterVictim.setMedicalRecords(medicalRecords);
+
+        assertTrue("Medical records list should be empty", testDisasterVictim.getMedicalRecords().isEmpty());
     }
 
     @Test
     public void testSetAndGetPersonalBelongings() {
-        Supply supply = new Supply("Water", 10);
-        testDisasterVictim.addPersonalBelonging(supply);
-        assertEquals("setPersonalBelongings should update the personal belongings", supply, testDisasterVictim.getPersonalBelongings().get(0));
+        Supply supply1 = new Supply("Supply1", 5);
+        Supply supply2 = new Supply("Supply2", 5);
+
+        ArrayList<Supply> supplies = new ArrayList<>();
+        supplies.add(supply1);
+        supplies.add(supply2);
+
+        testDisasterVictim.setPersonalBelongings(supplies);
+
+        assertEquals("setPersonalBelongings should update the personal belongings", supplies, testDisasterVictim.getPersonalBelongings());
     }
 
     @Test
-    public void testSetAndGetMissingStatus() {
-        testDisasterVictim.setMissingStatus(true);
-        assertEquals("setMissingStatus should update the missing status", true, testDisasterVictim.getMissingStatus());
+    public void testSetEmptyPersonalBelongings() {
+        ArrayList<Supply> supplies = new ArrayList<>();
+
+        testDisasterVictim.setPersonalBelongings(supplies);
+
+        assertTrue("Personal belongings list should be empty", testDisasterVictim.getPersonalBelongings().isEmpty());
+    }
+
+    /*-----------Testing Adders/Removers------------*/
+
+    @Test
+    public void testAddValidFamilyConnectionToEmpty() {
+        DisasterVictim A = new DisasterVictim("John", "2024/01/01");
+        DisasterVictim B = new DisasterVictim("Bobby", "2024/01/01");
+
+        FamilyRelation expectedValidFamilyConnection = new FamilyRelation(A, "sibling", B);
+
+        testDisasterVictim.addFamilyConnection(expectedValidFamilyConnection);
+
+//        assertEquals("addFamilyConnection should ");
     }
 
     @Test
-    public void testSetAndGetLastKnownLocation() {
-        Location location = new Location("ShelterA", "140 8 Ave NW");
-        testDisasterVictim.setLastKnownLocation(location);
-        assertEquals("setLastKnownLocation should update the last known location", location, testDisasterVictim.getLastKnownLocation());
+    public void testAddValidFamilyConnectionToPopulated() {
+
     }
 
+    @Test
+    public void testAddExistingFamilyConnection() {
+        // FamilyRelation already exists
+    }
+
+    @Test
+    public void testRemoveFamilyConnectionFromEmpty() {
+
+    }
+
+    @Test
+    public void testRemoveValidFamilyConnectionFromPopulated() {
+
+    }
+
+    @Test
+    public void testRemoveNonExistentFamilyConnection() {
+
+    }
+
+    @Test
+    public void testCompletionOfTwoSidedFamilyConnection() {
+        // Symmetric Property
+        // if x R y, then y R x
+    }
+
+    @Test
+    public void testCompletionOfThreeSidedFamilyConnections() {
+        // TODO: update to proper test name
+        // Transitive Property
+        // If x R y and y R z, then x R z, where R => Relates to
+    }
+
+    @Test
+    public void testCompletionOfComplexFamilyConnections() {
+        // A crazy example with 5 interconnected familyConnections
+    }
+
+    @Test
+    public void testSelfToSelfFamilyConnection() {
+        // Reflexive Property
+        // x R x should not be possible
+
+    }
+
+    @Test
+    public void testDeletingFromOneSideOfTwoSidedFamilyConnection() {
+
+    }
+
+    @Test
+    public void testDeletingFromOneSideOfThreeSidedFamilyConnection() {
+        // Transitive but x no longer relates to z.
+    }
+
+    @Test
+    public void testDeletingFromOneSideOfComplexFamilyConnection() {
+
+    }
 
     @Test
     public void testAddPersonalBelonging() {

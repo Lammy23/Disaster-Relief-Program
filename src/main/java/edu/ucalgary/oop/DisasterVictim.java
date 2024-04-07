@@ -1,5 +1,10 @@
 package edu.ucalgary.oop;
 
+import com.sun.tools.javac.util.DiagnosticSource;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -72,7 +77,7 @@ import java.util.HashSet;
 /**
  * Class that represents a victim of a disaster
  */
-public class DisasterVictim {                                           // TODO: extend `Person` class
+public class DisasterVictim {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -80,7 +85,7 @@ public class DisasterVictim {                                           // TODO:
     private String comments;
     private HashSet<FamilyRelation> familyConnections;
     private String gender;
-    private HashSet<DietaryRestriction> dietaryRestrictions;
+    private HashSet<DietaryRestriction> dietaryRestrictions;            // A victim may have more than one dietary restriction
     private final int ASSIGNED_SOCIAL_ID;                               // Social ID is assigned once and never changed
     private ArrayList<MedicalRecord> medicalRecords;                    // It may be useful to know what the earlier entries are, so we use ArrayList
     private final String ENTRY_DATE;                                    // A victim can only have one date of entry
@@ -170,6 +175,43 @@ public class DisasterVictim {                                           // TODO:
         // Replacing any non-digit characters with a dash
         // TODO: Confirm that \\D is the right symbol
         return date.replaceAll("\\D", "-");
+    }
+
+    /**
+     * Checks if gender is valid then returns a boolean
+     *
+     * @param gender the gender to check
+     * @return `true` if gender is valid, else returns `false`
+     */
+    private boolean isValidGender(String gender) {
+        // Check GenderOptions.txt to see if the gender exists
+        BufferedReader inputStream = null;
+        boolean genderFound = false;
+
+        try {
+            inputStream = new BufferedReader(new FileReader("./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
+            String line;
+            // Reading the file line by line
+            while ((line = inputStream.readLine()) != null) {
+                // Accounting for case
+                if (line.toLowerCase().equals(gender.toLowerCase())) {
+                    genderFound = true;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return genderFound;
     }
 
     // TODO: Export `checkDate` and `checkBirthDate` functions if necessary
@@ -373,7 +415,8 @@ public class DisasterVictim {                                           // TODO:
      * @param gender the gender to set
      */
     public void setGender(String gender) {
-        this.gender = gender;                           // TODO: Implement error checking - check whether gender is valid according to the gender.txt file
+        if (isValidGender(gender)) this.gender = gender.toLowerCase();
+        else throw new IllegalArgumentException("Invalid gender provided");
     }
 
     /**
@@ -405,14 +448,41 @@ public class DisasterVictim {                                           // TODO:
 
     /*-----------------Adders/Removers-----------------*/
 
+
+    public void addFamilyConnection(FamilyRelation familyConnection) {
+
+    }
+
+
     /**
      * Adds a family connection to the victim
      *
      * @param familyConnection the family connection to add
      */
-    public void addFamilyConnection(FamilyRelation familyConnection) {
+    public void addFamilyConnection(FamilyRelation familyConnection, boolean withGlade) {
+        // TODO: Implement function
+
+        familyConnections.add(familyConnection);
+        familyConnection.gladeRecurse(new HashSet<DisasterVictim>());
+    }
+
+    public void removeFamilyConnection(FamilyRelation familyConnection) {
         // TODO: Implement function
     }
 
-    // more...
+    public void addMedicalRecord(MedicalRecord medicalRecord) {
+        // TODO: Implement function
+    }
+
+    public void removeMedicalRecord(MedicalRecord medicalRecord) {
+        // TODO: Implement function
+    }
+
+    public void addPersonalBelonging(Supply supply) {
+        // TODO: Implement function
+    }
+
+    public void removePersonalBelonging(Supply supply) {
+        // TODO: Implement function
+    }
 }

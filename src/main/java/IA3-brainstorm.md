@@ -12,5 +12,4 @@
 * In constructing tests: test valid, test invalid, test fringe/edge cases
 * I'll have to implement a function in some `main()` that reads all the genders from the
 file and prints it so the social worker can know what gender to input.
-* I'll have to use recursion for familyrelation
-* 
+* I'll have to use recursion for familyRelation
