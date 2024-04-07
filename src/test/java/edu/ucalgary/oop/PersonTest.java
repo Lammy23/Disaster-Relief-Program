@@ -22,11 +22,6 @@ public class PersonTest {
 
     }
 
-    @Before
-    public void setUp() {
-        testPerson = new Person(expectedFirstName, expectedLastName);
-    }
-
     @Test
     public void testObjectCreation() {
         assertNotNull(testPerson);

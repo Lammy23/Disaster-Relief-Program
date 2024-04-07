@@ -1,22 +1,18 @@
 package edu.ucalgary.oop;
 
 import org.junit.*;
-
 import static org.junit.Assert.*;
 
 public class DisasterVictimTest {
 
     private DisasterVictim testDisasterVictim;
-    private String expectedFirstName = "John";
-    private String expectedEntryDate = "2021-10-10";
+    private final String expectedFirstName = "John";
+    private final String expectedValidEntryDate = "2024/01/01";
 
-
-    public DisasterVictimTest() {
-    }
 
     @Before
     public void setUp() {
-        testDisasterVictim = new DisasterVictim(expectedFirstName, expectedEntryDate);
+        testDisasterVictim = new DisasterVictim(expectedFirstName, expectedValidEntryDate);
     }
 
     @Test
@@ -30,8 +26,32 @@ public class DisasterVictimTest {
     }
 
     @Test
-    public void testConstructorEntryDate() {
-        assertEquals("Constructor should set the correct entry date", expectedEntryDate, testDisasterVictim.getEntryDate());
+    public void testConstructorValidEntryDate() {
+        assertEquals("Constructor should set the correct entry date", expectedValidEntryDate, testDisasterVictim.getEntryDate());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorInvalidDelimiterEntryDate() {
+        String invalidDelimiter = "2024*01*01";
+        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, invalidDelimiter); // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorInvalidFormatEntryDate() {
+        String invalidFormat = "01-01-2024";
+        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, invalidFormat);   // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorImpossibleEntryDate() {
+        String impossibleDate = "99-99-2024";
+        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, impossibleDate);  // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFutureEntryDate() {
+        String futureDate = "2025-01-01";
+        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, futureDate);      // Expecting line to fail
     }
 
     @Test

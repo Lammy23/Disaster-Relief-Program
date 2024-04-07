@@ -24,10 +24,10 @@ Also **required** to use 'Inheritance' and 'Interface'. Just to
 remind you, here's how to represent both these concepts in a UML
 diagram.
 
-![inheritance-uml-demo](../../../../resources/inheritance-uml-demo.png)
+![inheritance-uml-demo](inheritance-uml-demo.png)
 
 
-![interface-uml-demo](../../../../resources/interfaces-uml-demo.png)
+![interface-uml-demo](interfaces-uml-demo.png)
 
 As show, we can use a line with a hollow arrow head
 to demonstrate both inheritance and interfaces. It's
@@ -37,7 +37,7 @@ in the child classes, it follows that the must be implemented.
 
 Furthermore, here is the UML cheat sheet provided for you in the D2L shell,
 
-![UML-cheat-sheet-D2L](../../../../resources/uml-cheatsheet-2.0.png)
+![UML-cheat-sheet-D2L](uml-cheatsheet-2.0.png)
 
 ### Tips / Ideas
 
