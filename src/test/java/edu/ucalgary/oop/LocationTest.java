@@ -2,7 +2,6 @@ package edu.ucalgary.oop;
 
 import org.junit.*;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
@@ -128,7 +127,7 @@ public class LocationTest {
     @Test
     public void testRemoveOccupantFromEmpty() {
         testLocation.removeOccupant(x);
-        assertEquals("removeOccupant should not remove any occupants", 0, testLocation.getOccupants().size());
+        assertEquals("removeOccupant should not care for the non-existent occupant", 0, testLocation.getOccupants().size());
     }
 
     @Test
@@ -147,16 +146,43 @@ public class LocationTest {
     }
 
     @Test
-    public void testAddDuplicateSupplies() {
+    public void testAddSameSupplies() {
         // Checking if the quantity of the supply is updated
-        Supply supply = new Supply("Water", 1);
+        Supply supply1 = new Supply("Water", 2);
+        Supply supply2 = new Supply("Water", 5);
 
-        testLocation.addSupply(supply);
-        testLocation.addSupply(supply);
+        testLocation.addSupply(supply1);
+        testLocation.addSupply(supply2);
 
-        Optional<Supply> actualSupply = testLocation.getSupplies().stream().filter(item -> item.getType().equals(supply.getType())).findFirst();
+        Optional<Supply> actualSupply = testLocation.getSupplies().stream().filter(item -> item.getType().equals(supply1.getType())).findFirst();
+
         // Assert that actualSupply has quantity of 2
         assertTrue("addSupply should add the supply", actualSupply.isPresent());
-        assertEquals("Supply quantities should be increased", 2, actualSupply.get().getQuantity());
+        assertEquals("Supply quantities should be increased", 7, actualSupply.get().getQuantity());
+    }
+
+    @Test
+    public void testRemoveOneSupplyFromPopulated() {
+        testLocation.addSupply(a);
+        testLocation.addSupply(b);
+        testLocation.removeSupply(a);
+        assertFalse("removeSupply should remove the correct supply", testLocation.getSupplies().contains(a));
+    }
+
+    @Test
+    public void testRemoveNonExistentSupply() {
+        testLocation.addSupply(a);
+        testLocation.addSupply(b);
+
+        testLocation.removeSupply(c);
+
+        assertEquals("removeSupply should ignore the non-existent supply", 2, testLocation.getSupplies().size());
+    }
+
+    @Test
+    public void testRemoveSupplyFromEmpty() {
+        testLocation.removeSupply(a);
+
+        assertEquals("removeSupply should ignore the non-existent supply", 0, testLocation.getSupplies().size());
     }
 }

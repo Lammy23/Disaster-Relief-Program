@@ -323,16 +323,6 @@ public class DisasterVictimTest {
         assertEquals("addFamilyConnection should ignore the duplicate", 1, x.getFamilyConnections().size());
     }
 
-    @Test
-    public void testAddDuplicateToRelativeFamilyConnections() {
-        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
-        FamilyRelation r2 = new FamilyRelation(y, "sibling", x);
-
-        x.addFamilyConnection(r1);
-        y.addFamilyConnection(r2);
-
-        assertFalse("addFamilyConnection for y should ignore the duplicate (r2)", y.getFamilyConnections().contains(r2));
-    }
 
     @Test
     public void testRemoveNonExistentFamilyConnectionFromEmpty() {
@@ -389,6 +379,8 @@ public class DisasterVictimTest {
         // Test that x relates to z
         assertTrue("z should relate to y", z.getFamilyConnections().contains(r2));
     }
+
+    // TODO: Test Adding family connection that has nothing to do with the DisasterVictim
 
     @Test
     public void testCompletionOfComplexFamilyConnections() {

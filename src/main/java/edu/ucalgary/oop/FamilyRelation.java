@@ -1,5 +1,6 @@
 package edu.ucalgary.oop;
 
+import java.util.HashSet;
 /*
 
 ## Attributes ##
@@ -21,8 +22,6 @@ relationshipTo: String, personTwo: DisasterVictim)
 + setRelationshipTo(relationshipTo: String): void
 + setPersonTwo(personTwo: DisasterVictim): void
  */
-
-import java.util.HashSet;
 
 /**
  * Class that represents a family relationship of a `DisasterVictim`
@@ -99,13 +98,15 @@ public class FamilyRelation {
     }
 
     public void recursiveRemoverGlance(HashSet<DisasterVictim> fellows) {
-
+        // TODO: Implement function
     }
 
     /*-----------Constructor----------*/
 
     public FamilyRelation(DisasterVictim personOne, String relationshipTo, DisasterVictim personTwo) {
-
+        this.personOne = personOne;
+        this.relationshipTo = relationshipTo;
+        this.personTwo = personTwo;
     }
 
     /*------Getters--------*/

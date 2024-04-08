@@ -1,5 +1,9 @@
 package edu.ucalgary.oop;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 /*
 
 ## Attributes ##
@@ -15,13 +19,10 @@ package edu.ucalgary.oop;
 + getFirstName(): String
 + getLastName(): String
 + getInfo():String
-+ getServicesPhone():String
- */
++ getServicesPhone(): String
++ getLogDetails(): String
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+ */
 
 public class Inquirer {
     private final String FIRST_NAME;
@@ -39,25 +40,25 @@ public class Inquirer {
         this.SERVICES_PHONE = SERVICES_PHONE;
     }
 
-    public String getFIRST_NAME() {
+    public String getFirstName() {
         return FIRST_NAME;
     }
 
-    public String getLAST_NAME() {
+    public String getLastName() {
         return LAST_NAME;
     }
 
-    public String getSERVICES_PHONE() {
+    public String getServicesPhone() {
         return SERVICES_PHONE;
     }
 
-    public String getINFO() {
+    public String getInfo() {
         return INFO;
     }
 
     public String getLogDetails() {
         /* Reading log details from postgreSQL database */
-        StringBuffer logDetails = new StringBuffer();
+        StringBuilder logDetails = new StringBuilder();
 
         try {
             String query = "SELECT inquiry_log.details, inquiry_log.calldate FROM inquirer RIGHT OUTER JOIN inquiry_log ON inquirer.id = inquiry_log.inquirer WHERE (inquirer.firstname = ? AND inquirer.lastname = ?)";

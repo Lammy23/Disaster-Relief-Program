@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class DisasterVictim {
     private String dateOfBirth;
     private int approximateAge;
     private String comments;
-    private HashSet<FamilyRelation> familyConnections;
+    private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private String gender;
     private HashSet<DietaryRestriction> dietaryRestrictions;            // A victim may have more than one dietary restriction
     private final int ASSIGNED_SOCIAL_ID;                               // Social ID is assigned once and never changed
@@ -451,22 +452,20 @@ public class DisasterVictim {
      *
      * @param familyConnection the family connection to add
      */
-    public void addFamilyConnection(FamilyRelation familyConnection) {
-        // Checking for duplicates
-        for (FamilyRelation connection : familyConnections) {
-            if ((connection.getPersonOne().equals(familyConnection.getPersonOne()) &&
-                    connection.getPersonTwo().equals(familyConnection.getPersonTwo()) &&
-                    connection.getRelationshipTo().equals(familyConnection.getRelationshipTo()))
-                    || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) &&
-                    connection.getPersonTwo().equals(familyConnection.getPersonOne()) &&
-                    connection.getRelationshipTo().equals(familyConnection.getRelationshipTo()))) {
+    public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
+            Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> {
+                boolean isPresent;
+                return (connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())) || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne()));
+            }).findFirst();
+
+            if (existingConnection.isPresent()) {
                 return;
             }
-        }
-        // checking for self-connection
-        if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
-            return;
-        }
+
+            // checking for self-connection
+            if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
+                throw new IllegalArgumentException("Invalid family connection provided: Self relation not allowed");
+            }
 
 
         familyConnections.add(familyConnection);

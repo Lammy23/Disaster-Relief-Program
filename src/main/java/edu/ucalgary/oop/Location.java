@@ -2,6 +2,7 @@ package edu.ucalgary.oop;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 
 /* TODO: perfect this UML Diagram
 - name: String
@@ -147,12 +148,32 @@ public class Location {
     }
 
     public void addSupply(Supply supply) {
-        this.supplies.forEach(targetSupply -> {
-            if (targetSupply.equals(supply)) {
-                targetSupply.setQuantity(targetSupply.getQuantity() + supply.getQuantity());
-                return;
+        Optional<Supply> existingSupply = supplies.stream().filter((item) -> item.getType().equals(supply.getType())).findFirst();
+
+        if (existingSupply.isPresent()) {
+            Supply targetSupply = existingSupply.get();
+            int oldQuantity = targetSupply.getQuantity();
+            int newQuantity = supply.getQuantity();
+            targetSupply.setQuantity(oldQuantity + newQuantity);
+        } else {
+            supplies.add(supply);
+        }
+    }
+
+    public void removeSupply(Supply supply) {
+        Optional<Supply> existingSupply = supplies.stream().filter(item -> item.getType().equals(supply.getType())).findFirst();
+
+        if (existingSupply.isPresent()) {
+            Supply targetSupply = existingSupply.get();
+            int oldQuantity = targetSupply.getQuantity();
+            int newQuantity = supply.getQuantity();
+
+            if (newQuantity >= oldQuantity) {
+                // Remove supplies entirely
+                supplies.remove(supply);
+            } else {
+                targetSupply.setQuantity(oldQuantity - newQuantity);
             }
-        });
-        this.supplies.add(supply);
+        }
     }
 }

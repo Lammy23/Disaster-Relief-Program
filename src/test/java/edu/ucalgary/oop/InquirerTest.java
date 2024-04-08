@@ -1,31 +1,29 @@
 package edu.ucalgary.oop;
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.*;
 
 import static org.junit.Assert.*;
 
 public class InquirerTest {
 
     private Inquirer testInquirer;
-    private String expectedFirstName = "John";
-    private String expectedLastName = "Doe";
-    private String expectedSERVICES_PHONE = "403-123-4567";
-    private String expectedINFO = "I am looking for my missing family members.";
+    private final String expectedFirstName = "John";
+    private final String expectedLastName = "Doe";
+    private final String expectedServicesPhone = "403-123-4567";
+    private final String expectedInfo = "Looking for dog";
 
-
-    public InquirerTest() {
-
-    }
 
     @Before
     public void setUp() {
-        testInquirer = new Inquirer(expectedFirstName, expectedLastName, expectedSERVICES_PHONE, expectedINFO);
+        testInquirer = new Inquirer(expectedFirstName, expectedLastName, expectedServicesPhone, expectedInfo);
     }
 
     @Test
     public void testObjectCreation() {
         assertNotNull(testInquirer);
     }
+
+    /*--------------Testing Constructor-----------------*/
 
     @Test
     public void testConstructorFirstName() {
@@ -38,24 +36,19 @@ public class InquirerTest {
     }
 
     @Test
-    public void testConstructorSERVICES_PHONE() {
-        assertEquals("Constructor should set the correct SERVICES_PHONE", expectedSERVICES_PHONE, testInquirer.getServicesPhone());
+    public void testConstructorServicesPhone() {
+        assertEquals("Constructor should set the correct services phone", expectedServicesPhone, testInquirer.getServicesPhone());
     }
 
     @Test
-    public void testConstructorINFO() {
-        assertEquals("Constructor should set the correct INFO", expectedINFO, testInquirer.getInfo());
+    public void testConstructorInfo() {
+        assertEquals("Constructor should set the correct info", expectedInfo, testInquirer.getInfo());
     }
 
-    @Test
-    public void testSetAndGetInfo() {
-        String newInfo = "I am looking for my missing pet.";
-        testInquirer.setInfo(newInfo);
-        assertEquals("setInfo should update the INFO", newInfo, testInquirer.getInfo());
-    }
+    /*--------------Testing Methods-----------------*/
 
     @Test
-    public void testGetServicesPhone() {
-        assertEquals("getServicesPhone should return the correct SERVICES_PHONE", expectedSERVICES_PHONE, testInquirer.getServicesPhone());
+    public void testGetLogDetails() {
+        // TODO: Implement function
     }
 }

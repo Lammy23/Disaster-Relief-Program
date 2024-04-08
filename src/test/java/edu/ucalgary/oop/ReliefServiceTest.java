@@ -11,133 +11,113 @@ import static org.junit.Assert.*;
 
 public class ReliefServiceTest {
 
-    private MissingPersonReliefService testService;
-    private Inquirer expectedInquirer = new Inquirer("John", "Doe", "403-123-4567", "I am looking for my family");
+    private ReliefService testReliefService;
+    private final Inquirer expectedInquirer = new Inquirer("John", "Doe", "Looking for children", "403-555-666");
+    private final DisasterVictim expectedMissingPerson = new DisasterVictim("Bobby", "2024/01/01");
+    private final String expectedDateOfInquiry = "2024/02/02";
+    private final String expectedInfoProvided = "Looking for family";
+    private final Location expectedLastKnownLocation = new Location("Location A", "123 Location lane");
 
-    private Person p1 = new Person("Robert", "Hess");
-    private Person p2 = new Person("GM", "Hikaru");
-    private PriorityQueue<DisasterVictim> expectedMissingPersons = new PriorityQueue<DisasterVictim>(p1, p2);
-    private String expectedDateOfInquiry = "2021-10-10";
-    private String expectedInfoProvided = "I am looking for my family";
-
-    public ReliefServiceTest() {
-    }
+    private final String expectedValidDateOfInquiry = "2023.01.01";
 
     @Before
     public void setUp() {
-        testService = new MissingPersonReliefService(expectedInquirer, expectedMissingPersons, expectedDateOfInquiry, expectedInfoProvided);
+        testReliefService = new ReliefService(expectedInquirer, expectedMissingPerson, expectedDateOfInquiry, expectedInfoProvided, expectedLastKnownLocation);
     }
 
     @Test
     public void testObjectCreation() {
-        assertNotNull(testService);
+        assertNotNull(testReliefService);
     }
+
+    /*-----------Testing Constructor----------*/
 
     @Test
     public void testConstructorInquirer() {
-        assertEquals("Constructor should set the correct inquirer", expectedInquirer, testService.getInquirer());
+        assertEquals("Constructor should set the correct inquirer", expectedInquirer, testReliefService.getInquirer());
     }
 
     @Test
     public void testConstructorMissingPersons() {
-        assertEquals("Constructor should set the correct missing persons", expectedMissingPersons, testService.getMissingPersons());
+        assertEquals("Constructor should set the correct missing persons", expectedMissingPerson, testReliefService.getMissingPerson());
     }
 
     @Test
     public void testConstructorDateOfInquiry() {
-        assertEquals("Constructor should set the correct date of inquiry", expectedDateOfInquiry, testService.getDateOfInquiry());
+        assertEquals("Constructor should set the correct date of inquiry", expectedDateOfInquiry, testReliefService.getDateOfInquiry());
     }
 
     @Test
     public void testConstructorInfoProvided() {
-        assertEquals("Constructor should set the correct info provided", expectedInfoProvided, testService.getInfoProvided());
+        assertEquals("Constructor should set the correct info provided", expectedInfoProvided, testReliefService.getInfoProvided());
     }
+
+    @Test
+    public void testConstructorLastKnownLocation() {
+        assertEquals("Constructor should set the correct last known location", expectedLastKnownLocation, testReliefService.getLastKnownLocation());
+    }
+
+    /*-------------Testing Getters & Setters-----------------*/
 
     @Test
     public void testSetAndGetInquirer() {
-        Inquirer newInquirer = new Inquirer("Jane", "Doe", "403-123-4567", "I am looking for my mother");
-        testService.setInquirer(newInquirer);
-        assertEquals("setInquirer should update the inquirer", newInquirer, testService.getInquirer());
+        Inquirer newInquirer = new Inquirer("Jane", "Doe", "I am looking for my mother", "Looking for parents");
+
+        testReliefService.setInquirer(newInquirer);
+        assertEquals("setInquirer should update the inquirer", newInquirer, testReliefService.getInquirer());
     }
 
     @Test
-    public void testSetAndGetMissingPersons() {
-        Person p3 = new Person("Bobby", "Doe");
-        Person p4 = new Person("Jimmy", "Doe");
-        PriorityQueue<DisasterVictim> newMissingPersons = new PriorityQueue<DisasterVictim>(p3, p4);
-        testService.setMissingPersons(newMissingPersons);
-        assertEquals("setMissingPersons should update the missing persons", newMissingPersons, testService.getMissingPersons());
+    public void testSetAndGetMissingPerson() {
+        DisasterVictim newVictim = new DisasterVictim("Bobby", "403-566-000");
+
+        testReliefService.setMissingPerson(newVictim);
+        assertEquals("setMissingPersons should update the missing person", newVictim, testReliefService.getMissingPerson());
     }
 
     @Test
-    public void testSetAndGetDateOfInquiry() {
-        String newDateOfInquiry = "2021-10-11";
-        testService.setDateOfInquiry(newDateOfInquiry);
-        assertEquals("setDateOfInquiry should update the date of inquiry", newDateOfInquiry, testService.getDateOfInquiry());
+    public void testSetAndGetValidDateOfInquiry() {
+        testReliefService.setDateOfInquiry(expectedDateOfInquiry);
+        assertEquals("setDateOfInquiry should update the date of inquiry", expectedDateOfInquiry, testReliefService.getDateOfInquiry());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetInvalidDelimiterDateOfInquiry() {
+        String invalidDelimiter = "2024!01)01";
+        testReliefService.setDateOfInquiry(invalidDelimiter);               // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetInvalidFormatDateOfInquiry() {
+        String invalidFormat = "01.01.2024";
+        testReliefService.setDateOfInquiry(invalidFormat);               // Expecting line to fail
+    }
+
+    @Test
+    public void testSetImpossibleDateOfInquiry() {
+        String impossibleDate = "2022.99.99";
+        testReliefService.setDateOfInquiry(impossibleDate);              // Expecting line to fail
+    }
+
+    @Test
+    public void testSetFutureDateOfInquiry() {
+        String futureDate = "2025.01.01";
+        testReliefService.setDateOfInquiry(futureDate);                 // Expecting line to fail
     }
 
     @Test
     public void testSetAndGetInfoProvided() {
         String newInfoProvided = "I am looking for my brother";
-        testService.setInfoProvided(newInfoProvided);
-        assertEquals("setInfoProvided should update the info provided", newInfoProvided, testService.getInfoProvided());
+
+        testReliefService.setInfoProvided(newInfoProvided);
+        assertEquals("setInfoProvided should update the info provided", newInfoProvided, testReliefService.getInfoProvided());
     }
 
     @Test
-    public void testGetLogDetails() {
-        String expectedLogDetails = "Inquirer: " + expectedInquirer + "\n" + "Date of Inquiry: " + expectedDateOfInquiry + "\n" + "Info Provided: " + expectedInfoProvided + "\n" + "Missing Persons: " + expectedMissingPersons;
-        assertEquals("getLogDetails should return the correct log details", expectedLogDetails, testService.getLogDetails());
+    public void testSetAndGetLastKnownLocation() {
+        Location newLocation = new Location("Location B", "456 Location lane");
+
+        testReliefService.setLastKnownLocation(newLocation);
+        assertEquals("setLastKnownLocation should update the last known location", newLocation, testReliefService.getLastKnownLocation());
     }
-
-    @Test
-    public void testAddMissingPerson() {
-        Person p5 = new Person("Papier", "Marche");
-        testService.addMissingPerson(p5);
-        assertTrue("addMissingPerson should add the missing person", testService.getMissingPersons().contains(p5));
-    }
-
-    @Test
-    public void testRemoveMissingPerson() {
-        testService.removeMissingPerson(p1);
-        assertFalse("removeMissingPerson should remove the missing person", testService.getMissingPersons().contains(p1));
-    }
-
-    @Test
-    public void testRemoveMissingPersonWithNonExistentPerson() {
-        Person p6 = new Person("Papier", "Marche");
-        testService.removeMissingPerson(p6);
-        assertFalse("removeMissingPerson should not remove the missing person if it does not exist", testService.getMissingPersons().contains(p6));
-    }
-
-    @Test
-    public void testRemoveMissingPersonWithEmptyMissingPersons() {
-        testService.setMissingPersons(new PriorityQueue<DisasterVictim>());
-        testService.removeMissingPerson(p1);
-        assertEquals("removeMissingPerson should not remove the missing person if it is empty", 0, testService.getMissingPersons().size());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseDateForDateOfInquiryInvalidLogic() {
-        /* date cannot be in the future */
-        /* Throws an exception if date of birth is in the future */
-
-        /* Generate future date */
-        LocalDate futureDate = LocalDate.now().plusDays(1);
-
-        /* Convert future date to string in the form yyyy-mm-dd */
-        String futureDateOfInquiry = futureDate.toString();
-
-        /* Set future date as date of inquiry */
-        testService.parseDate(futureDateOfInquiry);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseDateForDateOfInquiryInvalidFormat() {
-        /* Does not parse dd-mm-yyyy format */
-        /* Throws an exception if date is not in yyyy-mm-dd format */
-
-        String invalidDateOfInquiry = "11-10-2021";
-        testService.parseDate(invalidDateOfInquiry);
-    }
-
 }
