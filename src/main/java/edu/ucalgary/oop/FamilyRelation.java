@@ -51,7 +51,7 @@ public class FamilyRelation {
             // Preventing ConcurrentModificationException
             HashSet<FamilyRelation> connectionsToAdd = new HashSet<>();
 
-            if (person.getFamilyConnections() != null) {
+            if (!person.getFamilyConnections().isEmpty()) {
                 for (FamilyRelation connection : person.getFamilyConnections()) {
                     if (connection.equals(this)) {
                         for (DisasterVictim otherPerson : otherPeople) {
@@ -82,7 +82,7 @@ public class FamilyRelation {
                 otherThanMyself.remove(person);
 
                 for (DisasterVictim otherPersonThanMyself : otherThanMyself) {
-                    if (otherPersonThanMyself.getFamilyConnections() == null) {
+                    if (otherPersonThanMyself.getFamilyConnections().isEmpty()) {
                         FamilyRelation targetConnection = new FamilyRelation(person, relationshipTo, otherPersonThanMyself);
                         person.addFamilyConnection(targetConnection, false);
                     } else for (FamilyRelation targetConnection : otherPersonThanMyself.getFamilyConnections()) {
