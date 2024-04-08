@@ -135,6 +135,24 @@ public class Location {
      */
 
     public void addOccupant(DisasterVictim occupant) {
+        // Check if occupant is already in the list
+        if (this.occupants.contains(occupant)) {
+            return;
+        }
+        this.occupants.add(occupant);
+    }
 
+    public void removeOccupant(DisasterVictim occupant) {
+        this.occupants.remove(occupant);
+    }
+
+    public void addSupply(Supply supply) {
+        this.supplies.forEach(targetSupply -> {
+            if (targetSupply.equals(supply)) {
+                targetSupply.setQuantity(targetSupply.getQuantity() + supply.getQuantity());
+                return;
+            }
+        });
+        this.supplies.add(supply);
     }
 }

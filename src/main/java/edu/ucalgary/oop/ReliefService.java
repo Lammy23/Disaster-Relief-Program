@@ -94,13 +94,15 @@ public class ReliefService implements LogInquirerQueries {
     }
 
     /*---------------Interface Methods---------------*/
-
+    @Override
     public void logInquirerQuery() {
 
     }
 
-    public DisasterVictim searchDisasterVictim() {
-
+    @Override
+    public DisasterVictim searchDisasterVictim(String keyword) {
+        // TODO: Implement function
+        return new DisasterVictim("null", "null");
     }
 
 
