@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import static org.junit.Assert.*;
 
 
-public class MissingPersonReliefServiceTest {
+public class ReliefServiceTest {
 
     private MissingPersonReliefService testService;
     private Inquirer expectedInquirer = new Inquirer("John", "Doe", "403-123-4567", "I am looking for my family");
@@ -20,7 +20,7 @@ public class MissingPersonReliefServiceTest {
     private String expectedDateOfInquiry = "2021-10-10";
     private String expectedInfoProvided = "I am looking for my family";
 
-    public MissingPersonReliefServiceTest() {
+    public ReliefServiceTest() {
     }
 
     @Before

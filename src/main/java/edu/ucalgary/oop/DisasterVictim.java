@@ -452,6 +452,23 @@ public class DisasterVictim {
      * @param familyConnection the family connection to add
      */
     public void addFamilyConnection(FamilyRelation familyConnection) {
+        // Checking for duplicates
+        for (FamilyRelation connection : familyConnections) {
+            if ((connection.getPersonOne().equals(familyConnection.getPersonOne()) &&
+                    connection.getPersonTwo().equals(familyConnection.getPersonTwo()) &&
+                    connection.getRelationshipTo().equals(familyConnection.getRelationshipTo()))
+                    || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) &&
+                    connection.getPersonTwo().equals(familyConnection.getPersonOne()) &&
+                    connection.getRelationshipTo().equals(familyConnection.getRelationshipTo()))) {
+                return;
+            }
+        }
+        // checking for self-connection
+        if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
+            return;
+        }
+
+
         familyConnections.add(familyConnection);
         familyConnection.recursiveAdderGlance(new HashSet<>());
     }
@@ -467,9 +484,8 @@ public class DisasterVictim {
         if (withGlance) familyConnection.recursiveAdderGlance(new HashSet<>());
     }
 
-    public void removeFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
-        boolean isExisting = familyConnections.remove(familyConnection);
-        if (!isExisting) throw new IllegalArgumentException("Non-existent family connection provided");
+    public void removeFamilyConnection(FamilyRelation familyConnection) {
+        familyConnections.remove(familyConnection);
         familyConnection.recursiveRemoverGlance(new HashSet<>());
     }
 

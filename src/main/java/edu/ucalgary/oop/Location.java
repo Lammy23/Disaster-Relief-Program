@@ -135,6 +135,6 @@ public class Location {
      */
 
     public void addOccupant(DisasterVictim occupant) {
-        // TODO: Implement function
+
     }
 }

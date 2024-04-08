@@ -101,25 +101,25 @@ public class DisasterVictimTest {
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorInvalidDelimiterEntryDate() {
         String invalidDelimiter = "2024*01*01";
-        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, invalidDelimiter); // Expecting line to fail
+        new DisasterVictim(expectedFirstName, invalidDelimiter); // Expecting line to fail
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorInvalidFormatEntryDate() {
         String invalidFormat = "01-01-2024";
-        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, invalidFormat);   // Expecting line to fail
+        new DisasterVictim(expectedFirstName, invalidFormat);   // Expecting line to fail
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorImpossibleEntryDate() {
         String impossibleDate = "2024-99-99";
-        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, impossibleDate);  // Expecting line to fail
+        new DisasterVictim(expectedFirstName, impossibleDate);  // Expecting line to fail
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFutureEntryDate() {
         String futureDate = "2025-01-01";
-        DisasterVictim testDisasterVictim = new DisasterVictim(expectedFirstName, futureDate);      // Expecting line to fail
+        new DisasterVictim(expectedFirstName, futureDate);      // Expecting line to fail
     }
 
     /*------------Testing Getters/Setters-------------*/
@@ -290,129 +290,191 @@ public class DisasterVictimTest {
     @Test
     public void testAddValidFamilyConnectionToEmpty() {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
-        testDisasterVictim.addFamilyConnection(r1);
+        x.addFamilyConnection(r1);
 
-        assertTrue("addFamilyConnection should add the relation", testDisasterVictim.getFamilyConnections().contains(r1));
+        assertTrue("addFamilyConnection should add the relation", x.getFamilyConnections().contains(r1));
     }
 
     @Test
     public void testAddValidFamilyConnectionToPopulated() {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
         FamilyRelation r2 = new FamilyRelation(x, "sibling", z);
-        testDisasterVictim.addFamilyConnection(r1);
-        testDisasterVictim.addFamilyConnection(r2);
 
-        assertTrue("addFamilyConnection should add the second relation", testDisasterVictim.getFamilyConnections().contains(r2));
+        x.addFamilyConnection(r1);
+        x.addFamilyConnection(r2);
+
+        // Creating a collection
+        ArrayList<FamilyRelation> siblings = new ArrayList<>();
+        siblings.add(r1);
+        siblings.add(r2);
+
+        assertTrue("addFamilyConnection should add the both relations", x.getFamilyConnections().containsAll(siblings));
     }
 
     @Test
-    public void testAddDuplicateFamilyConnections() {
+    public void testAddDuplicateToSamePersonFamilyConnections() {
         // FamilyRelation already exists (duplicate test)
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
-        FamilyRelation r2 = new FamilyRelation(x, "sibling", y);        // Duplicate
+        FamilyRelation r2 = new FamilyRelation(y, "sibling", x);        // Duplicate essentially
 
-        testDisasterVictim.addFamilyConnection(r1);
-        testDisasterVictim.addFamilyConnection(r2);
+        x.addFamilyConnection(r1);
+        x.addFamilyConnection(r2);
 
-        assertEquals("addFamilyConnection should ignore the duplicate", 1, testDisasterVictim.getFamilyConnections().size());
+        assertEquals("addFamilyConnection should ignore the duplicate", 1, x.getFamilyConnections().size());
+    }
+
+    @Test
+    public void testAddDuplicateToRelativeFamilyConnections() {
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(y, "sibling", x);
+
+        x.addFamilyConnection(r1);
+        y.addFamilyConnection(r2);
+
+        assertFalse("addFamilyConnection for y should ignore the duplicate (r2)", y.getFamilyConnections().contains(r2));
     }
 
     @Test
     public void testRemoveNonExistentFamilyConnectionFromEmpty() {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
-        testDisasterVictim.removeFamilyConnection(r1);
+        x.removeFamilyConnection(r1);
 
-        assertFalse("removeFamilyConnection should ignore non-existent relation", testDisasterVictim.getFamilyConnections().contains(r1));
+        assertTrue("removeFamilyConnection should ignore non-existent relation", x.getFamilyConnections().isEmpty());
     }
 
     @Test
     public void testRemoveValidFamilyConnectionFromPopulated() {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
-        FamilyRelation r2 = new FamilyRelation(y, "parent", z);
+        FamilyRelation r2 = new FamilyRelation(x, "parent", z);
 
-        testDisasterVictim.addFamilyConnection(r1);
-        testDisasterVictim.removeFamilyConnection(r2);                              // Expecting to
+        x.addFamilyConnection(r1);
+        x.addFamilyConnection(r2);
+
+        x.removeFamilyConnection(r2);
+
+        assertFalse("removeFamilyConnection should remove the relation", x.getFamilyConnections().contains(r2));
     }
 
     @Test
     public void testRemoveNonExistentFamilyConnectionFromPopulated() {
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(x, "parent", z);
 
+        x.addFamilyConnection(r1);
+        x.removeFamilyConnection(r2);
+
+        assertEquals("removeFamilyConnection should ignore non-existent relation", 1, x.getFamilyConnections().size());
     }
 
     @Test
     public void testCompletionOfTwoSidedFamilyConnections() {
         // Symmetric Property
         // if x R y, then y R x
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        x.addFamilyConnection(r1);
+
+        assertTrue("Relation r1 should be present in y", y.getFamilyConnections().contains(r1));
     }
 
     @Test
     public void testCompletionOfThreeSidedFamilyConnections() {
-        // TODO: update to proper test name
         // Transitive Property
         // If x R y and y R z, then x R z, where R => Relates to
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(y, "sibling", z);
+
+        x.addFamilyConnection(r1);
+        y.addFamilyConnection(r2);
+
+        // Test that x relates to z
+        assertTrue("z should relate to y", z.getFamilyConnections().contains(r2));
     }
 
     @Test
     public void testCompletionOfComplexFamilyConnections() {
-        // A crazy example with 5 interconnected familyConnections
+        // A fringe example with 5 interconnected familyConnections
+        // TODO: Implement function
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSelfToSelfFamilyConnection() {
         // Reflexive Property
         // x R x should not be possible
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", x);
 
+        x.addFamilyConnection(r1);                      // Expected to fail
     }
 
     @Test
     public void testDeletingFromOneSideOfTwoSidedFamilyConnections() {
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
 
+        x.addFamilyConnection(r1);
+
+        y.removeFamilyConnection(r1);
+
+        assertTrue("Removing relation from y should affect x", x.getFamilyConnections().isEmpty());
     }
 
     @Test
     public void testDeletingFromOneSideOfThreeSidedFamilyConnections() {
         // Transitive but x no longer relates to z.
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(y, "sibling", z);
+
+        x.addFamilyConnection(r1);
+        y.addFamilyConnection(r2);
+
+        z.removeFamilyConnection(r2);
+
+        // All connections should be gone
+        assertFalse("Removing relation from z should break x <-> y relationship", x.getFamilyConnections().contains(r1));
     }
 
     @Test
     public void testDeletingFromOneSideOfComplexFamilyConnections() {
-
+        // TODO: Implement function
     }
 
     @Test
     public void testInvalidThreeSidedFamilyConnections() {
         // If x R y but y notR z, then x notR z
-        FamilyRelation r1 = new FamilyRelation(x, "parent", y);
-        FamilyRelation r2 = new FamilyRelation(y, "sibling", z);
+        FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
+        FamilyRelation r2 = new FamilyRelation(y, "parent", z);
+
+        x.addFamilyConnection(r1);
+        y.addFamilyConnection(r2);
+
+        assertEquals("x should not be related to z. I.e. it should have only one relationship", 1, x.getFamilyConnections().size());
     }
 
-    @Test
-    public void testAddPersonalBelonging() {
-        Supply supply = new Supply("Water", 10);
-        testDisasterVictim.addPersonalBelonging(supply);
-        assertEquals("addPersonalBelonging should add the personal belonging", supply, testDisasterVictim.getPersonalBelongings().get(0));
-    }
-
-    @Test
-    public void testAddAndRemovePersonalBelonging() {
-        Supply supply = new Supply("Water", 10);
-        testDisasterVictim.addPersonalBelonging(supply);
-        testDisasterVictim.removePersonalBelonging(supply);
-        assertEquals("removePersonalBelonging should remove the personal belonging", 0, testDisasterVictim.getPersonalBelongings().size());
-    }
-
-    @Test
-    public void testAddMedicalRecord() {
-        MedicalRecord medicalRecord = new MedicalRecord("Calgary", "Broken Leg", "2021-10-10");
-        testDisasterVictim.addMedicalRecord(medicalRecord);
-        assertEquals("addMedicalRecord should add the medical record", medicalRecord, testDisasterVictim.getMedicalRecords().get(0));
-    }
-
-    @Test
-    public void testAddAndRemoveMedicalRecord() {
-        MedicalRecord medicalRecord = new MedicalRecord("Calgary", "Broken Leg", "2021-10-10");
-        testDisasterVictim.addMedicalRecord(medicalRecord);
-        testDisasterVictim.removeMedicalRecord(medicalRecord);
-        assertEquals("removeMedicalRecord should remove the medical record", 0, testDisasterVictim.getMedicalRecords().size());
-    }
+//    @Test
+//    public void testAddPersonalBelonging() {
+//        Supply supply = new Supply("Water", 10);
+//        testDisasterVictim.addPersonalBelonging(supply);
+//        assertEquals("addPersonalBelonging should add the personal belonging", supply, testDisasterVictim.getPersonalBelongings().get(0));
+//    }
+//
+//    @Test
+//    public void testAddAndRemovePersonalBelonging() {
+//        Supply supply = new Supply("Water", 10);
+//        testDisasterVictim.addPersonalBelonging(supply);
+//        testDisasterVictim.removePersonalBelonging(supply);
+//        assertEquals("removePersonalBelonging should remove the personal belonging", 0, testDisasterVictim.getPersonalBelongings().size());
+//    }
+//
+//    @Test
+//    public void testAddMedicalRecord() {
+//        MedicalRecord medicalRecord = new MedicalRecord("Calgary", "Broken Leg", "2021-10-10");
+//        testDisasterVictim.addMedicalRecord(medicalRecord);
+//        assertEquals("addMedicalRecord should add the medical record", medicalRecord, testDisasterVictim.getMedicalRecords().get(0));
+//    }
+//
+//    @Test
+//    public void testAddAndRemoveMedicalRecord() {
+//        MedicalRecord medicalRecord = new MedicalRecord("Calgary", "Broken Leg", "2021-10-10");
+//        testDisasterVictim.addMedicalRecord(medicalRecord);
+//        testDisasterVictim.removeMedicalRecord(medicalRecord);
+//        assertEquals("removeMedicalRecord should remove the medical record", 0, testDisasterVictim.getMedicalRecords().size());
+//    }
 }

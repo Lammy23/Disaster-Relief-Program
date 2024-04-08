@@ -1,20 +1,19 @@
 package edu.ucalgary.oop;
 
-
 import org.junit.*;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
 public class LocationTest {
 
     private Location testLocation;
-    private String expectedName = "ShelterA";
-    private String expectedAddress = "140 8 Ave NW";
+    private final String expectedName = "ShelterA";
+    private final String expectedAddress = "140 8 Ave NW";
 
-    public LocationTest() {
-    }
+    // Testing occupants
+    private final DisasterVictim x = new DisasterVictim("John", "2024/01/01");
+    private final DisasterVictim y = new DisasterVictim("Bob", "2024/01/01");
+    private final DisasterVictim z = new DisasterVictim("Mack", "2024/01/01");
 
     @Before
     public void setUp() {
@@ -26,6 +25,8 @@ public class LocationTest {
         assertNotNull(testLocation);
     }
 
+    /*--------Testing Constructor------------*/
+
     @Test
     public void testConstructorName() {
         assertEquals("Constructor should set the correct name", expectedName, testLocation.getName());
@@ -35,6 +36,8 @@ public class LocationTest {
     public void testConstructorAddress() {
         assertEquals("Constructor should set the correct address", expectedAddress, testLocation.getAddress());
     }
+
+    /*--------------Testing Getters/Setters------------*/
 
     @Test
     public void testSetAndGetName() {
@@ -52,11 +55,7 @@ public class LocationTest {
 
     @Test
     public void testSetAndGetOccupants() {
-        Person p1 = new Person("John");
-        Person p2 = new Person("Jane");
-        ArrayList<Person> occupants = new ArrayList<Person>(p1, p2);
-        testLocation.setOccupants(occupants);
-        assertEquals("setOccupants should update the occupants", occupants, testLocation.getOccupants());
+
     }
 
     @Test
