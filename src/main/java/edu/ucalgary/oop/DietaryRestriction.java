@@ -10,5 +10,4 @@ public enum DietaryRestriction {
     PFML,
     VGML,
     VJML,
-
 }

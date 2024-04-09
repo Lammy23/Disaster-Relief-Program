@@ -15,3 +15,7 @@ file and prints it so the social worker can know what gender to input.
 * I'll have to use recursion for familyRelation
 * I only need the two tables in the sql file - Inquirer & InquirerLog. Don't overthink it, focus
 on implementing the functions first.
+* I am not my user. I am not my user. I am not my user. I am not my user. I am not my user.
+I must explain everything in the README.
+* You have the create your locations. The user cannot create locations.
+* 

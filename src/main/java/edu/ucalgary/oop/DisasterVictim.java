@@ -7,11 +7,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 /* TODO: update this UML representation
 
@@ -76,20 +74,20 @@ import java.util.HashSet;
 /**
  * Class that represents a victim of a disaster
  */
-public class DisasterVictim {
+public class DisasterVictim implements VictimEntryInterface {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
-    private int approximateAge;
+    private Integer approximateAge;
     private String comments;
     private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private String gender;
-    private HashSet<DietaryRestriction> dietaryRestrictions;            // A victim may have more than one dietary restriction
-    private final int ASSIGNED_SOCIAL_ID;                               // Social ID is assigned once and never changed
-    private ArrayList<MedicalRecord> medicalRecords;                    // It may be useful to know what the earlier entries are, so we use ArrayList
+    private HashSet<DietaryRestriction> dietaryRestrictions = new HashSet<>();            // A victim may have more than one dietary restriction
+    private final Integer ASSIGNED_SOCIAL_ID;                               // Social ID is assigned once and never changed
+    private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();                    // It may be useful to know what the earlier entries are, so we use ArrayList
     private final String ENTRY_DATE;                                    // A victim can only have one date of entry
-    private ArrayList<Supply> personalBelongings;                       // It may be useful to know the earlier supplies received, so we use ArrayList
-    private static int counter;
+    private ArrayList<Supply> personalBelongings = new ArrayList<>();                       // It may be useful to know the earlier supplies received, so we use ArrayList
+    private static Integer counter;
 
     /**
      * Checks if approximateAge is valid and returns a boolean
@@ -369,10 +367,11 @@ public class DisasterVictim {
     public void setDateOfBirth(String dateOfBirth) throws IllegalStateException {
         // TODO: add functionality to remove approximateAge and add dateOfBirth instead (if possible)
         // Checking if `approximateAge` has been set.
-        if (this.approximateAge != 0) {
+        if (this.approximateAge != null) {
             throw new IllegalStateException("The approximate age has already been set.");
         } else {
-            this.dateOfBirth = dateOfBirth;
+            if (isValidPastDate(dateOfBirth)) this.dateOfBirth = dateOfBirth;
+            else throw new IllegalArgumentException("Invalid date format or future entry date provided.");
         }
     }
 
@@ -386,6 +385,7 @@ public class DisasterVictim {
         if (this.dateOfBirth != null) {
             throw new IllegalStateException("The date of birth has already been set");
         } else {
+            // TODO: Validate possible approximate ages
             this.approximateAge = approximateAge;
         }
     }
@@ -453,19 +453,19 @@ public class DisasterVictim {
      * @param familyConnection the family connection to add
      */
     public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
-            Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> {
-                boolean isPresent;
-                return (connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())) || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne()));
-            }).findFirst();
+        Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> {
+            boolean isPresent;
+            return (connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())) || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne()));
+        }).findFirst();
 
-            if (existingConnection.isPresent()) {
-                return;
-            }
+        if (existingConnection.isPresent()) {
+            return;
+        }
 
-            // checking for self-connection
-            if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
-                throw new IllegalArgumentException("Invalid family connection provided: Self relation not allowed");
-            }
+        // checking for self-connection
+        if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
+            throw new IllegalArgumentException("Invalid family connection provided: Self relation not allowed");
+        }
 
 
         familyConnections.add(familyConnection);
@@ -508,4 +508,74 @@ public class DisasterVictim {
     public void removePersonalBelonging(Supply supply) {
         // TODO: Implement function
     }
+
+    /*------------------Interface Methods--------------------*/
+
+    // REQ 6: Implementing InterfaceDisasterVictim's functions
+
+    public void enterDisasterVictimInfo() {
+
+        // TODO: Implement optional entries
+
+        // Instantiate common keywords in HashMap
+        HashMap<String, Boolean> cliKeywords = new HashMap<>();
+        cliKeywords.put("yes", true);
+        cliKeywords.put("y", true);
+        cliKeywords.put("no", false);
+        cliKeywords.put("n", false);
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Disaster Victim Information");
+
+        // Collecting user data
+        System.out.println("Enter first name: ");
+        this.setFirstName(scanner.nextLine());
+
+        System.out.println("Enter last name: ");
+        this.setLastName(scanner.nextLine());
+
+        // Enter either approximate age or date of birth
+        System.out.println("Do you know the victim's date of birth?\nEnter yes/no: ");
+        Boolean birthDateKnown = cliKeywords.get(scanner.nextLine().toLowerCase());
+        if (birthDateKnown) {
+            System.out.println("Enter date of birth.\nValid Formats are: " + "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\n");
+            this.setDateOfBirth(scanner.nextLine());
+        } else {
+            System.out.println("Enter the approximate age: ");
+            this.setApproximateAge(Integer.parseInt(scanner.nextLine()));
+        }
+
+        System.out.println("Enter comments: ");
+        this.setComments(scanner.nextLine());
+
+        // Creating family connections. Note to self: Java likely passes objects by reference
+        this.enterFamilyConnectionsInfo
+    }
+
+    public void createFamilyConnectionsInfo() {
+        Scanner scanner = new Scanner(System.in);
+        // Relationships HashMap
+        HashMap<Integer, String> relationshipMap = new HashMap<>();
+        relationshipMap.put(1, "sibling");
+        relationshipMap.put(2, "parent");
+        relationshipMap.put(3, "child");
+        relationshipMap.put(4, "spouse");
+
+        // Figure out the DisasterVictim that `this` is related to
+        System.out.println("Enter the first name and last name of the relative. If you don't know the full first name or last name, you can type it in partially. We will" +
+                "automatically search it up for you\nEnter here: ");
+        String keyWord = scanner.nextLine();
+
+        // Function that returns DisasterVictim object
+
+
+        System.out.println("We support four types of relationships. Choose a relationship type.\n1. 'sibling'\n2. 'parent'\n3. 'child'\n4. 'spouse'\n\nEnter a number: ");
+        String relationType = relationshipMap.get(Integer.parseInt(scanner.nextLine()));
+
+        // Add connection
+        this.addFamilyConnection(new FamilyRelation(this, relationType, relative));
+
+
+    }
+
 }

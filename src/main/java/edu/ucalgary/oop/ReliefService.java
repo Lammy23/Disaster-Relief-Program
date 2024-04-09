@@ -30,9 +30,7 @@ dateOfInquiry:String, infoProvided: String , lastKnownLocation: Location )
 
  */
 
-import java.sql.*;
-
-public class ReliefService implements LogInquirerQueries {
+public class ReliefService implements QueriesAndVictimsInterface {
     private Inquirer inquirer;
     private DisasterVictim missingPerson;
     private String dateOfInquiry;

@@ -1,6 +1,6 @@
 package edu.ucalgary.oop;
 
-public interface LogInquirerQueries {
+public interface QueriesAndVictimsInterface {
     public DisasterVictim searchDisasterVictim(String keyword);
     public void logInquirerQuery();
 
