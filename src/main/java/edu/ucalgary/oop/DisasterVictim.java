@@ -213,7 +213,18 @@ public class DisasterVictim implements VictimEntryInterface {
 
     // TODO: Export `checkDate` and `checkBirthDate` functions if necessary
 
+    // TODO: Replace printStackTrace methods with more 'user-friendly messages' as per her requirements
+
+    // TODO: Consider line endings \n vs \r\n for text I/O
+
+    // TODO: Modify throwing of exceptions so the users don't see unadulterated execption text.
+
     // TODO: Implement functionality to automatically generate ASSIGNED_ID and ENTRY_DATE
+
+    public DisasterVictim(String ENTRY_DATE) {
+        if (isValidPastDate(ENTRY_DATE)) this.ENTRY_DATE = parseDate(ENTRY_DATE);
+        else throw new IllegalArgumentException("Invalid date format or future entry day provided");
+    }
 
     /**
      * Constructor for `DisasterVictim`
@@ -511,8 +522,9 @@ public class DisasterVictim implements VictimEntryInterface {
 
     /*------------------Interface Methods--------------------*/
 
-    // REQ 6: Implementing InterfaceDisasterVictim's functions
+    // REQ 6: Implementing VictimEntryInterface's functions
 
+    @Override
     public void enterDisasterVictimInfo() {
 
         // TODO: Implement optional entries
@@ -549,10 +561,11 @@ public class DisasterVictim implements VictimEntryInterface {
         this.setComments(scanner.nextLine());
 
         // Creating family connections. Note to self: Java likely passes objects by reference
-        this.enterFamilyConnectionsInfo
+        this.enterFamilyConnectionsInfo();
     }
 
-    public void createFamilyConnectionsInfo() {
+    @Override
+    public void enterFamilyConnectionsInfo() {
         Scanner scanner = new Scanner(System.in);
         // Relationships HashMap
         HashMap<Integer, String> relationshipMap = new HashMap<>();
@@ -562,12 +575,9 @@ public class DisasterVictim implements VictimEntryInterface {
         relationshipMap.put(4, "spouse");
 
         // Figure out the DisasterVictim that `this` is related to
-        System.out.println("Enter the first name and last name of the relative. If you don't know the full first name or last name, you can type it in partially. We will" +
-                "automatically search it up for you\nEnter here: ");
-        String keyWord = scanner.nextLine();
 
         // Function that returns DisasterVictim object
-
+        DisasterVictim relative = searchDisasterVictim();
 
         System.out.println("We support four types of relationships. Choose a relationship type.\n1. 'sibling'\n2. 'parent'\n3. 'child'\n4. 'spouse'\n\nEnter a number: ");
         String relationType = relationshipMap.get(Integer.parseInt(scanner.nextLine()));

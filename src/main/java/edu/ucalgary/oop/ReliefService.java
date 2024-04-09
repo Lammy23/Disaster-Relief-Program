@@ -30,6 +30,10 @@ dateOfInquiry:String, infoProvided: String , lastKnownLocation: Location )
 
  */
 
+import jdk.tools.jmod.Main;
+
+import java.util.Scanner;
+
 public class ReliefService implements QueriesAndVictimsInterface {
     private Inquirer inquirer;
     private DisasterVictim missingPerson;
@@ -92,15 +96,32 @@ public class ReliefService implements QueriesAndVictimsInterface {
     }
 
     /*---------------Interface Methods---------------*/
+
+    // REQ 7: Implementing QueriesAndVictimsInterface's functions
+
+
     @Override
     public void logInquirerQuery() {
 
     }
 
     @Override
-    public DisasterVictim searchDisasterVictim(String keyword) {
+    public DisasterVictim searchDisasterVictim() {
         // TODO: Implement function
-        return new DisasterVictim("null", "null");
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the first name and last name of the victim. If you don't know the full first name or last name, you can type it in partially. We will" +
+                "automatically search it up for you\nEnter here: ");
+        String keyWord = scanner.nextLine();
+
+       // Check if user is location based or from HQ
+        if (MainApplication.workerType.equals("central")) {
+            // Search all locations
+            for (Location storedLocation : MainApplication.storedLocations) {
+                storedLocation.getOccupants();
+            }
+        }
+
     }
 
 

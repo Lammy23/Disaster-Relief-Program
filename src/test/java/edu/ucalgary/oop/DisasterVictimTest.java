@@ -423,6 +423,8 @@ public class DisasterVictimTest {
         assertFalse("Removing relation from z should break x <-> y relationship", x.getFamilyConnections().contains(r1));
     }
 
+    // TODO: Add Tests for parent/child and spouse.
+
     @Test
     public void testDeletingFromOneSideOfComplexFamilyConnections() {
         // TODO: Implement function
