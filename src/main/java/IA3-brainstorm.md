@@ -18,3 +18,4 @@ on implementing the functions first.
 I must explain everything in the README.
 * You have the create your locations. The user cannot create locations.
 * Name your submissions zip with your UCID
+* No interfaces required
