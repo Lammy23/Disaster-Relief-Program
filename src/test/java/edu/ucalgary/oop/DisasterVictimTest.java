@@ -4,6 +4,7 @@ import org.junit.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -335,7 +336,9 @@ public class DisasterVictimTest {
         siblings.add(r1);
         siblings.add(r2);
 
-        assertTrue("addFamilyConnection should add the both relations", x.getFamilyConnections().containsAll(siblings));
+        assertTrue("addFamilyConnection should add both the relations",
+                x.familyConnectionAlreadyExists(r1, "sibling") && x.familyConnectionAlreadyExists(r2, "sibling"
+                ));
     }
 
     @Test
@@ -390,7 +393,7 @@ public class DisasterVictimTest {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
         x.addFamilyConnection(r1);
 
-        assertTrue("Relation r1 should be present in y", y.getFamilyConnections().contains(r1));
+        assertTrue("Relation r1 should be present in y", y.familyConnectionAlreadyExists(r1, "sibling"));
     }
 
     @Test
@@ -404,7 +407,7 @@ public class DisasterVictimTest {
         y.addFamilyConnection(r2);
 
         // Test that x relates to z
-        assertTrue("z should relate to y", z.getFamilyConnections().contains(r2));
+        assertTrue("z should relate to y", z.familyConnectionAlreadyExists(r2, "sibling"));
     }
 
     // TODO: Test Adding family connection that has nothing to do with the DisasterVictim
@@ -507,23 +510,31 @@ public class DisasterVictimTest {
     @Test
     public void testAddDuplicatePersonalBelonging() {
 
-        Supply supply10 = new Supply("Water", 10, expectedLocation);
+        new Supply("Water", 10, expectedLocation);
         Supply supply1 = new Supply("Water", 1, expectedLocation);
         Supply supply5 = new Supply("Water", 5, expectedLocation);
-        // Ensuring Location has supply
-        expectedLocation.addSupply(supply10);
 
         testDisasterVictim.addPersonalBelonging(supply1);
         testDisasterVictim.addPersonalBelonging(supply5);
-        assertEquals("addPersonalBelonging should add the personal belongings in the right quantity", 6, testDisasterVictim.getPersonalBelongings().size());
+
+        // Finding the supply in victim
+        Optional<Supply> existingSupply = testDisasterVictim.getPersonalBelongings().stream().filter(supply ->
+                supply.getType().equals("Water")
+        ).findFirst();
+
+        if (existingSupply.isPresent()) {
+            Supply targetSupply = existingSupply.get();
+            // Checking if the quantity is 6
+            assertEquals("addPersonalBelonging should add the personal belongings in the right quantity", 6, targetSupply.getQuantity());
+        } else {
+            fail("Supply not found in personal belongings list");
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddNonExistentPersonalBelonging() {
         Supply existingSupply = new Supply("Water", 10, expectedLocation);
         Supply nonExistentSupply = new Supply("Food", 5, expectedLocation);
-        // Ensuring Location has existingSupply
-        expectedLocation.addSupply(existingSupply);
 
         testDisasterVictim.addPersonalBelonging(existingSupply);
         // Adding non-existent supply
@@ -533,8 +544,6 @@ public class DisasterVictimTest {
     @Test
     public void testRemovePersonalBelonging() {
         Supply supply = new Supply("Water", 1, expectedLocation);
-        // Ensuring Location has supply
-        expectedLocation.addSupply(supply);
 
         testDisasterVictim.addPersonalBelonging(supply);
         testDisasterVictim.removePersonalBelonging(supply);
@@ -546,8 +555,6 @@ public class DisasterVictimTest {
 
         Supply supply = new Supply("Water", 1, expectedLocation);
         Supply nonExistentSupply = new Supply("Food", 5, expectedLocation);
-        // Ensuring Location has supply
-        expectedLocation.addSupply(supply);
 
         testDisasterVictim.addPersonalBelonging(supply);
         testDisasterVictim.removePersonalBelonging(nonExistentSupply);
@@ -558,9 +565,6 @@ public class DisasterVictimTest {
     public void testRemoveAllPersonalBelongings() {
         Supply supply1 = new Supply("Water", 10, expectedLocation);
         Supply supply2 = new Supply("Food", 5, expectedLocation);
-        // Ensuring Location has supply
-        expectedLocation.addSupply(supply1);
-        expectedLocation.addSupply(supply2);
 
         testDisasterVictim.addPersonalBelonging(supply1);
         testDisasterVictim.addPersonalBelonging(supply2);

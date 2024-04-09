@@ -12,101 +12,29 @@ public class FamilyRelation {
     private String relationshipTo;
 
     /**
-     * Recursive method that adds all siblings to a set.
-     * It makes sure that the proper connections are made according to the relationship.
-     *
-     * @param fellows The set of people who are siblings
+     * Method to get all the siblings of the two people in the family relationship
+     * @param siblings The set of siblings to add the siblings to
+     * @return The set of siblings
      */
-    public void recursiveAdderGlance(HashSet<DisasterVictim> fellows) {
+    public HashSet<DisasterVictim> getAllSiblings(HashSet<DisasterVictim> siblings) {
 
-        // Adding personOne and personTwo to the set of people who are connected by the same relationship
-        // TODO: restrict "relationshipTo" to just "siblings"
-        boolean p1Necessary = fellows.add(personOne);
-        boolean p2Necessary = fellows.add(personTwo);
-
-        HashSet<DisasterVictim> otherPeople = new HashSet<>(fellows);
-        otherPeople.remove(personOne);
-        otherPeople.remove(personTwo);
-
-        HashSet<DisasterVictim> nextPeople = new HashSet<>();
-        if (p1Necessary) nextPeople.add(personOne);
-        if (p2Necessary) nextPeople.add(personTwo);
-
-        for (DisasterVictim person : nextPeople) {
-            // Preventing ConcurrentModificationException
-            HashSet<FamilyRelation> connectionsToAdd = new HashSet<>();
-
-            if (!person.getFamilyConnections().isEmpty()) {
-                for (FamilyRelation connection : person.getFamilyConnections()) {
-                    if (connection.equals(this)) {
-                        for (DisasterVictim otherPerson : otherPeople) {
-                            if (otherPerson.getFamilyConnections() == null) {
-                                FamilyRelation targetConnection = new FamilyRelation(person, relationshipTo, otherPerson);
-                                connectionsToAdd.add(targetConnection);
-                            } else for (FamilyRelation targetConnection : otherPerson.getFamilyConnections()) {
-                                // Ensuring no redundancy according to REQ 2
-                                if (targetConnection.personOne.equals(person) || targetConnection.personTwo.equals(person)) {
-                                    connectionsToAdd.add(targetConnection);
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (connection.relationshipTo.equals(this.relationshipTo)) {
-                        connection.recursiveAdderGlance(fellows);
-                    }
-                }
-
-                for (FamilyRelation connectionToAdd : connectionsToAdd) {
-                    person.addFamilyConnection(connectionToAdd, false);
-                }
-
-            } else {
-                HashSet<DisasterVictim> otherThanMyself = new HashSet<>(fellows);
-                otherThanMyself.remove(person);
-
-                for (DisasterVictim otherPersonThanMyself : otherThanMyself) {
-                    if (otherPersonThanMyself.getFamilyConnections().isEmpty()) {
-                        FamilyRelation targetConnection = new FamilyRelation(person, relationshipTo, otherPersonThanMyself);
-                        person.addFamilyConnection(targetConnection, false);
-                    } else for (FamilyRelation targetConnection : otherPersonThanMyself.getFamilyConnections()) {
-                        // Ensuring no redundancy according to REQ 2
-                        if (targetConnection.personOne.equals(person) || targetConnection.personTwo.equals(person)) {
-                            person.addFamilyConnection(targetConnection, false);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Recursive method that removes all people connected by the same relationship from a set.
-     * It makes sure that the proper connections are removed according to the relationship.
-     *
-     * @param fellows The set of people who are siblings
-     * @return The set of people who are siblings
-     */
-    public HashSet<DisasterVictim> recursiveRemoverGlance(HashSet<DisasterVictim> fellows) {
-        // Gathering all siblings
-
-        boolean p1NotExisting = fellows.add(personOne);
+        boolean p1NotExisting = siblings.add(personOne);
         if (p1NotExisting) {
             for (FamilyRelation connection : personOne.getFamilyConnections()) {
                 if (connection.getRelationshipTo().equals("sibling"))
-                    fellows = connection.recursiveRemoverGlance(fellows);
+                    connection.getAllSiblings(siblings);
             }
         }
 
-        boolean p2NotExisting = fellows.add(personTwo);
+        boolean p2NotExisting = siblings.add(personTwo);
         if (p2NotExisting) {
             for (FamilyRelation connection : personTwo.getFamilyConnections()) {
                 if (connection.getRelationshipTo().equals("sibling"))
-                    fellows = connection.recursiveRemoverGlance(fellows);
+                    connection.getAllSiblings(siblings);
             }
         }
 
-        return fellows;
+        return siblings;
     }
 
     /*-----------Constructor----------*/
@@ -114,9 +42,9 @@ public class FamilyRelation {
     /**
      * Constructor for the `FamilyRelation` class
      *
-     * @param personOne The first person in the family relationship
+     * @param personOne      The first person in the family relationship
      * @param relationshipTo The relationship between the two people
-     * @param personTwo The second person in the family relationship
+     * @param personTwo      The second person in the family relationship
      */
     public FamilyRelation(DisasterVictim personOne, String relationshipTo, DisasterVictim personTwo) {
         this.personOne = personOne;
@@ -128,6 +56,7 @@ public class FamilyRelation {
 
     /**
      * Getter for the first person in the family relationship
+     *
      * @return The first person in the family relationship
      */
     public DisasterVictim getPersonOne() {
@@ -136,6 +65,7 @@ public class FamilyRelation {
 
     /**
      * Getter for the relationship between the two people
+     *
      * @return The relationship between the two people
      */
     public String getRelationshipTo() {
@@ -144,6 +74,7 @@ public class FamilyRelation {
 
     /**
      * Getter for the second person in the family relationship
+     *
      * @return The second person in the family relationship
      */
     public DisasterVictim getPersonTwo() {
@@ -154,6 +85,7 @@ public class FamilyRelation {
 
     /**
      * Setter for the first person in the family relationship
+     *
      * @param personOne The first person in the family relationship
      */
     public void setPersonOne(DisasterVictim personOne) {
@@ -162,6 +94,7 @@ public class FamilyRelation {
 
     /**
      * Setter for the relationship between the two people
+     *
      * @param relationshipTo The relationship between the two people
      */
     public void setRelationshipTo(String relationshipTo) {
@@ -170,6 +103,7 @@ public class FamilyRelation {
 
     /**
      * Setter for the second person in the family relationship
+     *
      * @param personTwo The second person in the family relationship
      */
     public void setPersonTwo(DisasterVictim personTwo) {

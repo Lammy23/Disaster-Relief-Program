@@ -32,6 +32,24 @@ public class DisasterVictim implements VictimEntryInterface {
         return (approximateAge >= 0 && approximateAge < 150);
     }
 
+    public boolean familyConnectionAlreadyExists(FamilyRelation familyConnection, String type) {
+        if (type.equals("sibling")) {
+            // Checking if the connection already exists
+            Optional<FamilyRelation> siblingConnection = familyConnections.stream().filter((connection) -> (
+                    connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne())
+                            || connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())
+            )).findFirst();
+            return siblingConnection.isPresent();
+
+        } else {
+            // Checking if the connection already exists
+            Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> (
+                    connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())
+            )).findFirst();
+            return existingConnection.isPresent();
+        }
+    }
+
     // TODO: Replace printStackTrace methods with more 'user-friendly messages' as per her requirements
 
     // TODO: Consider line endings \n vs \r\n for text I/O
@@ -39,6 +57,8 @@ public class DisasterVictim implements VictimEntryInterface {
     // TODO: Modify throwing of exceptions so the users don't see unadulterated execption text.
 
     // TODO: Implement functionality to automatically generate ASSIGNED_ID and ENTRY_DATE
+
+    /*-----------------Constructors-----------------*/
 
     public DisasterVictim(String ENTRY_DATE) throws IllegalArgumentException {
         this.ASSIGNED_SOCIAL_ID = ++counter;
@@ -292,47 +312,87 @@ public class DisasterVictim implements VictimEntryInterface {
         }
 
         // Checking if the connection already exists
-        Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> (
-                connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())
-        )).findFirst();
-        if (existingConnection.isPresent()) {
-            return;
-        }
+        familyConnectionAlreadyExists(familyConnection, familyConnection.getRelationshipTo());
 
-        // Checking if the connection is a sibling
-        if (familyConnection.getRelationshipTo().equals("sibling")) {
-            // Checking if the connection already exists
-            Optional<FamilyRelation> siblingConnection = familyConnections.stream().filter((connection) -> (
-                    connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne())
-            )).findFirst();
-            if (siblingConnection.isPresent()) {
-                return;
+        switch (familyConnection.getRelationshipTo()) {     // Checking if the connection is a sibling
+
+            case "sibling":
+                HashSet<DisasterVictim> siblingsHash = familyConnection.getAllSiblings(new HashSet<>());
+
+                // Convert HashSet to ArrayList
+                ArrayList<DisasterVictim> siblings = new ArrayList<>(siblingsHash);
+
+                // Adding siblings to each other
+                for (int i = 0; i < siblings.size(); i++) {
+                    for (int j = i + 1; j < siblings.size(); j++) {
+                        // Check if connection already exists
+                        DisasterVictim person1 = siblings.get(i);
+                        DisasterVictim person2 = siblings.get(j);
+
+                        FamilyRelation pendingSiblingConnection = new FamilyRelation(person1, "sibling", person2);
+
+                        // Check if person1 already has connection
+                        if (person1.familyConnectionAlreadyExists(pendingSiblingConnection, "sibling")) {
+                            continue;
+                        }
+
+                        person1.familyConnections.add(pendingSiblingConnection);
+                        person2.familyConnections.add(pendingSiblingConnection);
+                    }
+                }
+                break;
+            case "parent": { // Checking if the connection is a parent
+                // Enforce a strict two-sided relationship
+                DisasterVictim parent = this;
+                DisasterVictim child = familyConnection.getPersonTwo();
+
+                FamilyRelation pendingParentConnection = new FamilyRelation(parent, "parent", child);
+                FamilyRelation pendingChildConnection = new FamilyRelation(child, "child", parent);
+
+                // Check if child connection already exists
+                if (!child.familyConnectionAlreadyExists(pendingChildConnection, "child"))
+                    child.addFamilyConnection(pendingChildConnection);
+
+                parent.familyConnections.add(pendingParentConnection);
+
+
+                break;
             }
+            case "child": { // Checking if the connection is a child
+                // Enforce a strict two-sided relationship
+                DisasterVictim child = this;
+                DisasterVictim parent = familyConnection.getPersonTwo();
 
-            familyConnections.add(familyConnection);
-            familyConnection.recursiveSiblingAdder(new HashSet<>());
+                FamilyRelation pendingParentConnection = new FamilyRelation(parent, "parent", child);
+                FamilyRelation pendingChildConnection = new FamilyRelation(child, "child", parent);
 
-        } else if (familyConnection.getRelationshipTo().equals("parent")) { // Checking if the connection is a parent
+                // Check if parent connection already exists
+                if (!parent.familyConnectionAlreadyExists(pendingParentConnection, "parent"))
+                    parent.addFamilyConnection(pendingParentConnection);
 
-        } else if (familyConnection.getRelationshipTo().equals("child")) {
+                child.familyConnections.add(pendingChildConnection);
 
-        } else if (familyConnection.getRelationshipTo().equals("spouse")) {
+                break;
+            }
+            case "spouse": {// Checking if the connection is a spouse
+                // Enforce a strict two-sided relationship
+                DisasterVictim spouse1 = this;
+                DisasterVictim spouse2 = familyConnection.getPersonTwo();
 
-        } else {
-            throw new IllegalArgumentException("Invalid family connection provided: Invalid relationship type");
+                FamilyRelation pendingSpouse2Connection = new FamilyRelation(spouse2, "spouse", spouse1);
+
+                // Check if spouse2 connection already exists
+                if (!spouse2.familyConnectionAlreadyExists(pendingSpouse2Connection, "spouse"))
+                    spouse2.addFamilyConnection(pendingSpouse2Connection);
+
+                spouse1.familyConnections.add(new FamilyRelation(spouse1, "spouse", spouse2));
+
+                break;
+            }
+            default:
+                throw new IllegalArgumentException("Invalid family connection provided: Invalid relationship type");
         }
 
-    }
-
-    /**
-     * Adds a family connection to the victim
-     *
-     * @param familyConnection the family connection to add
-     * @param withGlance       whether to recurse through the family connection to fix any inconsistencies
-     */
-    public void addFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
-        familyConnections.add(familyConnection);
-        if (withGlance) familyConnection.recursiveAdderGlance(new HashSet<>());
     }
 
     /**
@@ -344,27 +404,16 @@ public class DisasterVictim implements VictimEntryInterface {
 
         // If siblings are disconnected, it cascades effectively everywhere
         // Getting all siblings
-        HashSet<DisasterVictim> siblings = familyConnection.recursiveRemoverGlance(new HashSet<>());
+        HashSet<DisasterVictim> siblings = familyConnection.getAllSiblings(new HashSet<>());
 
         // Removing "siblings" relationships
         siblings.forEach((sibling) -> {
             sibling.getFamilyConnections().forEach((connection) -> {
                 if (connection.getRelationshipTo().equals("sibling")) {
-                    sibling.removeFamilyConnection(connection, false);
+                    familyConnections.remove(familyConnection);
                 }
             });
         });
-    }
-
-    /**
-     * Removes a family connection from the victim
-     *
-     * @param familyConnection the family connection to remove
-     * @param withGlance       whether to recurse through the family connection to fix any inconsistencies
-     */
-    public void removeFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
-        familyConnections.remove(familyConnection);
-        if (withGlance) familyConnection.recursiveRemoverGlance(new HashSet<>());
     }
 
     /**

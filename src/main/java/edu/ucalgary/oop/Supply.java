@@ -20,17 +20,6 @@ public class Supply {
     /*---------------Constructor---------------*/
 
     /**
-     * Constructor for the Supply class (when source is not known)
-     *
-     * @param type     the type of supply
-     * @param quantity the quantity of the supply
-     */
-    public Supply(String type, int quantity) {
-        this.type = type;
-        this.quantity = quantity;
-    }
-
-    /**
      * Constructor for the Supply class
      *
      * @param type     the type of supply
@@ -40,6 +29,9 @@ public class Supply {
         this.type = type;
         this.quantity = quantity;
         this.source = source;
+
+        // Attached supply to location
+        source.addSupply(this);
     }
 
     /*---------------Getters---------------*/
