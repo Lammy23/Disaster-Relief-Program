@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Class that represents a victim of a disaster
  */
-public class DisasterVictim implements DisasterVictimInterface {
+public class DisasterVictim {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -557,7 +557,6 @@ public class DisasterVictim implements DisasterVictimInterface {
 
     // REQ 6: Implementing VictimEntryInterface's functions
 
-    @Override
     public void enterDisasterVictimInfo() {
 
         // TODO: Implement optional entries
@@ -597,7 +596,7 @@ public class DisasterVictim implements DisasterVictimInterface {
         this.enterFamilyConnectionsInfo();
     }
 
-    @Override
+
     public void enterFamilyConnectionsInfo() {
         Scanner scanner = new Scanner(System.in);
         // Relationships HashMap
