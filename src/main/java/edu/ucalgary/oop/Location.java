@@ -12,8 +12,8 @@ import java.util.Optional;
 public class Location {
     private String name;
     private String address;
-    private ArrayList<DisasterVictim> occupants;                            // Might be useful to know who arrived first at location, we use ArrayList
-    private HashSet<Supply> supplies;
+    private ArrayList<DisasterVictim> occupants = new ArrayList<>();                            // Might be useful to know who arrived first at location, we use ArrayList
+    private HashSet<Supply> supplies = new HashSet<>();
 
     /*---------Constructor------------*/
 
@@ -108,6 +108,7 @@ public class Location {
 
     /**
      * Adds an occupant to the location
+     *
      * @param occupant the occupant to add
      */
     public void addOccupant(DisasterVictim occupant) {
@@ -120,6 +121,7 @@ public class Location {
 
     /**
      * Removes an occupant from the location
+     *
      * @param occupant the occupant to remove
      */
     public void removeOccupant(DisasterVictim occupant) {
@@ -128,6 +130,7 @@ public class Location {
 
     /**
      * Adds a supply to the location
+     *
      * @param supply the supply to add
      */
     public void addSupply(Supply supply) {
@@ -139,12 +142,14 @@ public class Location {
             int newQuantity = supply.getQuantity();
             targetSupply.setQuantity(oldQuantity + newQuantity);
         } else {
+            supply.setSource(this);
             supplies.add(supply);
         }
     }
 
     /**
      * Removes a supply from the location
+     *
      * @param supply the supply to remove
      */
     public void removeSupply(Supply supply) {
@@ -157,6 +162,7 @@ public class Location {
 
             if (newQuantity >= oldQuantity) {
                 // Remove supplies entirely
+                supply.setSource(null);
                 supplies.remove(supply);
             } else {
                 targetSupply.setQuantity(oldQuantity - newQuantity);

@@ -34,6 +34,8 @@ public class LocationTest {
         assertNotNull(testLocation);
     }
 
+    // TODO: Remove multiple assert statements from test. Only one assert per test is allowed (basically).
+
     /*--------Testing Constructor------------*/
 
     @Test
@@ -130,10 +132,19 @@ public class LocationTest {
         assertEquals("removeOccupant should not care for the non-existent occupant", 0, testLocation.getOccupants().size());
     }
 
+    // REQ 3: Supply consistency
+
     @Test
     public void testAddOneSupplyToEmpty() {
         testLocation.addSupply(a);
         assertTrue("addSupply should add the supply", testLocation.getSupplies().contains(a));
+    }
+
+    @Test
+    public void testAddSupplySourceEffect() {
+        // Checking if the source will be reassigned
+        testLocation.addSupply(a);
+        assertEquals("supply should belong to the location", testLocation, a.getSource());
     }
 
     @Test
@@ -142,7 +153,7 @@ public class LocationTest {
         testLocation.addSupply(b);
         testLocation.addSupply(c);
 
-        assertEquals("addSupply should add all three supplies", 3, testLocation.getSupplies().size());
+        assertTrue("addSupply should add all three supplies", testLocation.getSupplies().contains(a) && testLocation.getSupplies().contains(b) && testLocation.getSupplies().contains(c));
     }
 
     @Test
@@ -182,7 +193,6 @@ public class LocationTest {
     @Test
     public void testRemoveSupplyFromEmpty() {
         testLocation.removeSupply(a);
-
         assertEquals("removeSupply should ignore the non-existent supply", 0, testLocation.getSupplies().size());
     }
 }

@@ -48,6 +48,8 @@ public class MainApplication {
 //        return genderFound;
 //    }
 
+    // TODO: Move date parser here and parse all dates in all classes that use dates
+
     public static void main(String[] args) {
 
         // Read command-line flag

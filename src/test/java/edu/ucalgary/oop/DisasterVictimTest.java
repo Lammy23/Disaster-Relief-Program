@@ -2,6 +2,7 @@ package edu.ucalgary.oop;
 
 import org.junit.*;
 
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,6 +19,8 @@ public class DisasterVictimTest {
     private final int expectedValidApproximateAge = 25;
     private final String expectedValidGender = getValidGender();
     private final String InvalidGender = getInvalidGender();
+    private Location expectedLocation;
+
 
     private DisasterVictim x;
     private DisasterVictim y;
@@ -79,6 +82,8 @@ public class DisasterVictimTest {
         x = new DisasterVictim("John", "2024/01/01");
         y = new DisasterVictim("Bobby", "2024/01/01");
         z = new DisasterVictim("Mack", "2024/01/01");
+
+        expectedLocation = new Location("Location", "Address");
     }
 
     @Test
@@ -180,6 +185,7 @@ public class DisasterVictimTest {
         testDisasterVictim.setApproximateAge(negativeApproximateAge);   // Expecting line to fail
     }
 
+
     @Test(expected = IllegalArgumentException.class)
     public void testSetExtremelyUnlikelyApproximateAge() {
         int extremelyUnlikelyApproximateAge = 160;
@@ -265,8 +271,8 @@ public class DisasterVictimTest {
 
     @Test
     public void testSetAndGetPersonalBelongings() {
-        Supply supply1 = new Supply("Supply1", 5);
-        Supply supply2 = new Supply("Supply2", 5);
+        Supply supply1 = new Supply("Supply1", 5, expectedLocation);
+        Supply supply2 = new Supply("Supply2", 5, expectedLocation);
 
         ArrayList<Supply> supplies = new ArrayList<>();
         supplies.add(supply1);
@@ -442,33 +448,137 @@ public class DisasterVictimTest {
         assertEquals("x should not be related to z. I.e. it should have only one relationship", 1, x.getFamilyConnections().size());
     }
 
-//    @Test
-//    public void testAddPersonalBelonging() {
-//        Supply supply = new Supply("Water", 10);
-//        testDisasterVictim.addPersonalBelonging(supply);
-//        assertEquals("addPersonalBelonging should add the personal belonging", supply, testDisasterVictim.getPersonalBelongings().get(0));
-//    }
-//
-//    @Test
-//    public void testAddAndRemovePersonalBelonging() {
-//        Supply supply = new Supply("Water", 10);
-//        testDisasterVictim.addPersonalBelonging(supply);
-//        testDisasterVictim.removePersonalBelonging(supply);
-//        assertEquals("removePersonalBelonging should remove the personal belonging", 0, testDisasterVictim.getPersonalBelongings().size());
-//    }
-//
-//    @Test
-//    public void testAddMedicalRecord() {
-//        MedicalRecord medicalRecord = new MedicalRecord("Calgary", "Broken Leg", "2021-10-10");
-//        testDisasterVictim.addMedicalRecord(medicalRecord);
-//        assertEquals("addMedicalRecord should add the medical record", medicalRecord, testDisasterVictim.getMedicalRecords().get(0));
-//    }
-//
-//    @Test
-//    public void testAddAndRemoveMedicalRecord() {
-//        MedicalRecord medicalRecord = new MedicalRecord("Calgary", "Broken Leg", "2021-10-10");
-//        testDisasterVictim.addMedicalRecord(medicalRecord);
-//        testDisasterVictim.removeMedicalRecord(medicalRecord);
-//        assertEquals("removeMedicalRecord should remove the medical record", 0, testDisasterVictim.getMedicalRecords().size());
-//    }
+    // REQ 3: Supply consistency Testing
+
+    @Test
+    public void testAddOnlyPersonalBelongingToEmpty() {
+        Supply supply = new Supply("Water", 1, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply);
+
+        testDisasterVictim.addPersonalBelonging(supply);
+        assertTrue("addPersonalBelonging should add the personal belonging", testDisasterVictim.getPersonalBelongings().contains(supply));
+        assertTrue("Source of supply should lose all stock", expectedLocation.getSupplies().isEmpty());
+    }
+
+    @Test
+    public void testAddAllPersonalBelongingsToEmpty() {
+        Supply supply1 = new Supply("Water", 10, expectedLocation);
+        Supply supply2 = new Supply("Food", 5, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply1);
+        expectedLocation.addSupply(supply2);
+
+        testDisasterVictim.addPersonalBelonging(supply1);
+        testDisasterVictim.addPersonalBelonging(supply2);
+        assertTrue("addPersonalBelonging should add the personal belongings", testDisasterVictim.getPersonalBelongings().contains(supply1) && testDisasterVictim.getPersonalBelongings().contains(supply2));
+        assertFalse("Source of supplies should lose all stock", testDisasterVictim.getPersonalBelongings().contains(supply1) && testDisasterVictim.getPersonalBelongings().contains(supply2));
+    }
+
+    @Test
+    public void testAddDuplicatePersonalBelonging() {
+
+        Supply supply10 = new Supply("Water", 10, expectedLocation);
+        Supply supply1 = new Supply("Water", 1, expectedLocation);
+        Supply supply5 = new Supply("Water", 5, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply10);
+
+        testDisasterVictim.addPersonalBelonging(supply1);
+        testDisasterVictim.addPersonalBelonging(supply5);
+        assertTrue("addPersonalBelonging should add the personal belongings in the right quantity", testDisasterVictim.getPersonalBelongings().contains(new Supply("Water", 6, expectedLocation)));
+        assertTrue("Source of supplies should lose some stock", expectedLocation.getSupplies().contains(new Supply("Water", 4, expectedLocation)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddNonExistentPersonalBelonging() {
+        Supply existingSupply = new Supply("Water", 10, expectedLocation);
+        Supply nonExistentSupply = new Supply("Food", 5, expectedLocation);
+        // Ensuring Location has existingSupply
+        expectedLocation.addSupply(existingSupply);
+
+        testDisasterVictim.addPersonalBelonging(existingSupply);
+        // Adding non-existent supply
+        testDisasterVictim.addPersonalBelonging(nonExistentSupply);                             // Expecting line to fail
+    }
+
+    @Test
+    public void testRemovePersonalBelonging() {
+        Supply supply = new Supply("Water", 1, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply);
+
+        testDisasterVictim.addPersonalBelonging(supply);
+        testDisasterVictim.removePersonalBelonging(supply);
+        assertFalse("removePersonalBelonging should remove the personal belonging", testDisasterVictim.getPersonalBelongings().contains(supply));
+    }
+
+    @Test
+    public void testRemoveNonExistentPersonalBelonging() {
+
+        Supply supply = new Supply("Water", 1, expectedLocation);
+        Supply nonExistentSupply = new Supply("Food", 5, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply);
+
+        testDisasterVictim.addPersonalBelonging(supply);
+        testDisasterVictim.removePersonalBelonging(nonExistentSupply);
+        assertEquals("removePersonalBelonging should ignore non-existent personal belonging", 1, testDisasterVictim.getPersonalBelongings().size());
+    }
+
+    @Test
+    public void testRemoveAllPersonalBelongings() {
+        Supply supply1 = new Supply("Water", 10, expectedLocation);
+        Supply supply2 = new Supply("Food", 5, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply1);
+        expectedLocation.addSupply(supply2);
+
+        testDisasterVictim.addPersonalBelonging(supply1);
+        testDisasterVictim.addPersonalBelonging(supply2);
+
+        testDisasterVictim.removePersonalBelonging(supply1);
+        testDisasterVictim.removePersonalBelonging(supply2);
+
+        assertTrue("removePersonalBelonging should remove all personal belongings", testDisasterVictim.getPersonalBelongings().isEmpty());
+    }
+
+    @Test
+    public void testAddMedicalRecord() {
+        MedicalRecord medicalRecord = new MedicalRecord(expectedLocation, "Broken Leg", "2021-01-01");
+        testDisasterVictim.addMedicalRecord(medicalRecord);
+
+        assertTrue("addMedicalRecord should add the medical record", testDisasterVictim.getMedicalRecords().contains(medicalRecord));
+    }
+
+    @Test
+    public void testAddDuplicateMedicalRecord() {
+        MedicalRecord medicalRecord1 = new MedicalRecord(expectedLocation, "Broken Leg", "2021-01-01");
+        MedicalRecord medicalRecord2 = new MedicalRecord(expectedLocation, "Broken Arm", "2022-01-01");
+        testDisasterVictim.addMedicalRecord(medicalRecord1);
+        testDisasterVictim.addMedicalRecord(medicalRecord2);
+
+        assertTrue("addMedicalRecord should add the medical records", testDisasterVictim.getMedicalRecords().contains(medicalRecord1) && testDisasterVictim.getMedicalRecords().contains(medicalRecord2));
+
+    }
+
+    @Test
+    public void testRemoveMedicalRecord() {
+        MedicalRecord medicalRecord = new MedicalRecord(expectedLocation, "Broken Leg", "2021-01-01");
+        testDisasterVictim.addMedicalRecord(medicalRecord);
+        testDisasterVictim.removeMedicalRecord(medicalRecord);
+
+        assertFalse("removeMedicalRecord should remove the medical record", testDisasterVictim.getMedicalRecords().contains(medicalRecord));
+    }
+
+    @Test
+    public void testRemoveNonExistentMedicalRecord() {
+        MedicalRecord medicalRecord = new MedicalRecord(expectedLocation, "Broken Leg", "2021-01-01");
+        MedicalRecord nonExistentMedicalRecord = new MedicalRecord(expectedLocation, "Broken Arm", "2022-01-01");
+        testDisasterVictim.addMedicalRecord(medicalRecord);
+        testDisasterVictim.removeMedicalRecord(nonExistentMedicalRecord);
+
+        assertEquals("removeMedicalRecord should ignore non-existent medical record", 1, testDisasterVictim.getMedicalRecords().size());
+
+    }
 }
