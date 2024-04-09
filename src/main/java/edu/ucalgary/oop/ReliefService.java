@@ -30,16 +30,16 @@ dateOfInquiry:String, infoProvided: String , lastKnownLocation: Location )
 
  */
 
-import jdk.tools.jmod.Main;
-
+import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ReliefService implements QueriesAndVictimsInterface {
+public class ReliefService implements InquirerQueryEntryInterface {
     private Inquirer inquirer;
     private DisasterVictim missingPerson;
     private String dateOfInquiry;
     private String infoProvided;
     private Location lastKnownLocation;
+    private static ArrayList<String> logs;             //REQ something: cool though
 
     /*---------------Constructor---------------*/
 
@@ -102,26 +102,26 @@ public class ReliefService implements QueriesAndVictimsInterface {
 
     @Override
     public void logInquirerQuery() {
-
+        // We get inquirers from the database.
+        // We create an inquirer object, a reliefService object and fill them in appropriately
+        // We generate a log, i.e. all the info .toString()
+        // We store the log somewhere ?? // TODO: Figure the point out
     }
 
     @Override
     public DisasterVictim searchDisasterVictim() {
-        // TODO: Implement function
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter the first name and last name of the victim. If you don't know the full first name or last name, you can type it in partially. We will" +
                 "automatically search it up for you\nEnter here: ");
         String keyWord = scanner.nextLine();
 
-       // Check if user is location based or from HQ
+        // Check if user is location based or from HQ
         if (MainApplication.workerType.equals("central")) {
-            // Search all locations
-            for (Location storedLocation : MainApplication.storedLocations) {
-                storedLocation.getOccupants();
-            }
-        }
+            // Search inquirer objects
 
+        }
+        return new DisasterVictim("null", "null");
     }
 
 

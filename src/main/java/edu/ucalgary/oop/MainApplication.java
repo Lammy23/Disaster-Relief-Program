@@ -1,5 +1,8 @@
 package edu.ucalgary.oop;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -12,6 +15,38 @@ public class MainApplication {
 
     public static String workerType;
     public static HashSet<Location> storedLocations;
+
+//    private HashSet<String> getValidGenders() {
+//        // TODO: Change function up
+//        // Check GenderOptions.txt to see if the gender exists
+//        BufferedReader inputStream = null;
+//        boolean genderFound = false;
+//
+//        try {
+//            inputStream = new BufferedReader(new FileReader("./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
+//            String line;
+//            // Reading the file line by line
+//            while ((line = inputStream.readLine()) != null) {
+//                // Accounting for case
+////                if (line.toLowerCase().equals(gender.toLowerCase())) {
+////                    genderFound = true;
+////                    break;
+////                }
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            try {
+//                if (inputStream != null) {
+//                    inputStream.close();
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return genderFound;
+//    }
 
     public static void main(String[] args) {
 

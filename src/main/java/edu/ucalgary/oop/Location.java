@@ -4,29 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
-/* TODO: perfect this UML Diagram
-- name: String
-- address: String
-- occupants: ArrayList<DisasterVictim>                      // Might be useful to know who arrived first at location, we use ArrayList
-- supplies: HashSet<Supply>
-
-+ Location(name:String, address:String)
-
-+ getName(): String
-+ getAddress(): String
-+ getOccupants(): ArrayList<DisasterVictim>
-+ getSupplies(): HashSet<Supply>
-
-+ setName(name: String): void
-+ setAddress(address: String): void
-+ setOccupants(occupants: ArrayList<DisasterVictim>): void
-+ setSupplies(supplies: HashSet<Supply>): void
-
-+ addOccupant(occupant: DisasterVictim): void
-+ removeOccupant(occupant: DisasterVictim): void
-+ addSupply(supply: Supply): void
-+ removeSupply(supply: Supply): void
-*/
+// TODO: Add version and author to every single class
 
 /**
  * Class that represents a location that shelters `DisasterVictim`s
@@ -34,7 +12,7 @@ import java.util.Optional;
 public class Location {
     private String name;
     private String address;
-    private ArrayList<DisasterVictim> occupants;
+    private ArrayList<DisasterVictim> occupants;                            // Might be useful to know who arrived first at location, we use ArrayList
     private HashSet<Supply> supplies;
 
     /*---------Constructor------------*/
@@ -128,13 +106,10 @@ public class Location {
 
     /*---------Adders/Removers------------*/
 
-    /*
-    + addOccupant(occupant: DisasterVictim): void
-    + removeOccupant(occupant: DisasterVictim): void
-    + addSupply(supply: Supply): void
-    + removeSupply(supply: Supply): void
+    /**
+     * Adds an occupant to the location
+     * @param occupant the occupant to add
      */
-
     public void addOccupant(DisasterVictim occupant) {
         // Check if occupant is already in the list
         if (this.occupants.contains(occupant)) {
@@ -143,10 +118,18 @@ public class Location {
         this.occupants.add(occupant);
     }
 
+    /**
+     * Removes an occupant from the location
+     * @param occupant the occupant to remove
+     */
     public void removeOccupant(DisasterVictim occupant) {
         this.occupants.remove(occupant);
     }
 
+    /**
+     * Adds a supply to the location
+     * @param supply the supply to add
+     */
     public void addSupply(Supply supply) {
         Optional<Supply> existingSupply = supplies.stream().filter((item) -> item.getType().equals(supply.getType())).findFirst();
 
@@ -160,6 +143,10 @@ public class Location {
         }
     }
 
+    /**
+     * Removes a supply from the location
+     * @param supply the supply to remove
+     */
     public void removeSupply(Supply supply) {
         Optional<Supply> existingSupply = supplies.stream().filter(item -> item.getType().equals(supply.getType())).findFirst();
 

@@ -1,26 +1,20 @@
 package edu.ucalgary.oop;
 
-/*
-## Attributes ##
-- type: String
-- quantity: int
+// TODO: Use the below comment as an example to write the Javadoc for classes
 
-## Methods ##
-+ Supply(type: String, quantity: int)
-
-+ getType(): String
-+ getQuantity(): int
-
-+ setType(type: string): void
-+ setQuantity(quantity: int): void
- */
-
+// TODO: Last thing todo, add null exception for strings ("") and negative numbers
 /**
  * Class to represent a supply
+ *
+ * @version 1.1
+ * @since 1.0
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
  */
 public class Supply {
     private String type;
     private int quantity;
+    private Location source;
 
     /*---------------Constructor---------------*/
 
@@ -30,9 +24,10 @@ public class Supply {
      * @param type     the type of supply
      * @param quantity the quantity of the supply
      */
-    public Supply(String type, int quantity) {
+    public Supply(String type, int quantity, Location source) {
         this.type = type;
         this.quantity = quantity;
+        this.source = source;
     }
 
     /*---------------Getters---------------*/
@@ -55,6 +50,14 @@ public class Supply {
         return quantity;
     }
 
+    /**
+     * Getter for the source of the supply
+     *
+     * @return the source of the supply
+     */
+    public Location getSource() {
+        return source;
+    }
     /*---------------Setters---------------*/
 
     /**
@@ -63,6 +66,9 @@ public class Supply {
      * @param type the type of supply
      */
     public void setType(String type) {
+        if (type.isEmpty()) {
+            throw new IllegalArgumentException("Type cannot be empty");
+        }
         this.type = type;
     }
 
@@ -73,5 +79,14 @@ public class Supply {
      */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * Setter for the source of the supply
+     *
+     * @param source the source of the supply
+     */
+    public void setSource(Location source) {
+        this.source = source;
     }
 }

@@ -10,19 +10,22 @@ public class SupplyTest {
     private Supply testSupply;
     private String expectedType = "Water";
     private int expectedQuantity = 10;
+    private Location expectedSource = new Location("LocationA", "123 Location lane");
 
     public SupplyTest() {
     }
 
     @Before
     public void setUp() {
-        testSupply = new Supply(expectedType, expectedQuantity);
+        testSupply = new Supply(expectedType, expectedQuantity, expectedSource);
     }
 
     @Test
     public void testObjectCreation() {
         assertNotNull(testSupply);
     }
+
+    /*--------Testing Constructor-----------*/
 
     @Test
     public void testConstructorType() {
@@ -33,6 +36,13 @@ public class SupplyTest {
     public void testConstructorQuantity() {
         assertEquals("Constructor should set the correct quantity", expectedQuantity, testSupply.getQuantity());
     }
+
+    @Test
+    public void testConstructorSource() {
+        assertNull("Constructor should set the correct source", testSupply.getSource());
+    }
+
+    /*--------Testing Getters & Setters-----------*/
 
     @Test
     public void testSetAndGetType() {
@@ -56,6 +66,13 @@ public class SupplyTest {
     @Test(expected = IllegalArgumentException.class)
     public void testSetTypeEmpty() {
         testSupply.setType("");
+    }
+
+    @Test
+    public void testSetAndGetSource() {
+        Location newSource = new Location("University of Calgary", "2500 University Dr NW");
+        testSupply.setSource(newSource);
+        assertEquals("setSource should update the source", newSource, testSupply.getSource());
     }
 
 }

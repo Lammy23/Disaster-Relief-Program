@@ -186,7 +186,8 @@ public class DisasterVictim implements VictimEntryInterface {
         boolean genderFound = false;
 
         try {
-            inputStream = new BufferedReader(new FileReader("./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
+            inputStream = new BufferedReader(new FileReader(
+                    "./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
             String line;
             // Reading the file line by line
             while ((line = inputStream.readLine()) != null) {
@@ -222,6 +223,7 @@ public class DisasterVictim implements VictimEntryInterface {
     // TODO: Implement functionality to automatically generate ASSIGNED_ID and ENTRY_DATE
 
     public DisasterVictim(String ENTRY_DATE) {
+        this.ASSIGNED_SOCIAL_ID = ++counter;
         if (isValidPastDate(ENTRY_DATE)) this.ENTRY_DATE = parseDate(ENTRY_DATE);
         else throw new IllegalArgumentException("Invalid date format or future entry day provided");
     }
@@ -459,15 +461,13 @@ public class DisasterVictim implements VictimEntryInterface {
     /*-----------------Adders/Removers-----------------*/
 
     /**
-     * Adds a family connection to the victim
+     * Adds a family connection to the victim and fixes any inconsistencies
      *
      * @param familyConnection the family connection to add
      */
     public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
-        Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> {
-            boolean isPresent;
-            return (connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())) || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne()));
-        }).findFirst();
+        Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> (connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo()))
+                || (connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne()))).findFirst();
 
         if (existingConnection.isPresent()) {
             return;
@@ -477,7 +477,6 @@ public class DisasterVictim implements VictimEntryInterface {
         if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
             throw new IllegalArgumentException("Invalid family connection provided: Self relation not allowed");
         }
-
 
         familyConnections.add(familyConnection);
         familyConnection.recursiveAdderGlance(new HashSet<>());
@@ -494,30 +493,106 @@ public class DisasterVictim implements VictimEntryInterface {
         if (withGlance) familyConnection.recursiveAdderGlance(new HashSet<>());
     }
 
+    /**
+     * Removes a family connection from the victim and fixes any inconsistencies
+     *
+     * @param familyConnection the family connection to remove
+     */
     public void removeFamilyConnection(FamilyRelation familyConnection) {
-        familyConnections.remove(familyConnection);
-        familyConnection.recursiveRemoverGlance(new HashSet<>());
+
+        // If siblings are disconnected, it cascades effectively everywhere
+        // Getting all siblings
+        HashSet<DisasterVictim> siblings = familyConnection.recursiveRemoverGlance(new HashSet<>());
+
+        // Removing "siblings" relationships
+        siblings.forEach((sibling) -> {
+            sibling.getFamilyConnections().forEach((connection) -> {
+                if (connection.getRelationshipTo().equals("sibling")) {
+                    sibling.removeFamilyConnection(connection, false);
+                }
+            });
+        });
     }
 
+    /**
+     * Removes a family connection from the victim
+     *
+     * @param familyConnection the family connection to remove
+     * @param withGlance       whether to recurse through the family connection to fix any inconsistencies
+     */
     public void removeFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
         familyConnections.remove(familyConnection);
         if (withGlance) familyConnection.recursiveRemoverGlance(new HashSet<>());
     }
 
+    /**
+     * Adds a dietary restriction to the victim
+     *
+     * @param dietaryRestriction the dietary restriction to add
+     */
+    public void addDietaryRestriction(DietaryRestriction dietaryRestriction) {
+        dietaryRestrictions.add(dietaryRestriction);
+    }
+
+    /**
+     * Removes a dietary restriction from the victim
+     *
+     * @param dietaryRestriction the dietary restriction to remove
+     */
+    public void removeDietaryRestriction(DietaryRestriction dietaryRestriction) {
+        dietaryRestrictions.remove(dietaryRestriction);
+    }
+
+    /**
+     * Adds a medical record to the victim
+     *
+     * @param medicalRecord the medical record to add
+     */
     public void addMedicalRecord(MedicalRecord medicalRecord) {
-        // TODO: Implement function
+        // TODO: make sure all dates are set with the same freaking delimiter to make sure this code works
+        if (medicalRecords.contains(medicalRecord)) {
+            return;
+        }
+        medicalRecords.add(medicalRecord);
     }
 
     public void removeMedicalRecord(MedicalRecord medicalRecord) {
-        // TODO: Implement function
+        medicalRecords.remove(medicalRecord);
     }
 
+    // REQ 3: Supply Consistency
+
     public void addPersonalBelonging(Supply supply) {
-        // TODO: Implement function
+        // If a victim gets a supply, decrease stock in source
+        supply.getSource().removeSupply(supply);
+
+        Optional<Supply> existingSupply = personalBelongings.stream().filter((item) -> item.getType().equals(supply.getType())).findFirst();
+
+        if (existingSupply.isPresent()) {
+            Supply targetSupply = existingSupply.get();
+            int oldQuantity = targetSupply.getQuantity();
+            int newQuantity = supply.getQuantity();
+            targetSupply.setQuantity(oldQuantity + newQuantity);
+        } else {
+            personalBelongings.add(supply);
+        }
     }
 
     public void removePersonalBelonging(Supply supply) {
-        // TODO: Implement function
+        Optional<Supply> existingSupply = personalBelongings.stream().filter(item -> item.getType().equals(supply.getType())).findFirst();
+
+        if (existingSupply.isPresent()) {
+            Supply targetSupply = existingSupply.get();
+            int oldQuantity = targetSupply.getQuantity();
+            int newQuantity = supply.getQuantity();
+
+            if (newQuantity >= oldQuantity) {
+                // Remove supplies entirely
+                personalBelongings.remove(supply);
+            } else {
+                targetSupply.setQuantity(oldQuantity - newQuantity);
+            }
+        }
     }
 
     /*------------------Interface Methods--------------------*/
@@ -575,15 +650,15 @@ public class DisasterVictim implements VictimEntryInterface {
         relationshipMap.put(4, "spouse");
 
         // Figure out the DisasterVictim that `this` is related to
-
+        System.out.println("Please enter info relevant to the disaster victim relative");
         // Function that returns DisasterVictim object
-        DisasterVictim relative = searchDisasterVictim();
+//        DisasterVictim relative = searchDisasterVictim();
 
         System.out.println("We support four types of relationships. Choose a relationship type.\n1. 'sibling'\n2. 'parent'\n3. 'child'\n4. 'spouse'\n\nEnter a number: ");
         String relationType = relationshipMap.get(Integer.parseInt(scanner.nextLine()));
 
         // Add connection
-        this.addFamilyConnection(new FamilyRelation(this, relationType, relative));
+//        this.addFamilyConnection(new FamilyRelation(this, relationType, relative));
 
 
     }
