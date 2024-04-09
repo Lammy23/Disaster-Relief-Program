@@ -3,13 +3,14 @@ package edu.ucalgary.oop;
 // TODO: Use the below comment as an example to write the Javadoc for classes
 
 // TODO: Last thing todo, add null exception for strings ("") and negative numbers
+
 /**
  * Class to represent a supply
  *
- * @version 1.1
- * @since 1.0
  * @author Olamikun Aluko
  * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class Supply {
     private String type;
@@ -84,11 +85,14 @@ public class Supply {
     }
 
     /**
-     * Setter for the quantity of the supply
+     * Setter for the quantity of the supply (cannot be zero or negative)
      *
      * @param quantity the quantity of the supply
      */
-    public void setQuantity(int quantity) {
+    public void setQuantity(int quantity) throws IllegalArgumentException {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity cannot be zero or negative");
+        }
         this.quantity = quantity;
     }
 

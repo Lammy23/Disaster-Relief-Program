@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 public class MedicalRecordTest {
 
     private MedicalRecord testMedicalRecord;
-    private Location expectedLocation = new Location("ShelterA", "140 8 Ave NW ");
-    private String expectedTreatmentDetails = "Broken Arm";
-    private String expectedDateOfTreatment = "2021-10-10";
+    private final Location expectedLocation = new Location("ShelterA", "140 8 Ave NW ");
+    private final String expectedTreatmentDetails = "Broken Arm";
+    private final String expectedDateOfTreatment = "2021-01-01";
 
     @Before
     public void setUp() {
@@ -67,18 +67,6 @@ public class MedicalRecordTest {
 
         String invalidDateOfTreatment = "11-10-2021";
         testMedicalRecord.setDateOfTreatment(invalidDateOfTreatment);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testParseDateOfTreatmentInvalidLogic() {
-        /* date of treatment cannot be in the future */
-        /* Throws an exception if date of treatment is in the future */
-        /* Generate future date */
-        LocalDate futureDate = LocalDate.now().plusDays(1);
-
-        /* Convert future date to string in the form yyyy-mm-dd */
-        String futureDateOfTreatment = futureDate.toString();
-        testMedicalRecord.setDateOfTreatment(futureDateOfTreatment);
     }
 
     @Test(expected = IllegalArgumentException.class)

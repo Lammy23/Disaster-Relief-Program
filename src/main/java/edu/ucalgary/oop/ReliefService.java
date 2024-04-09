@@ -1,35 +1,5 @@
 package edu.ucalgary.oop;
 
-/*
-
-## Attributes ##
-
-- inquirer: Inquirer
-- missingPerson: DisasterVictim
-- dateOfInquiry: String
-- infoProvided: String
-- lastKnownLocation: Location
-
-## Methods ##
-
-+ ReliefService(inquirer: Inquirer, missingPerson: DisasterVictim,
-dateOfInquiry:String, infoProvided: String , lastKnownLocation: Location )
-
-+ getInquirer():Inquirer
-+ getMissingPerson(): DisasterVictim
-+ getDateOfInquiry(): String
-+ getInfoProvided(): String
-+ getLastKnownLocation(): Location
-+ getLogDetails(): String
-
-+ setInquirer(inquirer: Inquirer)
-+ setMissingPerson(missingPerson: DisasterVictim)
-+ setDateOfInquiry(dateOfInquiry: String)
-+ setInfoProvided(infoProvided: String)
-+ setLastKnownLocation(lastKnownLocation: Location)
-
- */
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -43,10 +13,11 @@ public class ReliefService implements InquirerQueryEntryInterface {
 
     /*---------------Constructor---------------*/
 
-    public ReliefService(Inquirer inquirer, DisasterVictim missingPerson, String dateOfInquiry, String infoProvided, Location lastKnownLocation) {
+    public ReliefService(Inquirer inquirer, DisasterVictim missingPerson, String dateOfInquiry, String infoProvided, Location lastKnownLocation) throws IllegalArgumentException {
         this.inquirer = inquirer;
         this.missingPerson = missingPerson;
-        this.dateOfInquiry = dateOfInquiry;
+        if (ApplicationUtils.isValidPastDate(dateOfInquiry)) this.dateOfInquiry = ApplicationUtils.parseDate(dateOfInquiry);
+        else throw new IllegalArgumentException("Invalid date format or future entry day provided");
         this.infoProvided = infoProvided;
         this.lastKnownLocation = lastKnownLocation;
     }
@@ -83,8 +54,9 @@ public class ReliefService implements InquirerQueryEntryInterface {
         this.missingPerson = missingPerson;
     }
 
-    public void setDateOfInquiry(String dateOfInquiry) {
-        this.dateOfInquiry = dateOfInquiry;
+    public void setDateOfInquiry(String dateOfInquiry) throws IllegalArgumentException {
+        if (ApplicationUtils.isValidPastDate(dateOfInquiry)) this.dateOfInquiry = ApplicationUtils.parseDate(dateOfInquiry);
+        else throw new IllegalArgumentException("Invalid date format or future entry day provided");
     }
 
     public void setInfoProvided(String infoProvided) {

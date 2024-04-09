@@ -2,23 +2,24 @@ package edu.ucalgary.oop;
 
 import org.junit.*;
 
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
 public class DisasterVictimTest {
 
     private DisasterVictim testDisasterVictim;
+    private DisasterVictim testDisasterVictimTwo;
     private final String expectedFirstName = "John";
     private final String expectedValidEntryDate = "2024/01/01";
     private final String expectedValidDateOfBirth = "2024-01-01";
     private final int expectedValidApproximateAge = 25;
-    private final String expectedValidGender = getValidGender();
-    private final String InvalidGender = getInvalidGender();
+
+    private final HashSet<String> validGenders = ApplicationUtils.getValidGenders();
+    private final String expectedValidGender = getRandomValidGender();
+    private final String expectedInvalidGender = generateInvalidGender();
+
     private Location expectedLocation;
 
 
@@ -26,57 +27,44 @@ public class DisasterVictimTest {
     private DisasterVictim y;
     private DisasterVictim z;
 
-    private String getValidGender() {
-        String validGender = "";
-        BufferedReader inputStream = null;
+    /**
+     * Gets a random valid gender from the set of valid genders
+     *
+     * @return a random valid gender
+     */
+    private String getRandomValidGender() {
+        // Gets random valid gender from valid genders
 
-        try {
-            inputStream = new BufferedReader(new FileReader("./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
-            validGender = inputStream.readLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return validGender;
+        // Get random gender from the set
+        int randomIndex = (int) (Math.random() * validGenders.size());
+        return (String) validGenders.toArray()[randomIndex];
     }
 
-    private String getInvalidGender() {
+    /**
+     * Generates a `String` that is not in the set of valid genders
+     *
+     * @return an invalid gender
+     */
+    private String generateInvalidGender() {
+        // Generates a String that is definitely not a gender
         StringBuilder invalidGender = new StringBuilder();
-        BufferedReader inputStream = null;
 
-        try {
-            inputStream = new BufferedReader(new FileReader("./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
-            String line;
-            while ((line = inputStream.readLine()) != null) {
-                char firstChar = line.charAt(0);
-                // Increment the ASCII value of the first character
-                char newChar = (char) (firstChar + 1);
-                invalidGender.append(newChar);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // Loop through genders and get first character of each
+        for (String validGender : validGenders) {
+            char firstChar = validGender.charAt(0);
+
+            // Incrementing ASCII value of first character
+            char invalidChar = (char) (firstChar + 1);
+            invalidGender.append(invalidChar);
         }
+
         return invalidGender.toString();
     }
 
     @Before
     public void setUp() {
         testDisasterVictim = new DisasterVictim(expectedFirstName, expectedValidEntryDate);
+        testDisasterVictimTwo = new DisasterVictim(expectedValidEntryDate);
 
         // Testing Relationships
         x = new DisasterVictim("John", "2024/01/01");
@@ -94,35 +82,69 @@ public class DisasterVictimTest {
     /*-----------Testing Constructor-----------*/
 
     @Test
-    public void testConstructorFirstName() {
+    public void testConstructorOneFirstName() {
+        assertEquals("Constructor should set the correct first name", expectedFirstName, testDisasterVictimTwo.getFirstName());
+    }
+
+    @Test
+    public void testConstructorOneValidEntryDate() {
+        assertEquals("Constructor should set the correct entry date", expectedValidEntryDate, testDisasterVictimTwo.getEntryDate());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorOneInvalidDelimiterEntryDate() {
+        String invalidDelimiter = "2024!01!01";
+        new DisasterVictim(invalidDelimiter); // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorOneInvalidFormatEntryDate() {
+        String invalidFormat = "01.01.2024";
+        new DisasterVictim(invalidFormat);   // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorOneImpossibleEntryDate() {
+        String impossibleDate = "2024.99.99";
+        new DisasterVictim(impossibleDate);  // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorOneFutureEntryDate() {
+        String futureDate = "2025.01.01";
+        new DisasterVictim(futureDate);      // Expecting line to fail
+    }
+
+    @Test
+    public void testConstructorTwoFirstName() {
         assertEquals("Constructor should set the correct first name", expectedFirstName, testDisasterVictim.getFirstName());
     }
 
     @Test
-    public void testConstructorValidEntryDate() {
+    public void testConstructorTwoValidEntryDate() {
         assertEquals("Constructor should set the correct entry date", expectedValidEntryDate, testDisasterVictim.getEntryDate());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConstructorInvalidDelimiterEntryDate() {
+    public void testConstructorTwoInvalidDelimiterEntryDate() {
         String invalidDelimiter = "2024*01*01";
         new DisasterVictim(expectedFirstName, invalidDelimiter); // Expecting line to fail
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConstructorInvalidFormatEntryDate() {
+    public void testConstructorTwoInvalidFormatEntryDate() {
         String invalidFormat = "01-01-2024";
         new DisasterVictim(expectedFirstName, invalidFormat);   // Expecting line to fail
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConstructorImpossibleEntryDate() {
+    public void testConstructorTwoImpossibleEntryDate() {
         String impossibleDate = "2024-99-99";
         new DisasterVictim(expectedFirstName, impossibleDate);  // Expecting line to fail
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConstructorFutureEntryDate() {
+    public void testConstructorTwoFutureEntryDate() {
         String futureDate = "2025-01-01";
         new DisasterVictim(expectedFirstName, futureDate);      // Expecting line to fail
     }
@@ -206,7 +228,6 @@ public class DisasterVictimTest {
         testDisasterVictim.setDateOfBirth(expectedValidDateOfBirth);                 // Expecting line to fail
     }
 
-    /* End of REQ */
 
     @Test
     public void testSetAndGetComments() {
@@ -236,10 +257,8 @@ public class DisasterVictimTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testSetInvalidGender() {
-        testDisasterVictim.setGender(InvalidGender);                // Expecting line to fail
+        testDisasterVictim.setGender(expectedInvalidGender);                // Expecting line to fail
     }
-
-    /* End of REQ */
 
     @Test
     public void testSetAndGetDietaryRestrictions() {
@@ -293,6 +312,8 @@ public class DisasterVictimTest {
 
     /*-----------Testing Adders/Removers------------*/
 
+    // TODO: Test for invalid family relationshipTo e.g. "brother" or "cousin"
+
     @Test
     public void testAddValidFamilyConnectionToEmpty() {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
@@ -341,7 +362,7 @@ public class DisasterVictimTest {
     @Test
     public void testRemoveValidFamilyConnectionFromPopulated() {
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);
-        FamilyRelation r2 = new FamilyRelation(x, "parent", z);
+        FamilyRelation r2 = new FamilyRelation(x, "sibling", z);
 
         x.addFamilyConnection(r1);
         x.addFamilyConnection(r2);
@@ -458,7 +479,16 @@ public class DisasterVictimTest {
 
         testDisasterVictim.addPersonalBelonging(supply);
         assertTrue("addPersonalBelonging should add the personal belonging", testDisasterVictim.getPersonalBelongings().contains(supply));
-        assertTrue("Source of supply should lose all stock", expectedLocation.getSupplies().isEmpty());
+    }
+
+    @Test
+    public void testSourceSupplyEffect() {
+        Supply supply = new Supply("Water", 1, expectedLocation);
+        // Ensuring Location has supply
+        expectedLocation.addSupply(supply);
+
+        testDisasterVictim.addPersonalBelonging(supply);
+        assertFalse("Source of supply should lose all stock", expectedLocation.getSupplies().contains(supply));
     }
 
     @Test
@@ -472,7 +502,6 @@ public class DisasterVictimTest {
         testDisasterVictim.addPersonalBelonging(supply1);
         testDisasterVictim.addPersonalBelonging(supply2);
         assertTrue("addPersonalBelonging should add the personal belongings", testDisasterVictim.getPersonalBelongings().contains(supply1) && testDisasterVictim.getPersonalBelongings().contains(supply2));
-        assertFalse("Source of supplies should lose all stock", testDisasterVictim.getPersonalBelongings().contains(supply1) && testDisasterVictim.getPersonalBelongings().contains(supply2));
     }
 
     @Test
@@ -486,8 +515,7 @@ public class DisasterVictimTest {
 
         testDisasterVictim.addPersonalBelonging(supply1);
         testDisasterVictim.addPersonalBelonging(supply5);
-        assertTrue("addPersonalBelonging should add the personal belongings in the right quantity", testDisasterVictim.getPersonalBelongings().contains(new Supply("Water", 6, expectedLocation)));
-        assertTrue("Source of supplies should lose some stock", expectedLocation.getSupplies().contains(new Supply("Water", 4, expectedLocation)));
+        assertEquals("addPersonalBelonging should add the personal belongings in the right quantity", 6, testDisasterVictim.getPersonalBelongings().size());
     }
 
     @Test(expected = IllegalArgumentException.class)

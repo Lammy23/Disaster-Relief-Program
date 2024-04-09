@@ -43,8 +43,32 @@ public class ReliefServiceTest {
     }
 
     @Test
-    public void testConstructorDateOfInquiry() {
-        assertEquals("Constructor should set the correct date of inquiry", expectedDateOfInquiry, testReliefService.getDateOfInquiry());
+    public void testConstructorValidDateOfInquiry() {
+        assertEquals("Constructor should set the correct date of inquiry", ApplicationUtils.parseDate(expectedDateOfInquiry), testReliefService.getDateOfInquiry());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorInvalidDelimiterDateOfInquiry() {
+        String invalidDelimiter = "2024!01)01";
+        new ReliefService(expectedInquirer, expectedMissingPerson, invalidDelimiter, expectedInfoProvided, expectedLastKnownLocation);               // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorInvalidFormatDateOfInquiry() {
+        String invalidFormat = "01.01.2024";
+        new ReliefService(expectedInquirer, expectedMissingPerson, invalidFormat, expectedInfoProvided, expectedLastKnownLocation);               // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorImpossibleDateOfInquiry() {
+        String impossibleDate = "2022.99.99";
+        new ReliefService(expectedInquirer, expectedMissingPerson, impossibleDate, expectedInfoProvided, expectedLastKnownLocation);              // Expecting line to fail
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFutureDateOfInquiry() {
+        String futureDate = "2025.01.01";
+        new ReliefService(expectedInquirer, expectedMissingPerson, futureDate, expectedInfoProvided, expectedLastKnownLocation);                 // Expecting line to fail
     }
 
     @Test
@@ -69,7 +93,7 @@ public class ReliefServiceTest {
 
     @Test
     public void testSetAndGetMissingPerson() {
-        DisasterVictim newVictim = new DisasterVictim("Bobby", "403-566-000");
+        DisasterVictim newVictim = new DisasterVictim("Bobby", "2024/01/01");
 
         testReliefService.setMissingPerson(newVictim);
         assertEquals("setMissingPersons should update the missing person", newVictim, testReliefService.getMissingPerson());
@@ -78,7 +102,7 @@ public class ReliefServiceTest {
     @Test
     public void testSetAndGetValidDateOfInquiry() {
         testReliefService.setDateOfInquiry(expectedDateOfInquiry);
-        assertEquals("setDateOfInquiry should update the date of inquiry", expectedDateOfInquiry, testReliefService.getDateOfInquiry());
+        assertEquals("setDateOfInquiry should update the date of inquiry", ApplicationUtils.parseDate(expectedDateOfInquiry), testReliefService.getDateOfInquiry());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -93,13 +117,13 @@ public class ReliefServiceTest {
         testReliefService.setDateOfInquiry(invalidFormat);               // Expecting line to fail
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSetImpossibleDateOfInquiry() {
         String impossibleDate = "2022.99.99";
         testReliefService.setDateOfInquiry(impossibleDate);              // Expecting line to fail
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testSetFutureDateOfInquiry() {
         String futureDate = "2025.01.01";
         testReliefService.setDateOfInquiry(futureDate);                 // Expecting line to fail

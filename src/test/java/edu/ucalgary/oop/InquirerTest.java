@@ -15,7 +15,7 @@ public class InquirerTest {
 
     @Before
     public void setUp() {
-        testInquirer = new Inquirer(expectedFirstName, expectedLastName, expectedServicesPhone, expectedInfo);
+        testInquirer = new Inquirer(expectedFirstName, expectedLastName, expectedInfo, expectedServicesPhone);
     }
 
     @Test

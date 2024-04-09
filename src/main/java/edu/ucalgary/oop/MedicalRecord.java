@@ -36,52 +36,7 @@ public class MedicalRecord {
     private String treatmentDetails;
     private String dateOfTreatment;
 
-    /**
-     * Checks if date is valid and returns a boolean
-     *
-     * @param date The date to validate
-     * @return `true` if the date is valid else `false`
-     */
-    private boolean isValidDate(String date) {
-        // Checking that date resembles YYYY-MM-DD, YYYY/MM/DD, YYYY.MM.DD
-        String regex = "\\d{4}[.-/]\\d{2}[.-/]\\d{2}";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(date);
-        boolean matches = matcher.matches();
-
-        if (matches) {
-            try {
-                // Checking that the dates are not impossible
-                // Parsing date in standard format
-                String standardizedDate = parseDate(date);
-
-                // Defining the date format
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-                // Parsing the date
-                LocalDate parsedDate = LocalDate.parse(standardizedDate, formatter);
-
-                // If the date was successfully parsed, then it's valid
-                return true;
-            } catch (DateTimeParseException e) {
-                // If the date couldn't be parsed, then it's not valid
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Parses valid date into a standard format YYYY-MM-DD
-     *
-     * @param date The date to parse
-     * @return The date in the standard format
-     */
-    private String parseDate(String date) {
-        // Replacing any non-digit characters with a dash
-        // TODO: Confirm that \\D is the right symbol
-        return date.replaceAll("\\D", "-");
-    }
+    /*---------------Constructor---------------*/
 
     /**
      * Constructor for `MedicalRecord`
@@ -93,9 +48,11 @@ public class MedicalRecord {
     public MedicalRecord(Location location, String treatmentDetails, String dateOfTreatment) throws IllegalArgumentException {
         this.location = location;
         this.treatmentDetails = treatmentDetails;
-        if (isValidDate(dateOfTreatment)) this.dateOfTreatment = dateOfTreatment;
+        if (ApplicationUtils.isValidDate(dateOfTreatment)) this.dateOfTreatment = ApplicationUtils.parseDate(dateOfTreatment);
         else throw new IllegalArgumentException("Invalid date format provided");
     }
+
+    /*---------------Getters---------------*/
 
     /**
      * Gets the location of the treatment
@@ -121,6 +78,8 @@ public class MedicalRecord {
         return dateOfTreatment;
     }
 
+    /*---------------Setters---------------*/
+
     /**
      * Sets the location of the treatment
      * @param location the location of the treatment
@@ -142,7 +101,7 @@ public class MedicalRecord {
      * @param dateOfTreatment the date of the treatment
      */
     public void setDateOfTreatment(String dateOfTreatment) throws IllegalArgumentException {
-        if (isValidDate(dateOfTreatment)) this.dateOfTreatment = dateOfTreatment;
+        if (ApplicationUtils.isValidDate(dateOfTreatment)) this.dateOfTreatment = ApplicationUtils.parseDate(dateOfTreatment);
         else throw new IllegalArgumentException("Invalid date format provided");
     }
 }

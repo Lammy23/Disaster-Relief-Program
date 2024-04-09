@@ -12,7 +12,7 @@ public class FamilyRelation {
     private String relationshipTo;
 
     /**
-     * Recursive method that adds all people connected by the same relationship to a set.
+     * Recursive method that adds all siblings to a set.
      * It makes sure that the proper connections are made according to the relationship.
      *
      * @param fellows The set of people who are siblings

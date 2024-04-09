@@ -15,40 +15,9 @@ public class MainApplication {
 
     public static String workerType;
     public static HashSet<Location> storedLocations;
+    public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";  // TODO: Add file path to README documentation
+    public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
 
-//    private HashSet<String> getValidGenders() {
-//        // TODO: Change function up
-//        // Check GenderOptions.txt to see if the gender exists
-//        BufferedReader inputStream = null;
-//        boolean genderFound = false;
-//
-//        try {
-//            inputStream = new BufferedReader(new FileReader("./src/main/java/edu/ucalgary/oop/GenderOptions.txt"));
-//            String line;
-//            // Reading the file line by line
-//            while ((line = inputStream.readLine()) != null) {
-//                // Accounting for case
-////                if (line.toLowerCase().equals(gender.toLowerCase())) {
-////                    genderFound = true;
-////                    break;
-////                }
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (inputStream != null) {
-//                    inputStream.close();
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return genderFound;
-//    }
-
-    // TODO: Move date parser here and parse all dates in all classes that use dates
 
     public static void main(String[] args) {
 

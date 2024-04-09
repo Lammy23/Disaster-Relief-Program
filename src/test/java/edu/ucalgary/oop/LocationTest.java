@@ -115,8 +115,9 @@ public class LocationTest {
     public void testRemoveOneOccupantFromPopulated() {
         testLocation.addOccupant(x);
         testLocation.addOccupant(y);
+
         testLocation.removeOccupant(x);
-        assertEquals("removeOccupant should remove the correct occupant", 0, testLocation.getOccupants().size());
+        assertFalse("removeOccupant should remove the correct occupant", testLocation.getOccupants().contains(x));
     }
 
     @Test

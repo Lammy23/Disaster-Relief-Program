@@ -39,7 +39,7 @@ public class SupplyTest {
 
     @Test
     public void testConstructorSource() {
-        assertNull("Constructor should set the correct source", testSupply.getSource());
+        assertEquals("Constructor should set the correct source", expectedSource, testSupply.getSource());
     }
 
     /*--------Testing Getters & Setters-----------*/
@@ -56,6 +56,11 @@ public class SupplyTest {
         int newQuantity = 20;
         testSupply.setQuantity(newQuantity);
         assertEquals("setQuantity should update the quantity", newQuantity, testSupply.getQuantity());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetQuantityZero() {
+        testSupply.setQuantity(0);
     }
 
     @Test(expected = IllegalArgumentException.class)
