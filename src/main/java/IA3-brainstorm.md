@@ -1,7 +1,6 @@
 ## What I don't know
 
 * What the heck is "Search for partial DisasterVictim?"
-* What the heck is "Age or birthdate but not both can exist"
 * What the heck is " Make sure you consider that UNIX- or Windows-style line endings might be used."
 
 ## What I Know:
@@ -18,4 +17,4 @@ on implementing the functions first.
 * I am not my user. I am not my user. I am not my user. I am not my user. I am not my user.
 I must explain everything in the README.
 * You have the create your locations. The user cannot create locations.
-* 
+* Name your submissions zip with your UCID

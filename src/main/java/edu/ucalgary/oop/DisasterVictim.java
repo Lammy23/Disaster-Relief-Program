@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Class that represents a victim of a disaster
  */
-public class DisasterVictim implements VictimEntryInterface {
+public class DisasterVictim implements DisasterVictimInterface {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -59,6 +59,8 @@ public class DisasterVictim implements VictimEntryInterface {
     // TODO: Implement functionality to automatically generate ASSIGNED_ID and ENTRY_DATE
 
     /*-----------------Constructors-----------------*/
+
+    // TODO: What if entry date is not known, then put todays date.
 
     public DisasterVictim(String ENTRY_DATE) throws IllegalArgumentException {
         this.ASSIGNED_SOCIAL_ID = ++counter;
@@ -267,6 +269,7 @@ public class DisasterVictim implements VictimEntryInterface {
      * @param gender the gender to set
      */
     public void setGender(String gender) {
+        gender = gender.toLowerCase();
         if (ApplicationUtils.isValidGender(gender)) this.gender = gender.toLowerCase();
         else throw new IllegalArgumentException("Invalid gender provided");
     }
@@ -306,6 +309,12 @@ public class DisasterVictim implements VictimEntryInterface {
      * @param familyConnection the family connection to add
      */
     public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
+
+        // Check if the connection is relevant to the victim
+        if (!familyConnection.getPersonOne().equals(this) && !familyConnection.getPersonTwo().equals(this)) {
+            throw new IllegalArgumentException("Invalid family connection provided: Connection not relevant to the victim");
+        }
+
         // Checking for self-connection
         if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
             throw new IllegalArgumentException("Invalid family connection provided: Self relation not allowed");
@@ -351,7 +360,7 @@ public class DisasterVictim implements VictimEntryInterface {
 
                 // Check if child connection already exists
                 if (!child.familyConnectionAlreadyExists(pendingChildConnection, "child"))
-                    child.addFamilyConnection(pendingChildConnection);
+                    child.familyConnections.add(pendingChildConnection);
 
                 parent.familyConnections.add(pendingParentConnection);
 
@@ -402,18 +411,73 @@ public class DisasterVictim implements VictimEntryInterface {
      */
     public void removeFamilyConnection(FamilyRelation familyConnection) {
 
-        // If siblings are disconnected, it cascades effectively everywhere
-        // Getting all siblings
-        HashSet<DisasterVictim> siblings = familyConnection.getAllSiblings(new HashSet<>());
+        // Check if the connection is relevant to the victim
+        if (!familyConnection.getPersonOne().equals(this) && !familyConnection.getPersonTwo().equals(this)) {
+            throw new IllegalArgumentException("Invalid family connection provided: Connection not relevant to the victim");
+        }
 
-        // Removing "siblings" relationships
-        siblings.forEach((sibling) -> {
-            sibling.getFamilyConnections().forEach((connection) -> {
-                if (connection.getRelationshipTo().equals("sibling")) {
-                    familyConnections.remove(familyConnection);
-                }
-            });
-        });
+        switch (familyConnection.getRelationshipTo()) {
+            case "sibling":              // If siblings are disconnected, it cascades effectively everywhere
+
+                // Getting all siblings
+                HashSet<DisasterVictim> siblings = familyConnection.getAllSiblings(new HashSet<>());
+
+                HashMap<DisasterVictim, FamilyRelation> connectionsToRemove = new HashMap<>();
+
+                // Removing "siblings" relationships
+                siblings.forEach((sibling) -> {
+                    sibling.getFamilyConnections().forEach((connection) -> {
+                        if (connection.getRelationshipTo().equals("sibling")) {
+                            // Add to remove list
+                            connectionsToRemove.put(sibling, connection);
+                        }
+                    });
+                });
+
+                // Removing all sibling connections
+                connectionsToRemove.forEach((sibling, connection) -> {
+                    sibling.familyConnections.remove(connection);
+                });
+                break;
+            case "spouse":
+                DisasterVictim spouse1 = familyConnection.getPersonOne();
+                DisasterVictim spouse2 = familyConnection.getPersonTwo();
+                FamilyRelation alternateSpouseConnection = new FamilyRelation(spouse2, "spouse", spouse1);
+
+
+                // Removing all possible spouse connections (null safe)
+                spouse1.familyConnections.remove(familyConnection);
+                spouse1.familyConnections.remove(alternateSpouseConnection);
+
+                spouse2.familyConnections.remove(familyConnection);
+                spouse2.familyConnections.remove(alternateSpouseConnection);
+
+                break;
+            case "parent": {
+                DisasterVictim parent = familyConnection.getPersonOne();
+                DisasterVictim child = familyConnection.getPersonTwo();
+
+                FamilyRelation childConnection = new FamilyRelation(child, "child", parent);
+
+                // Removing all parent-child connections (null safe)
+                parent.familyConnections.remove(familyConnection);
+                child.familyConnections.remove(childConnection);
+
+                break;
+            }
+            case "child": {
+                DisasterVictim parent = familyConnection.getPersonOne();
+                DisasterVictim child = familyConnection.getPersonTwo();
+
+                FamilyRelation parentConnection = new FamilyRelation(parent, "parent", child);
+
+                // Removing all parent-child connections (null safe)
+                parent.familyConnections.remove(parentConnection);
+                child.familyConnections.remove(familyConnection);
+
+                break;
+            }
+        }
     }
 
     /**
@@ -453,7 +517,10 @@ public class DisasterVictim implements VictimEntryInterface {
 
     // REQ 3: Supply Consistency
 
-    public void addPersonalBelonging(Supply supply) {
+    public void addPersonalBelonging(Supply supply) throws IllegalArgumentException {
+        if (supply.getSource() == null) {
+            throw new IllegalArgumentException("Supply does not have a source: It doesn't exist in the system.");
+        }
         // If a victim gets a supply, decrease stock in source
         supply.getSource().removeSupply(supply);
 

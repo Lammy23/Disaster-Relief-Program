@@ -14,9 +14,10 @@ import java.util.Scanner;
 public class MainApplication {
 
     public static String workerType;
-    public static HashSet<Location> storedLocations;
+    public static HashSet<Location> storedLocations = new HashSet<>();
     public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";  // TODO: Add file path to README documentation
     public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
+    public static HashSet<Inquirer> storedInquirers = new HashSet<>();
 
 
     public static void main(String[] args) {
