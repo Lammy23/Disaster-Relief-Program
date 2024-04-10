@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 import static edu.ucalgary.oop.ApplicationUtils.*;
@@ -410,80 +411,98 @@ public class InquirerQueryCLI {
 
 
     public void exportDB() {
-        // TODO: Fix this method
+
         try {
-            // Connect to the database
-            dbConnect = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
+            for (ReliefService service : storedServices) {
 
-            // Start a transaction
-            dbConnect.setAutoCommit(false);
+                // Ensure that ReliefService is not already in the database
+                String checkService = "SELECT * FROM inquirer WHERE firstName = ? AND lastName = ?";
 
-            // Clear the inquirer and inquiry_log tables
-            try (PreparedStatement stmt1 = dbConnect.prepareStatement("DELETE FROM inquirer;")) {
-                stmt1.executeUpdate();
-            }
+                try (PreparedStatement pstmt = dbConnect.prepareStatement(checkService)) {
+                    pstmt.setString(1, service.getInquirer().getFirstName());
+                    pstmt.setString(2, service.getInquirer().getLastName());
+                    results = pstmt.executeQuery();
+                    if (results.next()) {
+                        continue;
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("Error checking if the ReliefService is already in the database.\n" + ex.getMessage());
+                }
 
-            try (PreparedStatement stmt1 = dbConnect.prepareStatement("DELETE FROM inquiry_log;")) {
-                stmt1.executeUpdate();
-            }
+                // Get MAX(id)
+                String getMaxID = "SELECT MAX(id) FROM inquirer";
+                int inquirerID = 0;
 
-            // Add the storedServices to the database
-            for (ReliefService reliefService : storedServices) {
-                Inquirer inquirer = reliefService.getInquirer();
-                if (inquirer != null) {
-                    // Insert the inquirer
-                    try (PreparedStatement stmt2 = dbConnect.prepareStatement("INSERT INTO inquirer (firstname, lastname, phonenumber) VALUES (?, ?, ?);", Statement.RETURN_GENERATED_KEYS)) {
-                        stmt2.setString(1, inquirer.getFirstName());
-                        stmt2.setString(2, inquirer.getLastName());
-                        stmt2.setString(3, inquirer.getServicesPhone());
-                        stmt2.executeUpdate();
+                try (PreparedStatement pstmt = dbConnect.prepareStatement(getMaxID)) {
+                    results = pstmt.executeQuery();
+                    if (results.next()) {
+                        inquirerID = results.getInt(1) + 1;
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("Error getting the MAX(id) from the inquirer table.\n" + ex.getMessage());
+                }
 
-                        // Get the inquirer's ID
-                        try (ResultSet generatedKeys = stmt2.getGeneratedKeys()) {
-                            if (generatedKeys.next()) {
-                                int inquirerID = generatedKeys.getInt(1);
+                // Insert into INQUIRER table
+                String sql = "INSERT INTO INQUIRER (id, firstName, lastName, phoneNumber) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement pstmt = dbConnect.prepareStatement(sql)) {
 
-                                // Insert the inquiry logs
-                                for (InquiryLog log : reliefService.getLogs()) {
-                                    try (PreparedStatement stmt4 = dbConnect.prepareStatement("INSERT INTO inquiry_log (calldate, details, inquirer) VALUES (?, ?, ?);")) {
-                                        stmt4.setString(1, log.getDateOfInquiry());
-                                        stmt4.setString(2, log.getInfoProvided());
-                                        stmt4.setInt(3, inquirerID);
-                                        stmt4.executeUpdate();
-                                    }
-                                }
-                            } else {
-                                throw new SQLException("Creating inquirer failed, no ID obtained.");
-                            }
+                    pstmt.setInt(1, inquirerID);
+                    pstmt.setString(2, service.getInquirer().getFirstName());
+                    pstmt.setString(3, service.getInquirer().getLastName());
+                    pstmt.setString(4, service.getInquirer().getServicesPhone());
+
+                    pstmt.executeUpdate();
+                }
+
+                // Insert into INQUIRY_LOG table
+                for (InquiryLog log : service.getLogs()) {
+
+                    // Ensure that InquiryLog is not already in the database
+                    String checkLog = "SELECT * FROM INQUIRY_LOG WHERE callDate = ? AND details = ?";
+
+                    try (PreparedStatement pstmt = dbConnect.prepareStatement(checkLog)) {
+                        pstmt.setDate(1, Date.valueOf(log.getDateOfInquiry()));
+                        pstmt.setString(2, log.getInfoProvided());
+                        results = pstmt.executeQuery();
+                        if (results.next()) {
+                            continue;
                         }
+                    } catch (SQLException ex) {
+                        System.out.println("Error checking if the InquiryLog is already in the database.\n" + ex.getMessage());
+                    }
+
+                    // Get MAX(id)
+                    String getMaxLogID = "SELECT MAX(id) FROM inquiry_log";
+                    int logID = 0;
+
+                    try (PreparedStatement pstmt = dbConnect.prepareStatement(getMaxLogID)) {
+                        results = pstmt.executeQuery();
+                        if (results.next()) {
+                            logID = results.getInt(1) + 1;
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println("Error getting the MAX(id) from the inquiry_log table.\n" + ex.getMessage());
+                    }
+
+                    // Insert into INQUIRY_LOG table
+                    sql = "INSERT INTO INQUIRY_LOG (id, inquirer, callDate, details) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement pstmt = dbConnect.prepareStatement(sql)) {
+                        pstmt.setInt(1, logID);
+                        pstmt.setInt(2, inquirerID);
+                        pstmt.setDate(3, Date.valueOf(log.getDateOfInquiry()));
+                        pstmt.setString(4, log.getInfoProvided());
+                        pstmt.executeUpdate();
                     }
                 }
             }
-
-            // Commit the transaction
-            dbConnect.commit();
-
-        } catch (SQLException e) {
-            // Rollback the transaction in case of an error
-            if (dbConnect != null) {
-                try {
-                    dbConnect.rollback();
-                } catch (SQLException ex) {
-                    System.out.println("Error rolling back the transaction.\n" + ex.getMessage());
-                }
-            }
-            System.out.println("Error connecting to the database.\n" + e.getMessage());
-            System.out.println("Exiting...");
-            System.exit(1); // Exit the program with an error code
-        } finally {
-            // Set auto-commit back to true
-            if (dbConnect != null) {
-                try {
-                    dbConnect.setAutoCommit(true);
-                } catch (SQLException ex) {
-                    System.out.println("Error setting auto-commit to true.\n" + ex.getMessage());
-                }
-            }
+        } catch (SQLException ex) {
+            System.out.println("Error exporting the storedInquirers to the database.\n" + ex.getMessage());
         }
+
+        close();
+
+        // Add closing message
+        System.out.println("Inquirers saved to database successfully!\nExiting...");
     }
+
 }
