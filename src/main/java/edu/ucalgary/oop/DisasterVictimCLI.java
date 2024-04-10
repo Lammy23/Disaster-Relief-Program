@@ -328,6 +328,33 @@ public class DisasterVictimCLI {
 
     }
 
+    public void addDietaryRestrictions() {
+
+        ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
+        if (allDisasterVictims.isEmpty()) {
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
+            return;
+        }
+
+        System.out.println("Which Disaster Victim would you like to add dietary restrictions to?\nSelect a number from the following options: ");
+
+        // Use functions
+        HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
+        printDisasterVictims(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
+
+        System.out.println("What dietary restriction would you like to add to the disaster victim?\nSelect a number from the following options:");
+        // Use functions
+        HashMap<Integer, DietaryRestriction> dietaryRestrictionMap = hashMapArray(DietaryRestriction.values());
+        printDietaryRestrictions(dietaryRestrictionMap);
+        DietaryRestriction dietaryRestriction = getChoiceFromHashMap(dietaryRestrictionMap, scanner);
+
+        disasterVictim.addDietaryRestriction(dietaryRestriction);
+
+        // Add closing message
+        System.out.println("Dietary restrictions successfully added!\nView other options in the menu if you wish to add more information.");
+    }
+
     public void viewDisasterVictimInfo() {
 
         ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();

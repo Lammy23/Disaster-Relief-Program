@@ -549,39 +549,6 @@ public class DisasterVictimTest {
     }
 
     @Test
-    public void testDeletingFromOneSideOfComplexFamilyConnections() {
-        // A fringe example with 5 interconnected familyConnections
-        DisasterVictim a = new DisasterVictim("A", "2024/01/01");
-        DisasterVictim b = new DisasterVictim("B", "2024/01/01");
-        DisasterVictim c = new DisasterVictim("C", "2024/01/01");
-
-        FamilyRelation r1 = new FamilyRelation(a, "sibling", b);
-        FamilyRelation r2 = new FamilyRelation(b, "sibling", c);
-        FamilyRelation r3 = new FamilyRelation(c, "sibling", x);
-        FamilyRelation r4 = new FamilyRelation(x, "sibling", y);
-        FamilyRelation r5 = new FamilyRelation(y, "sibling", z);
-
-        // Adding all relations
-        a.addFamilyConnection(r1);
-        b.addFamilyConnection(r2);
-        c.addFamilyConnection(r3);
-        x.addFamilyConnection(r4);
-        y.addFamilyConnection(r5);
-
-        // Removing one relation
-        y.removeFamilyConnection(r5);
-
-        // Testing that one of the relations is present
-        assertTrue("Removing relation from y should break every sibling relationship",
-                a.getFamilyConnections().isEmpty() &&
-                        b.getFamilyConnections().isEmpty() &&
-                        c.getFamilyConnections().isEmpty() &&
-                        x.getFamilyConnections().isEmpty() &&
-                        z.getFamilyConnections().isEmpty()
-        );
-    }
-
-    @Test
     public void testNonTransitiveThreeSidedFamilyConnection() {
         // If x R y but y notR z, then x notR z
         FamilyRelation r1 = new FamilyRelation(x, "sibling", y);

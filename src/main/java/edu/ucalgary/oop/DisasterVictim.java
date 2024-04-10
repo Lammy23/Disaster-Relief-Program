@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Class that represents a victim of a disaster
  */
-public class DisasterVictim {
+public class DisasterVictim implements Comparable<DisasterVictim> {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -396,13 +396,15 @@ public class DisasterVictim {
                 DisasterVictim spouse1 = this;
                 DisasterVictim spouse2 = familyConnection.getPersonTwo();
 
-                FamilyRelation pendingSpouse2Connection = new FamilyRelation(spouse2, "spouse", spouse1);
+                FamilyRelation pendingSpouseConnection = new FamilyRelation(spouse1, "spouse", spouse2);
+                FamilyRelation alternateSpouseConnection = new FamilyRelation(spouse2, "spouse", spouse1);
 
-                // Check if spouse2 connection already exists
-                if (!spouse2.familyConnectionAlreadyExists(pendingSpouse2Connection, "spouse"))
-                    spouse2.addFamilyConnection(pendingSpouse2Connection);
+                // Check if spouse connection already exists
+                if (!spouse1.familyConnectionAlreadyExists(pendingSpouseConnection, "spouse"))
+                    spouse1.familyConnections.add(pendingSpouseConnection);
 
-                spouse1.familyConnections.add(new FamilyRelation(spouse1, "spouse", spouse2));
+                if (!spouse2.familyConnectionAlreadyExists(alternateSpouseConnection, "spouse"))
+                    spouse2.familyConnections.add(alternateSpouseConnection);
 
                 break;
             }
@@ -450,38 +452,56 @@ public class DisasterVictim {
             case "spouse":
                 DisasterVictim spouse1 = familyConnection.getPersonOne();
                 DisasterVictim spouse2 = familyConnection.getPersonTwo();
-                FamilyRelation alternateSpouseConnection = new FamilyRelation(spouse2, "spouse", spouse1);
 
+                // Removing all spouse connections (null safe)
+                spouse1.familyConnections.forEach((connection) -> {
+                    if (connection.getPersonOne().equals(spouse1) && connection.getPersonTwo().equals(spouse2)) {
+                        spouse1.familyConnections.remove(connection);
+                    }
+                });
 
-                // Removing all possible spouse connections (null safe)
-                spouse1.familyConnections.remove(familyConnection);
-                spouse1.familyConnections.remove(alternateSpouseConnection);
-
-                spouse2.familyConnections.remove(familyConnection);
-                spouse2.familyConnections.remove(alternateSpouseConnection);
+                spouse2.familyConnections.forEach((connection) -> {
+                    if (connection.getPersonOne().equals(spouse2) && connection.getPersonTwo().equals(spouse1)) {
+                        spouse2.familyConnections.remove(connection);
+                    }
+                });
 
                 break;
             case "parent": {
                 DisasterVictim parent = familyConnection.getPersonOne();
                 DisasterVictim child = familyConnection.getPersonTwo();
 
-                FamilyRelation childConnection = new FamilyRelation(child, "child", parent);
 
                 // Removing all parent-child connections (null safe)
-                parent.familyConnections.remove(familyConnection);
-                child.familyConnections.remove(childConnection);
+                child.familyConnections.forEach((connection) -> {
+                    if (connection.getPersonOne().equals(child) && connection.getPersonTwo().equals(parent)) {
+                        child.familyConnections.remove(connection);
+                    }
+                });
 
+                parent.familyConnections.forEach((connection) -> {
+                    if (connection.getPersonOne().equals(parent) && connection.getPersonTwo().equals(child)) {
+                        parent.familyConnections.remove(connection);
+                    }
+                });
                 break;
             }
             case "child": {
                 DisasterVictim parent = familyConnection.getPersonOne();
                 DisasterVictim child = familyConnection.getPersonTwo();
 
-                FamilyRelation parentConnection = new FamilyRelation(parent, "parent", child);
-
                 // Removing all parent-child connections (null safe)
-                parent.familyConnections.remove(parentConnection);
-                child.familyConnections.remove(familyConnection);
+                parent.familyConnections.forEach((connection) -> {
+                    if (connection.getPersonOne().equals(parent) && connection.getPersonTwo().equals(child)) {
+                        parent.familyConnections.remove(connection);
+                    }
+                });
+
+                child.familyConnections.forEach((connection) -> {
+                    if (connection.getPersonOne().equals(child) && connection.getPersonTwo().equals(parent)) {
+                        child.familyConnections.remove(connection);
+                    }
+                });
 
                 break;
             }
@@ -597,4 +617,8 @@ public class DisasterVictim {
         return priorityWeight;
     }
 
+    @Override
+    public int compareTo(DisasterVictim o) {
+        return 0;
+    }
 }

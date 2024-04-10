@@ -11,9 +11,12 @@ public class InquiryLog {
     /*---------------Constructor---------------*/
 
 
-    public InquiryLog(String dateOfInquiry, String infoProvided) {
+    public InquiryLog(String dateOfInquiry, String infoProvided) throws IllegalArgumentException {
         if (ApplicationUtils.isValidPastDate(dateOfInquiry))
             this.dateOfInquiry = ApplicationUtils.parseDate(dateOfInquiry);
+        else {
+            throw new IllegalArgumentException("Invalid date of inquiry");
+        }
         this.infoProvided = infoProvided;
     }
 
@@ -45,10 +48,13 @@ public class InquiryLog {
      *
      * @param dateOfInquiry The date of the inquiry
      */
-    public void setDateOfInquiry(String dateOfInquiry) {
+    public void setDateOfInquiry(String dateOfInquiry) throws IllegalArgumentException {
         // Validate dateOfInquiry
         if (ApplicationUtils.isValidPastDate(dateOfInquiry))
             this.dateOfInquiry = ApplicationUtils.parseDate(dateOfInquiry);
+        else {
+            throw new IllegalArgumentException("Invalid date of inquiry");
+        }
     }
 
     /**

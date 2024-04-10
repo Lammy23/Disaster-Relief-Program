@@ -74,5 +74,4 @@ public class SupplyTest {
         testSupply.setSource(newSource);
         assertEquals("setSource should update the source", newSource, testSupply.getSource());
     }
-
 }

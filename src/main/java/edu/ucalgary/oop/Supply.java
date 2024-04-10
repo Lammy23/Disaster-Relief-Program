@@ -101,12 +101,8 @@ public class Supply {
      * @param source the source of the supply
      */
     public void setSource(Location source) {
-        // If source is not null, remove supply from previous source
-        if (this.source != null) {
-            this.source.removeSupply(this);
-        }
 
         this.source = source;
-        source.addSupply(this);
+        if (source != null) source.addSupply(this);
     }
 }

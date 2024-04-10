@@ -10,12 +10,10 @@ public class InquirerTest {
     private final String expectedFirstName = "John";
     private final String expectedLastName = "Doe";
     private final String expectedServicesPhone = "403-123-4567";
-    private final String expectedInfo = "Looking for dog";
-
 
     @Before
     public void setUp() {
-        testInquirer = new Inquirer(expectedFirstName, expectedLastName, expectedInfo, expectedServicesPhone);
+        testInquirer = new Inquirer(expectedFirstName, expectedLastName, expectedServicesPhone);
     }
 
     @Test
@@ -38,11 +36,6 @@ public class InquirerTest {
     @Test
     public void testConstructorServicesPhone() {
         assertEquals("Constructor should set the correct services phone", expectedServicesPhone, testInquirer.getServicesPhone());
-    }
-
-    @Test
-    public void testConstructorInfo() {
-        assertEquals("Constructor should set the correct info", expectedInfo, testInquirer.getInfo());
     }
 
     /*--------------Testing Methods-----------------*/

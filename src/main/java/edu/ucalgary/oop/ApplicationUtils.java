@@ -160,6 +160,15 @@ public class ApplicationUtils {
         return MainApplication.validGenders.contains(gender);
     }
 
+
+    public static HashMap<Integer, DietaryRestriction> hashMapArray(DietaryRestriction[] array) {
+        HashMap<Integer, DietaryRestriction> map = new HashMap<>();
+        for (int i = 0; i < array.length; i++) {
+            map.put(i+1, array[i]);
+        }
+        return map;
+    }
+
     public static <T> HashMap<Integer, T> hashMapArrayList(ArrayList<T> disasterVictims) {
         HashMap<Integer, T> hashMap = new HashMap<>();
         for (int i = 0; i < disasterVictims.size(); i++) {
@@ -181,6 +190,12 @@ public class ApplicationUtils {
     public static <T> void printHashMap(HashMap<Integer, T> hashMap) {
         for (int i = 0; i < hashMap.size(); i++) {
             System.out.println(i + 1 + ". " + hashMap.get(i));
+        }
+    }
+
+    public static void printDietaryRestrictions(HashMap<Integer, DietaryRestriction> hashMap) {
+        for (int i = 0; i < hashMap.size(); i++) {
+            System.out.println(i + 1 + ". " + hashMap.get(i + 1).getDescription());
         }
     }
 
