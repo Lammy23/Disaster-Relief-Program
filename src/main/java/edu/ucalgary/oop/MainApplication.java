@@ -3,74 +3,88 @@ package edu.ucalgary.oop;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 // TODO: Create more Tests for functions that implement database access
 // and input and output (printing), and those that interface with the
 // stored locations. Phew!
 
+/**
+ * MainApplication class that contains the main method to run the application
+ */
 public class MainApplication {
 
-    public static String workerType;
-    public static HashSet<Location> storedLocations;
+    public static String workerType = "central"; // default value
+    public static HashSet<Location> storedLocations = new HashSet<>();
     public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";  // TODO: Add file path to README documentation
     public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
+    public static Location locationWorkerLocation;
 
 
+    /**
+     * Main method to run the application
+     *
+     * @param args command-line flag to determine the type of worker
+     */
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Print command-line flag
+        System.out.println("args: " + Arrays.toString(args));
 
         // Read command-line flag
-        workerType = "central"; // default value
-
-        for (int i = 0; i < args.length; i++) {
-            if ("--worker-type".equals(args[i])) {
-                i++;
-                if (i < args.length) {
-                    workerType = args[i];
-                } else {
-                    System.err.println("--worker-type requires a parameter");
-                    return;
-                }
+        for (String arg : args) {
+            String[] tokens = arg.split("="); // Split the argument by the equals sign
+            if (tokens[0].equals("--worker-type")) {
+                workerType = tokens[1];
             }
         }
 
         // Initializing my locations
-        Location a = new Location("Calgary", "123 Location lane");
-        Location b = new Location("Edmonton", "456 Location lane");
-        Location c = new Location("Toronto", "789 Location lane");
-        Location d = new Location("New York", "101 Location lane");
-
-        // Storing the locations
-        storedLocations = new HashSet<>(Arrays.asList(a, b, c, d));
-
-        // TODO: Get gender options and delete respective function in DisasterVictim
-        // Testing I/O
-        Scanner scanner = new Scanner(System.in);
-        String testInput = scanner.nextLine();
-        System.out.println(testInput);
+        populateLocations();
 
         if (workerType.equals("central")) {
-            // Introduction
-            System.out.println("Welcome to the HeadQuarters Relief Management System");
-            System.out.println("Select what action you'd like to perform\n" +
-                    "1. Enter disaster victim information\n" +
-                    "2. Blah Blah Blah\n" +
-                    "3. Blah Blah Blah");
+            new InquirerQueryCLI().run();
+        } else {
+            // Ask for location
+            System.out.println("Hello Local Worker.\nEnter the name of the location you are working at.\nChoose from the following: ");
 
-            if (Integer.parseInt(scanner.nextLine()) == 1) {
-                System.out.println("Please enter the entry date of the victim.\nValid Formats are: " +
-                        "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\nEnter here: ");
-                String entryDate = scanner.nextLine();
-                DisasterVictim disasterVictim = new DisasterVictim(entryDate);
-
-                // Calling interface function with location list and worker-flag
-                disasterVictim.enterDisasterVictimInfo();
-
+            // Create HashMap to store integers and locations
+            HashMap<Integer, Location> locationMap = new HashMap<>();
+            int i = 1;
+            for (Location location : storedLocations) {
+                System.out.println(i + ". " + location.getName());
+                locationMap.put(i, location);
+                i++;
             }
+            // Get user input
+            while (true) {
+                try {
+                    int locationChoice = Integer.parseInt(scanner.nextLine());
+                    if (locationChoice < 1 || locationChoice > storedLocations.size()) {
+                        System.out.println("Invalid choice. Please choose a number between 1 and " + storedLocations.size());
+                    } else {
+                        locationWorkerLocation = locationMap.get(locationChoice);
+                        break;
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                }
+            }
+            new DisasterVictimCLI().run();
         }
+    }
 
+    /**
+     * Populates the storedLocations HashSet with Location objects
+     */
+    private static void populateLocations() {
+        // Initializing my locations
+        Location a = new Location("New York", "123 Location lane");
+        Location b = new Location("Edmonton", "456 Location lane");
+        Location c = new Location("Toronto", "789 Location lane");
+        Location d = new Location("Calgary", "101 Location lane");
 
+        storedLocations = new HashSet<>(Arrays.asList(a, b, c, d));
     }
 }

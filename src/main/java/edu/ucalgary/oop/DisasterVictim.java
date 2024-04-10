@@ -5,7 +5,7 @@ import java.util.*;
 /**
  * Class that represents a victim of a disaster
  */
-public class DisasterVictim implements VictimEntryInterface {
+public class DisasterVictim {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -32,6 +32,24 @@ public class DisasterVictim implements VictimEntryInterface {
         return (approximateAge >= 0 && approximateAge < 150);
     }
 
+    public boolean familyConnectionAlreadyExists(FamilyRelation familyConnection, String type) {
+        if (type.equals("sibling")) {
+            // Checking if the connection already exists
+            Optional<FamilyRelation> siblingConnection = familyConnections.stream().filter((connection) -> (
+                    connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne())
+                            || connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())
+            )).findFirst();
+            return siblingConnection.isPresent();
+
+        } else {
+            // Checking if the connection already exists
+            Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> (
+                    connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())
+            )).findFirst();
+            return existingConnection.isPresent();
+        }
+    }
+
     // TODO: Replace printStackTrace methods with more 'user-friendly messages' as per her requirements
 
     // TODO: Consider line endings \n vs \r\n for text I/O
@@ -39,6 +57,18 @@ public class DisasterVictim implements VictimEntryInterface {
     // TODO: Modify throwing of exceptions so the users don't see unadulterated execption text.
 
     // TODO: Implement functionality to automatically generate ASSIGNED_ID and ENTRY_DATE
+
+    /*-----------------Constructors-----------------*/
+
+    // TODO: What if entry date is not known, then put todays date.
+
+    /**
+     * Constructor for `DisasterVictim`
+     */
+    public DisasterVictim() {
+        this.ASSIGNED_SOCIAL_ID = ++counter;
+        this.ENTRY_DATE = ApplicationUtils.getCurrentDate();  // Set the entry date to the current date
+    }
 
     public DisasterVictim(String ENTRY_DATE) throws IllegalArgumentException {
         this.ASSIGNED_SOCIAL_ID = ++counter;
@@ -219,7 +249,7 @@ public class DisasterVictim implements VictimEntryInterface {
         } else {
             // TODO: Validate possible approximate ages
             if (isValidApproximateAge(approximateAge)) this.approximateAge = approximateAge;
-            else throw new IllegalArgumentException("Invalid approximate age provided");
+            else throw new IllegalArgumentException("Invalid approximate age provided: Age must be between 0 and 150");
         }
     }
 
@@ -247,6 +277,7 @@ public class DisasterVictim implements VictimEntryInterface {
      * @param gender the gender to set
      */
     public void setGender(String gender) {
+        gender = gender.toLowerCase();
         if (ApplicationUtils.isValidGender(gender)) this.gender = gender.toLowerCase();
         else throw new IllegalArgumentException("Invalid gender provided");
     }
@@ -286,53 +317,99 @@ public class DisasterVictim implements VictimEntryInterface {
      * @param familyConnection the family connection to add
      */
     public void addFamilyConnection(FamilyRelation familyConnection) throws IllegalArgumentException {
+
+        // Check if the connection is relevant to the victim
+        if (!familyConnection.getPersonOne().equals(this) && !familyConnection.getPersonTwo().equals(this)) {
+            throw new IllegalArgumentException("Invalid family connection provided: Connection not relevant to the victim");
+        }
+
         // Checking for self-connection
         if (familyConnection.getPersonOne().equals(familyConnection.getPersonTwo())) {
             throw new IllegalArgumentException("Invalid family connection provided: Self relation not allowed");
         }
 
         // Checking if the connection already exists
-        Optional<FamilyRelation> existingConnection = familyConnections.stream().filter((connection) -> (
-                connection.getPersonOne().equals(familyConnection.getPersonOne()) && connection.getPersonTwo().equals(familyConnection.getPersonTwo())
-        )).findFirst();
-        if (existingConnection.isPresent()) {
-            return;
-        }
+        familyConnectionAlreadyExists(familyConnection, familyConnection.getRelationshipTo());
 
-        // Checking if the connection is a sibling
-        if (familyConnection.getRelationshipTo().equals("sibling")) {
-            // Checking if the connection already exists
-            Optional<FamilyRelation> siblingConnection = familyConnections.stream().filter((connection) -> (
-                    connection.getPersonOne().equals(familyConnection.getPersonTwo()) && connection.getPersonTwo().equals(familyConnection.getPersonOne())
-            )).findFirst();
-            if (siblingConnection.isPresent()) {
-                return;
+        switch (familyConnection.getRelationshipTo()) {     // Checking if the connection is a sibling
+
+            case "sibling":
+                HashSet<DisasterVictim> siblingsHash = familyConnection.getAllSiblings(new HashSet<>());
+
+                // Convert HashSet to ArrayList
+                ArrayList<DisasterVictim> siblings = new ArrayList<>(siblingsHash);
+
+                // Adding siblings to each other
+                for (int i = 0; i < siblings.size(); i++) {
+                    for (int j = i + 1; j < siblings.size(); j++) {
+                        // Check if connection already exists
+                        DisasterVictim person1 = siblings.get(i);
+                        DisasterVictim person2 = siblings.get(j);
+
+                        FamilyRelation pendingSiblingConnection = new FamilyRelation(person1, "sibling", person2);
+
+                        // Check if person1 already has connection
+                        if (person1.familyConnectionAlreadyExists(pendingSiblingConnection, "sibling")) {
+                            continue;
+                        }
+
+                        person1.familyConnections.add(pendingSiblingConnection);
+                        person2.familyConnections.add(pendingSiblingConnection);
+                    }
+                }
+                break;
+            case "parent": { // Checking if the connection is a parent
+                // Enforce a strict two-sided relationship
+                DisasterVictim parent = this;
+                DisasterVictim child = familyConnection.getPersonTwo();
+
+                FamilyRelation pendingParentConnection = new FamilyRelation(parent, "parent", child);
+                FamilyRelation pendingChildConnection = new FamilyRelation(child, "child", parent);
+
+                // Check if child connection already exists
+                if (!child.familyConnectionAlreadyExists(pendingChildConnection, "child"))
+                    child.familyConnections.add(pendingChildConnection);
+
+                parent.familyConnections.add(pendingParentConnection);
+
+
+                break;
             }
+            case "child": { // Checking if the connection is a child
+                // Enforce a strict two-sided relationship
+                DisasterVictim child = this;
+                DisasterVictim parent = familyConnection.getPersonTwo();
 
-            familyConnections.add(familyConnection);
-            familyConnection.recursiveSiblingAdder(new HashSet<>());
+                FamilyRelation pendingParentConnection = new FamilyRelation(parent, "parent", child);
+                FamilyRelation pendingChildConnection = new FamilyRelation(child, "child", parent);
 
-        } else if (familyConnection.getRelationshipTo().equals("parent")) { // Checking if the connection is a parent
+                // Check if parent connection already exists
+                if (!parent.familyConnectionAlreadyExists(pendingParentConnection, "parent"))
+                    parent.addFamilyConnection(pendingParentConnection);
 
-        } else if (familyConnection.getRelationshipTo().equals("child")) {
+                child.familyConnections.add(pendingChildConnection);
 
-        } else if (familyConnection.getRelationshipTo().equals("spouse")) {
+                break;
+            }
+            case "spouse": {// Checking if the connection is a spouse
+                // Enforce a strict two-sided relationship
+                DisasterVictim spouse1 = this;
+                DisasterVictim spouse2 = familyConnection.getPersonTwo();
 
-        } else {
-            throw new IllegalArgumentException("Invalid family connection provided: Invalid relationship type");
+                FamilyRelation pendingSpouse2Connection = new FamilyRelation(spouse2, "spouse", spouse1);
+
+                // Check if spouse2 connection already exists
+                if (!spouse2.familyConnectionAlreadyExists(pendingSpouse2Connection, "spouse"))
+                    spouse2.addFamilyConnection(pendingSpouse2Connection);
+
+                spouse1.familyConnections.add(new FamilyRelation(spouse1, "spouse", spouse2));
+
+                break;
+            }
+            default:
+                throw new IllegalArgumentException("Invalid family connection provided: Invalid relationship type");
         }
 
-    }
-
-    /**
-     * Adds a family connection to the victim
-     *
-     * @param familyConnection the family connection to add
-     * @param withGlance       whether to recurse through the family connection to fix any inconsistencies
-     */
-    public void addFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
-        familyConnections.add(familyConnection);
-        if (withGlance) familyConnection.recursiveAdderGlance(new HashSet<>());
     }
 
     /**
@@ -342,29 +419,73 @@ public class DisasterVictim implements VictimEntryInterface {
      */
     public void removeFamilyConnection(FamilyRelation familyConnection) {
 
-        // If siblings are disconnected, it cascades effectively everywhere
-        // Getting all siblings
-        HashSet<DisasterVictim> siblings = familyConnection.recursiveRemoverGlance(new HashSet<>());
+        // Check if the connection is relevant to the victim
+        if (!familyConnection.getPersonOne().equals(this) && !familyConnection.getPersonTwo().equals(this)) {
+            throw new IllegalArgumentException("Invalid family connection provided: Connection not relevant to the victim");
+        }
 
-        // Removing "siblings" relationships
-        siblings.forEach((sibling) -> {
-            sibling.getFamilyConnections().forEach((connection) -> {
-                if (connection.getRelationshipTo().equals("sibling")) {
-                    sibling.removeFamilyConnection(connection, false);
-                }
-            });
-        });
-    }
+        switch (familyConnection.getRelationshipTo()) {
+            case "sibling":              // If siblings are disconnected, it cascades effectively everywhere
 
-    /**
-     * Removes a family connection from the victim
-     *
-     * @param familyConnection the family connection to remove
-     * @param withGlance       whether to recurse through the family connection to fix any inconsistencies
-     */
-    public void removeFamilyConnection(FamilyRelation familyConnection, boolean withGlance) {
-        familyConnections.remove(familyConnection);
-        if (withGlance) familyConnection.recursiveRemoverGlance(new HashSet<>());
+                // Getting all siblings
+                HashSet<DisasterVictim> siblings = familyConnection.getAllSiblings(new HashSet<>());
+
+                HashMap<DisasterVictim, FamilyRelation> connectionsToRemove = new HashMap<>();
+
+                // Removing "siblings" relationships
+                siblings.forEach((sibling) -> {
+                    sibling.getFamilyConnections().forEach((connection) -> {
+                        if (connection.getRelationshipTo().equals("sibling")) {
+                            // Add to remove list
+                            connectionsToRemove.put(sibling, connection);
+                        }
+                    });
+                });
+
+                // Removing all sibling connections
+                connectionsToRemove.forEach((sibling, connection) -> {
+                    sibling.familyConnections.remove(connection);
+                });
+                break;
+            case "spouse":
+                DisasterVictim spouse1 = familyConnection.getPersonOne();
+                DisasterVictim spouse2 = familyConnection.getPersonTwo();
+                FamilyRelation alternateSpouseConnection = new FamilyRelation(spouse2, "spouse", spouse1);
+
+
+                // Removing all possible spouse connections (null safe)
+                spouse1.familyConnections.remove(familyConnection);
+                spouse1.familyConnections.remove(alternateSpouseConnection);
+
+                spouse2.familyConnections.remove(familyConnection);
+                spouse2.familyConnections.remove(alternateSpouseConnection);
+
+                break;
+            case "parent": {
+                DisasterVictim parent = familyConnection.getPersonOne();
+                DisasterVictim child = familyConnection.getPersonTwo();
+
+                FamilyRelation childConnection = new FamilyRelation(child, "child", parent);
+
+                // Removing all parent-child connections (null safe)
+                parent.familyConnections.remove(familyConnection);
+                child.familyConnections.remove(childConnection);
+
+                break;
+            }
+            case "child": {
+                DisasterVictim parent = familyConnection.getPersonOne();
+                DisasterVictim child = familyConnection.getPersonTwo();
+
+                FamilyRelation parentConnection = new FamilyRelation(parent, "parent", child);
+
+                // Removing all parent-child connections (null safe)
+                parent.familyConnections.remove(parentConnection);
+                child.familyConnections.remove(familyConnection);
+
+                break;
+            }
+        }
     }
 
     /**
@@ -404,7 +525,10 @@ public class DisasterVictim implements VictimEntryInterface {
 
     // REQ 3: Supply Consistency
 
-    public void addPersonalBelonging(Supply supply) {
+    public void addPersonalBelonging(Supply supply) throws IllegalArgumentException {
+        if (supply.getSource() == null) {
+            throw new IllegalArgumentException("Supply does not have a source: It doesn't exist in the system.");
+        }
         // If a victim gets a supply, decrease stock in source
         supply.getSource().removeSupply(supply);
 
@@ -437,72 +561,40 @@ public class DisasterVictim implements VictimEntryInterface {
         }
     }
 
-    /*------------------Interface Methods--------------------*/
+    /**
+     * Gets the priority of the victim
+     *
+     * @return the priority of the victim
+     */
+    public int getPriority() {
+        // Calculate priority based on the entry date and the age of the victim
 
-    // REQ 6: Implementing VictimEntryInterface's functions
+        int priorityWeight = 0;
 
-    @Override
-    public void enterDisasterVictimInfo() {
+        // Calculate the difference in days between the entry date and today: daysSinceEntry
+        double daysSinceEntry = ApplicationUtils.getDaysSince(ENTRY_DATE);
 
-        // TODO: Implement optional entries
-
-        // Instantiate common keywords in HashMap
-        HashMap<String, Boolean> cliKeywords = new HashMap<>();
-        cliKeywords.put("yes", true);
-        cliKeywords.put("y", true);
-        cliKeywords.put("no", false);
-        cliKeywords.put("n", false);
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Disaster Victim Information");
-
-        // Collecting user data
-        System.out.println("Enter first name: ");
-        this.setFirstName(scanner.nextLine());
-
-        System.out.println("Enter last name: ");
-        this.setLastName(scanner.nextLine());
-
-        // Enter either approximate age or date of birth
-        System.out.println("Do you know the victim's date of birth?\nEnter yes/no: ");
-        Boolean birthDateKnown = cliKeywords.get(scanner.nextLine().toLowerCase());
-        if (birthDateKnown) {
-            System.out.println("Enter date of birth.\nValid Formats are: " + "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\n");
-            this.setDateOfBirth(scanner.nextLine());
-        } else {
-            System.out.println("Enter the approximate age: ");
-            this.setApproximateAge(Integer.parseInt(scanner.nextLine()));
+        // Very old people and very young people have high priority
+        if (approximateAge < 5 || approximateAge > 65) {
+            priorityWeight += 20;
         }
 
-        System.out.println("Enter comments: ");
-        this.setComments(scanner.nextLine());
+        // People who have been in the system for a long time have high priority
+        if (daysSinceEntry > 30) {
+            priorityWeight += 5;
+        }
 
-        // Creating family connections. Note to self: Java likely passes objects by reference
-        this.enterFamilyConnectionsInfo();
-    }
+        // People with dietary restrictions have high priority
+        if (!dietaryRestrictions.isEmpty()) {
+            priorityWeight += 1;
+        }
 
-    @Override
-    public void enterFamilyConnectionsInfo() {
-        Scanner scanner = new Scanner(System.in);
-        // Relationships HashMap
-        HashMap<Integer, String> relationshipMap = new HashMap<>();
-        relationshipMap.put(1, "sibling");
-        relationshipMap.put(2, "parent");
-        relationshipMap.put(3, "child");
-        relationshipMap.put(4, "spouse");
+        // People with medical records have high priority
+        if (!medicalRecords.isEmpty()) {
+            priorityWeight += 10;
+        }
 
-        // Figure out the DisasterVictim that `this` is related to
-        System.out.println("Please enter info relevant to the disaster victim relative");
-        // Function that returns DisasterVictim object
-//        DisasterVictim relative = searchDisasterVictim();
-
-        System.out.println("We support four types of relationships. Choose a relationship type.\n1. 'sibling'\n2. 'parent'\n3. 'child'\n4. 'spouse'\n\nEnter a number: ");
-        String relationType = relationshipMap.get(Integer.parseInt(scanner.nextLine()));
-
-        // Add connection
-//        this.addFamilyConnection(new FamilyRelation(this, relationType, relative));
-
-
+        return priorityWeight;
     }
 
 }

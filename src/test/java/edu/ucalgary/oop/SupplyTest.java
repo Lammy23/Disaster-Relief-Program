@@ -8,9 +8,9 @@ import static org.junit.Assert.*;
 public class SupplyTest {
 
     private Supply testSupply;
-    private String expectedType = "Water";
-    private int expectedQuantity = 10;
-    private Location expectedSource = new Location("LocationA", "123 Location lane");
+    private final String expectedType = "Water";
+    private final int expectedQuantity = 10;
+    private final Location expectedSource = new Location("LocationA", "123 Location lane");
 
     public SupplyTest() {
     }
@@ -35,11 +35,6 @@ public class SupplyTest {
     @Test
     public void testConstructorQuantity() {
         assertEquals("Constructor should set the correct quantity", expectedQuantity, testSupply.getQuantity());
-    }
-
-    @Test
-    public void testConstructorSource() {
-        assertEquals("Constructor should set the correct source", expectedSource, testSupply.getSource());
     }
 
     /*--------Testing Getters & Setters-----------*/

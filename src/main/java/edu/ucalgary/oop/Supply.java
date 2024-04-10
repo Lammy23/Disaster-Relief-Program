@@ -20,14 +20,10 @@ public class Supply {
     /*---------------Constructor---------------*/
 
     /**
-     * Constructor for the Supply class (when source is not known)
-     *
-     * @param type     the type of supply
-     * @param quantity the quantity of the supply
+     * Default constructor for the Supply class
      */
-    public Supply(String type, int quantity) {
-        this.type = type;
-        this.quantity = quantity;
+    public Supply() {
+
     }
 
     /**
@@ -40,6 +36,9 @@ public class Supply {
         this.type = type;
         this.quantity = quantity;
         this.source = source;
+
+        // Attached supply to location
+        source.addSupply(this);
     }
 
     /*---------------Getters---------------*/
@@ -102,6 +101,12 @@ public class Supply {
      * @param source the source of the supply
      */
     public void setSource(Location source) {
+        // If source is not null, remove supply from previous source
+        if (this.source != null) {
+            this.source.removeSupply(this);
+        }
+
         this.source = source;
+        source.addSupply(this);
     }
 }

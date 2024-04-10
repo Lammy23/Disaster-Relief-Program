@@ -142,7 +142,6 @@ public class Location {
             int newQuantity = supply.getQuantity();
             targetSupply.setQuantity(oldQuantity + newQuantity);
         } else {
-            supply.setSource(this);
             supplies.add(supply);
         }
     }
@@ -162,8 +161,8 @@ public class Location {
 
             if (newQuantity >= oldQuantity) {
                 // Remove supplies entirely
-                supply.setSource(null);
-                supplies.remove(supply);
+                targetSupply.setSource(null);
+                supplies.remove(targetSupply);
             } else {
                 targetSupply.setQuantity(oldQuantity - newQuantity);
             }
