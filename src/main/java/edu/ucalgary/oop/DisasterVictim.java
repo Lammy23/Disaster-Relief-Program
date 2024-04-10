@@ -62,6 +62,14 @@ public class DisasterVictim {
 
     // TODO: What if entry date is not known, then put todays date.
 
+    /**
+     * Constructor for `DisasterVictim`
+     */
+    public DisasterVictim() {
+        this.ASSIGNED_SOCIAL_ID = ++counter;
+        this.ENTRY_DATE = ApplicationUtils.getCurrentDate();  // Set the entry date to the current date
+    }
+
     public DisasterVictim(String ENTRY_DATE) throws IllegalArgumentException {
         this.ASSIGNED_SOCIAL_ID = ++counter;
         if (ApplicationUtils.isValidPastDate(ENTRY_DATE)) this.ENTRY_DATE = ApplicationUtils.parseDate(ENTRY_DATE);

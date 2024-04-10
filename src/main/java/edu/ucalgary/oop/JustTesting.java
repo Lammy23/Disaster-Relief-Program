@@ -14,11 +14,11 @@ public class JustTesting {
             try {
                 System.out.println("Enter a string: ");
                 String string = scanner.nextLine();
+                int number = Integer.parseInt(string);
                 System.out.println("You entered: " + string);
                 break;
             } catch (Exception e) {
-                System.out.println("Invalid input. Please enter a number.");
-                scanner.nextLine();
+                System.out.println("Invalid input. Please enter a number." + e.getMessage());
             }
         }
 
@@ -30,7 +30,6 @@ public class JustTesting {
                 break;
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a number.");
-                scanner.nextLine();
             }
         }
     }

@@ -17,6 +17,12 @@ public class InquirerQueryCLI {
         this.scanner = new Scanner(System.in);
     }
 
+    public void run() {
+
+    }
+
+    // TODO: Instantiate default classes
+
     /**
      * This method is responsible for creating an inquirer and adding it to the storedInquirers set
      */

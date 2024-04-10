@@ -16,6 +16,14 @@ import java.util.regex.Pattern;
 public class ApplicationUtils {
 
     /**
+     * Gets the current date
+     * @return the current date
+     */
+    public static String getCurrentDate() {
+        return LocalDate.now().toString();
+    }
+
+    /**
      * Checks if a date is valid. Date could be future or past
      *
      * @param date the date to check
