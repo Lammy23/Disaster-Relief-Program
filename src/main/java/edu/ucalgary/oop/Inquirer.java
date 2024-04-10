@@ -14,7 +14,6 @@ public class Inquirer {
     private final String INFO;
     private final String SERVICES_PHONE;
 
-    private Connection dbConnect;
     private ResultSet results;
 
     public Inquirer(String FIRST_NAME, String LAST_NAME, String INFO, String SERVICES_PHONE) {
@@ -40,25 +39,4 @@ public class Inquirer {
         return INFO;
     }
 
-    public String getLogDetails() {
-        /* Reading log details from postgreSQL database */
-        StringBuilder logDetails = new StringBuilder();
-
-        try {
-            String query = "SELECT inquiry_log.details, inquiry_log.calldate FROM inquirer RIGHT OUTER JOIN inquiry_log ON inquirer.id = inquiry_log.inquirer WHERE (inquirer.firstname = ? AND inquirer.lastname = ?)";
-            PreparedStatement myStmt = dbConnect.prepareStatement(query);
-            myStmt.setString(1, this.FIRST_NAME);
-            myStmt.setString(2, this.LAST_NAME);
-            results = myStmt.executeQuery();
-
-            while (results.next()) {
-                logDetails.append(results.getString("calldate")).append(results.getString("details"));
-                logDetails.append("\n\n");
-            }
-            myStmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return logDetails.toString();
-    }
 }

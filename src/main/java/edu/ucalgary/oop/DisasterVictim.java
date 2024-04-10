@@ -249,7 +249,7 @@ public class DisasterVictim {
         } else {
             // TODO: Validate possible approximate ages
             if (isValidApproximateAge(approximateAge)) this.approximateAge = approximateAge;
-            else throw new IllegalArgumentException("Invalid approximate age provided");
+            else throw new IllegalArgumentException("Invalid approximate age provided: Age must be between 0 and 150");
         }
     }
 

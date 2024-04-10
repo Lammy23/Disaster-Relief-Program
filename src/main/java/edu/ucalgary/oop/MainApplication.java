@@ -9,9 +9,12 @@ import java.util.*;
 // and input and output (printing), and those that interface with the
 // stored locations. Phew!
 
+/**
+ * MainApplication class that contains the main method to run the application
+ */
 public class MainApplication {
 
-    public static String workerType;
+    public static String workerType = "central"; // default value
     public static HashSet<Location> storedLocations = new HashSet<>();
     public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";  // TODO: Add file path to README documentation
     public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
@@ -19,105 +22,70 @@ public class MainApplication {
     public static Location locationWorkerLocation;
 
 
+    /**
+     * Main method to run the application
+     *
+     * @param args command-line flag to determine the type of worker
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Read command-line flag
-        workerType = "location"; // default value
+        // Print command-line flag
+        System.out.println("args: " + Arrays.toString(args));
 
-        for (int i = 0; i < args.length; i++) {
-            if ("--worker-type".equals(args[i])) {
-                i++;
-                if (i < args.length) {
-                    workerType = args[i];
-                } else {
-                    System.err.println("--worker-type requires a parameter");
-                    return;
-                }
+        // Read command-line flag
+        for (String arg : args) {
+            String[] tokens = arg.split("="); // Split the argument by the equals sign
+            if (tokens[0].equals("--worker-type")) {
+                workerType = tokens[1];
             }
         }
 
         // Initializing my locations
-        Location a = new Location("Calgary", "123 Location lane");
-        Location b = new Location("Edmonton", "456 Location lane");
-        Location c = new Location("Toronto", "789 Location lane");
-        Location d = new Location("New York", "101 Location lane");
+        populateLocations();
 
-        // Storing the locations
-        storedLocations = new HashSet<>(Arrays.asList(a, b, c, d));
+        if (workerType.equals("central")) {
+            new InquirerQueryCLI().run();
+        } else {
+            // Ask for location
+            System.out.println("Enter the name of the location you are working at.\nChoose from the following: ");
 
-        // Get Location of Local Worker
-        if (workerType.equals("location")) {
-            System.out.println("Please enter your location:\nChoose a number from the following options: ");
-
-            // Creating location hashmap
+            // Create HashMap to store integers and locations
             HashMap<Integer, Location> locationMap = new HashMap<>();
-
             int i = 1;
             for (Location location : storedLocations) {
                 System.out.println(i + ". " + location.getName());
                 locationMap.put(i, location);
                 i++;
             }
-
-            // Get the user's choice
-            int choice;
+            // Get user input
             while (true) {
                 try {
-                    choice = Integer.parseInt(scanner.nextLine());
-                    while (choice < 1 || choice > storedLocations.size()) {
-                        System.out.println("Invalid choice provided");
-                        System.out.println("Please choose a valid option: ");
-                        choice = Integer.parseInt(scanner.nextLine());
+                    int locationChoice = Integer.parseInt(scanner.nextLine());
+                    if (locationChoice < 1 || locationChoice > storedLocations.size()) {
+                        System.out.println("Invalid choice. Please choose a number between 1 and " + storedLocations.size());
+                    } else {
+                        locationWorkerLocation = locationMap.get(locationChoice);
+                        break;
                     }
-                    break;
-                } catch (Exception e) {
-                    System.out.println("Invalid input provided.\n" + e.getMessage());
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
                 }
             }
-            locationWorkerLocation = locationMap.get(choice);
+            new DisasterVictimCLI().run();
         }
+    }
 
-        // Introduction
-        System.out.println("Welcome to the Relief Management System");
-        System.out.println(
-                "Select what action you'd like to perform\n" +
-                        "1. Launch Disaster Victim Interface.\nHere you can enter information about disaster victims, their" + "relationships and their medical records\n" +
-                        "2. Launch Inquirer Query Interface.\nHere you can log inquirer queries, and search blah\n" +
-                        "3. Quit\n\n" +
-                        "Enter here: "
-        );
+    /**
+     * Populates the storedLocations HashSet with Location objects
+     */
+    private static void populateLocations() {
+        // Initializing my locations
+        Location a = new Location("New York", "123 Location lane");
+        Location b = new Location("Edmonton", "456 Location lane");
+        Location c = new Location("Toronto", "789 Location lane");
+        Location d = new Location("Calgary", "101 Location lane");
 
-        // Create a HashMap to store the choices
-        HashMap<Integer, Object> choiceMap = new HashMap<>();
-        choiceMap.put(1, new DisasterVictimCLI());
-        choiceMap.put(2, new InquirerQueryCLI());
-        choiceMap.put(3, null);
-
-        // Get the user's choice
-        int choice;
-        while (true) {
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                while (choice < 1 || choice > 3) {
-                    System.out.println("Invalid choice provided");
-                    System.out.println("Please choose a valid option: ");
-                    choice = Integer.parseInt(scanner.nextLine());
-                }
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
-
-        // Launch the selected interface
-        if (choice == 3) {
-            System.out.println("Exiting...");
-            System.exit(0);
-        } else if (choice == 2) {
-            ((InquirerQueryCLI) choiceMap.get(choice)).run();
-        } else {
-            ((DisasterVictimCLI) choiceMap.get(choice)).run();
-        }
+        storedLocations = new HashSet<>(Arrays.asList(a, b, c, d));
     }
 }

@@ -19,10 +19,56 @@ public class InquirerQueryCLI {
 
     public void run() {
 
+
+        int choice;
+        while (true) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                while (choice < 1 || choice > 4) {
+                    System.out.println("Invalid choice provided");
+                    System.out.println("Please choose an option from the following:");
+                    System.out.println("1. Create an inquirer");
+                    System.out.println("2. Delete an inquirer");
+                    System.out.println("3. Search for an inquirer");
+                    System.out.println("4. Exit");
+                    choice = Integer.parseInt(scanner.nextLine());
+                }
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());
+            }
+        }
+
+        switch (choice) {
+            case 1:
+                createInquirer();
+                break;
+            case 2:
+                deleteInquirer();
+                break;
+            case 3:
+                Inquirer inquirer = searchInquirer();
+                System.out.println("Inquirer found: " + inquirer.getFirstName() + " " + inquirer.getLastName());
+                break;
+            case 4:
+                System.out.println("Exiting the Inquirer Query Command Line Interface");
+                break;
+        }
+
+    }
+
+    private void displayMenu() {
+        System.out.println("\n\nWelcome to the Inquirer Query Command Line Interface.\nYour Location: Central Office\n\n");
+        System.out.println("Please choose an option from the following:");
+        System.out.println("1. Create an inquirer");
+        System.out.println("2. Delete an inquirer");
+        System.out.println("3. View and inquirers logs for an inquirer");
+        System.out.println("4. Exit");
     }
 
     // TODO: Instantiate default classes
     // TODO: These guys don't have access to any location specifically so they have to search the whole damn thing. That's what searchVictim is for
+
     /**
      * This method is responsible for creating an inquirer and adding it to the storedInquirers set
      */
@@ -144,6 +190,7 @@ public class InquirerQueryCLI {
 
     /**
      * This method is responsible for searching for an inquirer in the storedInquirers set
+     *
      * @return Inquirer
      */
     public Inquirer searchInquirer() {

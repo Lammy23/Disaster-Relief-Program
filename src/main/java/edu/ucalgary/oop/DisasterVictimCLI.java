@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
-
+/**
+ * This class is responsible for handling the command line interface for the disaster victims
+ */
 public class DisasterVictimCLI {
     private final Scanner scanner;
     private final HashMap<Integer, String> relationshipMap = new HashMap<>();
@@ -22,14 +24,14 @@ public class DisasterVictimCLI {
     private <T> HashMap<Integer, T> hashMapArrayList(ArrayList<T> disasterVictims) {
         HashMap<Integer, T> hashMap = new HashMap<>();
         for (int i = 0; i < disasterVictims.size(); i++) {
-            hashMap.put(i, disasterVictims.get(i));
+            hashMap.put(i + 1, disasterVictims.get(i));
         }
         return hashMap;
     }
 
     private <T> HashMap<Integer, T> hashMapHashSet(HashSet<T> disasterVictims) {
         HashMap<Integer, T> hashMap = new HashMap<>();
-        int i = 0;
+        int i = 1;
         for (T disasterVictim : disasterVictims) {
             hashMap.put(i, disasterVictim);
             i++;
@@ -39,13 +41,13 @@ public class DisasterVictimCLI {
 
     private <T> void printHashMap(HashMap<Integer, T> hashMap) {
         for (int i = 0; i < hashMap.size(); i++) {
-            System.out.println(i + ". " + hashMap.get(i));
+            System.out.println(i + 1 + ". " + hashMap.get(i));
         }
     }
 
     private void printDisasterVictims(HashMap<Integer, DisasterVictim> hashMap) {
         for (int i = 0; i < hashMap.size(); i++) {
-            System.out.println(i + ". " + hashMap.get(i).getFirstName() + " " + hashMap.get(i).getLastName());
+            System.out.println(i + 1 + ". " + hashMap.get(i).getFirstName() + " " + hashMap.get(i).getLastName());
         }
     }
 
@@ -54,7 +56,7 @@ public class DisasterVictimCLI {
         while (true) {
             try {
                 choice = Integer.parseInt(scanner.nextLine());
-                while (choice < 0 || choice >= hashMap.size()) {
+                while (choice < 1 || choice > hashMap.size()) {
                     System.out.println("Invalid choice provided");
                     System.out.println("Please choose a valid option: ");
                     choice = Integer.parseInt(scanner.nextLine());
@@ -104,7 +106,7 @@ public class DisasterVictimCLI {
     }
 
     private void displayMenu() {
-        System.out.println("Welcome Local Worker!\nThis is the new Disaster Victim Command Line Interface.\nYour Location: " + MainApplication.locationWorkerLocation.getName() +
+        System.out.println("\n\nWelcome Local Worker!\nThis is the new Disaster Victim Command Line Interface.\nYour Location: " + MainApplication.locationWorkerLocation.getName() +
                 "\nAddress: " + MainApplication.locationWorkerLocation.getAddress() + "\n\n");
         System.out.println("Please select an option from the following: ");
         System.out.println("1. Create a disaster victim");
@@ -168,7 +170,8 @@ public class DisasterVictimCLI {
         }
 
         if (cliKeywords.get(dobChoice)) {
-            System.out.println("Enter the date of birth of the disaster victim: ");
+            System.out.println("Enter the date of birth of the disaster victim.\nValid Formats are: " +
+                    "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\nEnter here: " );
             while (true) {
                 try {
                     disasterVictim.setDateOfBirth(scanner.nextLine());
@@ -230,6 +233,9 @@ public class DisasterVictimCLI {
         if (allDisasterVictims.isEmpty()) {
             System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
             return;
+        } else if (allDisasterVictims.size() == 1) {
+            System.out.println("Only one disaster victim found in your location.\nPlease add another disaster victim first.\nExiting...");
+            return;
         }
         System.out.println("Which Disaster Victim would you like to assign as the first person in the relationship?\nSelect a number from the following options: ");
 
@@ -257,6 +263,8 @@ public class DisasterVictimCLI {
         disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
 
         familyRelation.setPersonTwo(disasterVictim);
+
+        disasterVictim.addFamilyConnection(familyRelation);
 
         // Add closing message
         System.out.println("Relationship successfully assigned!\nView other options in the menu if you wish to add more information.");
@@ -368,5 +376,51 @@ public class DisasterVictimCLI {
 
     }
 
-    public void viewDisaster
+    public void viewDisasterVictimInfo() {
+
+        ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
+        if (allDisasterVictims.isEmpty()) {
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            return;
+        }
+
+        System.out.println("Which Disaster Victim would you like to view information for?\nSelect a number from the following options: ");
+
+        // Use functions
+        HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
+        printDisasterVictims(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+
+        System.out.println("Disaster Victim Information: ");
+        System.out.println("First Name: " + disasterVictim.getFirstName());
+        System.out.println("Last Name: " + disasterVictim.getLastName());
+        System.out.println("Assigned Social ID: " + disasterVictim.getAssignedSocialID());
+        System.out.println("Entry Date: " + disasterVictim.getEntryDate());
+        if (disasterVictim.getDateOfBirth() == null) {
+            System.out.println("Approximate Age: " + disasterVictim.getApproximateAge());
+        } else {
+            System.out.println("Date of Birth: " + disasterVictim.getDateOfBirth());
+        }
+
+        System.out.println("Comments: " + disasterVictim.getComments());
+        System.out.println("Family Connections: ");
+        disasterVictim.getFamilyConnections().forEach((connection) -> {
+            System.out.println(connection + " of " + connection.getPersonTwo().getFirstName() + " " + connection.getPersonTwo().getLastName());
+        });
+
+        System.out.println("Dietary Restrictions: ");
+        disasterVictim.getDietaryRestrictions().forEach((restriction) -> {
+            System.out.println(restriction.getDescription());
+        });
+
+        System.out.println("Medical Records: ");
+        disasterVictim.getMedicalRecords().forEach((record) -> {
+            System.out.println("Treatment: " + record.getTreatmentDetails() + "\nDate of Treatment: " + record.getDateOfTreatment());
+        });
+
+        System.out.println("Personal Belongings: ");
+        disasterVictim.getPersonalBelongings().forEach((belonging) -> {
+            System.out.println("Type: " + belonging.getType() + "\nQuantity: " + belonging.getQuantity());
+        });
+    }
 }
