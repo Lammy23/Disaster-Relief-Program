@@ -22,7 +22,7 @@ public class InquirerQueryCLI {
     }
 
     // TODO: Instantiate default classes
-
+    // TODO: These guys don't have access to any location specifically so they have to search the whole damn thing. That's what searchVictim is for
     /**
      * This method is responsible for creating an inquirer and adding it to the storedInquirers set
      */

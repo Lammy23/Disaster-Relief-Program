@@ -1,18 +1,68 @@
 package edu.ucalgary.oop;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 
 public class DisasterVictimCLI {
     private final Scanner scanner;
+    private final HashMap<Integer, String> relationshipMap = new HashMap<>();
 
     public DisasterVictimCLI() {
         scanner = new Scanner(System.in);
+
+        // Assign relationships
+        relationshipMap.put(1, "parent");
+        relationshipMap.put(2, "child");
+        relationshipMap.put(3, "sibling");
+    }
+
+    private <T> HashMap<Integer, T> hashMapArrayList(ArrayList<T> disasterVictims) {
+        HashMap<Integer, T> hashMap = new HashMap<>();
+        for (int i = 0; i < disasterVictims.size(); i++) {
+            hashMap.put(i, disasterVictims.get(i));
+        }
+        return hashMap;
+    }
+
+    private <T> HashMap<Integer, T> hashMapHashSet(HashSet<T> disasterVictims) {
+        HashMap<Integer, T> hashMap = new HashMap<>();
+        int i = 0;
+        for (T disasterVictim : disasterVictims) {
+            hashMap.put(i, disasterVictim);
+            i++;
+        }
+        return hashMap;
+    }
+
+    private void printDisasterVictims(HashMap<Integer, DisasterVictim> hashMap) {
+        for (int i = 0; i < hashMap.size(); i++) {
+            System.out.println(i + ". " + hashMap.get(i).getFirstName() + " " + hashMap.get(i).getLastName());
+        }
+    }
+
+    private <T> T getChoiceFromHashMap(HashMap<Integer, T> hashMap) {
+        int choice;
+        while (true) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                while (choice < 0 || choice >= hashMap.size()) {
+                    System.out.println("Invalid choice provided");
+                    System.out.println("Please choose a valid option: ");
+                    choice = Integer.parseInt(scanner.nextLine());
+                }
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());
+            }
+        }
+        return hashMap.get(choice);
     }
 
     /**
-     * Run the DisasterVictimCLI
+     * Method to create a HashMap from a list of DisasterVictims
      */
     public void run() {
         while (true) {
@@ -45,12 +95,14 @@ public class DisasterVictimCLI {
     }
 
     private void displayMenu() {
-        System.out.println("Welcome to the Disaster Victim Command Line Interface");
+        System.out.println("Welcome Local Worker!\nThis is the new Disaster Victim Command Line Interface.\nYour Location: " + MainApplication.locationWorkerLocation.getName() +
+                "\nAddress: " + MainApplication.locationWorkerLocation.getAddress() + "\n\n");
         System.out.println("Please select an option from the following: ");
         System.out.println("1. Create a disaster victim");
         System.out.println("2. Assign relationships to a disaster victim");
         System.out.println("3. Add medical records to a disaster victim");
-        System.out.println("4. Exit");
+        System.out.println("4. View all disaster victims");
+        System.out.println("5. Exit Application");
     }
 
     public void createDisasterVictim() {
@@ -208,43 +260,51 @@ public class DisasterVictimCLI {
             // Assign choice to disasterVictim
             locationMap.get(choice).addOccupant(disasterVictim);
         }
+
+        // Add closing message
+        System.out.println("Disaster victim successfully created!\nView other options in the menu if you wish to add more information.");
     }
 
     public void assignRelationships() {
-    // Instantiate common keywords in HashMap
-        HashMap<String, Boolean> cliKeywords = new HashMap<>();
-        cliKeywords.put("yes", true);
-        cliKeywords.put("y", true);
-        cliKeywords.put("no", false);
-        cliKeywords.put("n", false);
+        FamilyRelation familyRelation = new FamilyRelation();
 
-        // Enter family connections
-        System.out.println("Does the disaster victim have any family connections? (yes/no)");
-
-        String familyConnectionsChoice = scanner.nextLine().toLowerCase();
-        while (!cliKeywords.containsKey(familyConnectionsChoice)) {
-            System.out.println("Invalid choice provided");
-            System.out.println("Does the disaster victim have any family connections? (yes/no)");
-            familyConnectionsChoice = scanner.nextLine().toLowerCase();
+        ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
+        if (allDisasterVictims.isEmpty()) {
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            return;
         }
+        System.out.println("Which Disaster Victim would you like to assign as the first person in the relationship?\nSelect a number from the following options: ");
+
+        // Use functions
+        HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
+        printDisasterVictims(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+
+        familyRelation.setPersonOne(disasterVictim);
+
+        System.out.println("What type of relationship would you like to assign to the disaster victim?\nSelect a number from the following options: ");
+
+        // Use relationshipMap
+        for (int i = 1; i <= relationshipMap.size(); i++) {
+            System.out.println(i + ". " + relationshipMap.get(i));
+        }
+
+        String relationship = getChoiceFromHashMap(relationshipMap);
+        familyRelation.setRelationshipTo(relationship);
+
+        System.out.println("Which Disaster Victim would you like to assign as the second person in the relationship?\nSelect a number from the following options: ");
+
+        // Use functions
+        printDisasterVictims(allDisasterVictimsMap);
+        disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+
+        familyRelation.setPersonTwo(disasterVictim);
+
+        // Add closing message
+        System.out.println("Relationship successfully assigned!\nView other options in the menu if you wish to add more information.");
     }
 
     public void addMedicalRecords() {
-        // Instantiate common keywords in HashMap
-        HashMap<String, Boolean> cliKeywords = new HashMap<>();
-        cliKeywords.put("yes", true);
-        cliKeywords.put("y", true);
-        cliKeywords.put("no", false);
-        cliKeywords.put("n", false);
 
-        // Enter medical records
-        System.out.println("Does the disaster victim have any medical records? (yes/no)");
-
-        String medicalRecordsChoice = scanner.nextLine().toLowerCase();
-        while (!cliKeywords.containsKey(medicalRecordsChoice)) {
-            System.out.println("Invalid choice provided");
-            System.out.println("Does the disaster victim have any medical records? (yes/no)");
-            medicalRecordsChoice = scanner.nextLine().toLowerCase();
-        }
     }
 }

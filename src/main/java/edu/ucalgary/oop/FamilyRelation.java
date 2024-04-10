@@ -40,6 +40,13 @@ public class FamilyRelation {
     /*-----------Constructor----------*/
 
     /**
+     * Default constructor for the `FamilyRelation` class
+     */
+    public FamilyRelation() {
+
+    }
+
+    /**
      * Constructor for the `FamilyRelation` class
      *
      * @param personOne      The first person in the family relationship

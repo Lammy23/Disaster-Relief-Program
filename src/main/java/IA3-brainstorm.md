@@ -19,3 +19,4 @@ I must explain everything in the README.
 * You have the create your locations. The user cannot create locations.
 * Name your submissions zip with your UCID
 * No interfaces required
+* Central workers don't work on disasterVictims, only local workers do.

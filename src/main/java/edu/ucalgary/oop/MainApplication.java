@@ -23,7 +23,7 @@ public class MainApplication {
         Scanner scanner = new Scanner(System.in);
 
         // Read command-line flag
-        workerType = "central"; // default value
+        workerType = "location"; // default value
 
         for (int i = 0; i < args.length; i++) {
             if ("--worker-type".equals(args[i])) {
