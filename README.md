@@ -13,38 +13,62 @@
 Welcome to the User Manual for the OOP Project!
 This manual will guide you through the process of setting up and running the program.
 
-## Table of Contents
+## About the Program
 
-1. [Setting Up the Program](#setting-up-the-program)
-2. [Running the Program](#running-the-program)
-3. [Running the Tests](#running-the-tests)
-4. [Exiting the Program](#exiting-the-program)
-5. [Troubleshooting](#troubleshooting)
-6. [Additional Information](#additional-information)
-7. [Contact Information](#contact-information)
+...
 
 ## Setting Up the Program
 
 To set up the program, you will need to have the following installed on your computer:
 * Java 11
-* PostgreSQL
-* JUnit
-* Hamcrest
 
-To install Java 11, follow the instructions on the [Java website](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html).
+For installation of Java, follow the instructions on the [Java website](https://www.oracle.com/java/technologies/javase-jdk11-downloads.html).
 
-To install PostgreSQL, follow the instructions on the [PostgreSQL website](https://www.postgresql.org/download/).
+You will also need to have the following .jar files in the project directory:
+* postgresql-42.7.2.jar
+* junit-4.13.2.jar
+* hamcrest-core-1.3.jar
 
-To install JUnit and Hamcrest, follow the instructions on the [JUnit website](https://junit.org/junit5/).
+These files can be downloaded from the following links:
+* [PostgreSQL JDBC Driver](https://jdbc.postgresql.org/download.html)
+* [JUnit](https://junit.org/junit4/)
+* [Hamcrest](http://hamcrest.org/JavaHamcrest/)
 
-Once you have installed the necessary software, you can proceed to the next section.
+The file structure for this project (Maven) ensures that the main program and the tests are kept separate. 
+The main program is located in the `src/main/java/edu/ucalgary/oop` directory, while the tests are located in the `src/test/java/edu/ucalgary/oop` directory.
+
+Ensure you have the GenderOptions.txt file in the project directory. It should be in the `src/main/resources` directory.
+
+
+This program interfaces with the PostgreSQL database, so you will need to have PostgreSQL installed on your computer.
+You can download PostgreSQL from the [PostgreSQL website](https://www.postgresql.org/download/). After downloading and installing PostgreSQL,
+open the PostgreSQL Shell, login with:
+
+```
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:         // Enter your password
+```
+
+Once you have logged in as admin, create a new user with the following command:
+
+
+```
+CREATE USER oop PASSWORD 'ucalgary';
+```
+
+Now that you have created a new user, you're ready to run the program. In the program, we 
+handle the creation of the database for you.
 
 ## Running the Program
 
 To run the program, follow these steps:
 
-1. Clone the repository to your local machine.
-2. Open a terminal window and navigate to the project directory.
+As mentioned earlier, ensure you have the following folder structure:
+
+Open a terminal window and navigate to the project directory.
 3. Run the following command to compile the program:
 ```
 javac -cp .:postgresql-42.2.23.jar Main.java

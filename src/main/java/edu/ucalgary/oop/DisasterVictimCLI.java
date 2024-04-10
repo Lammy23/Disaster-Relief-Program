@@ -2,13 +2,17 @@ package edu.ucalgary.oop;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Scanner;
 
 import static edu.ucalgary.oop.ApplicationUtils.*;
 
 /**
  * This class is responsible for handling the command line interface for the disaster victims
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class DisasterVictimCLI {
     private final Scanner scanner;
@@ -45,6 +49,8 @@ public class DisasterVictimCLI {
             }
             if (choice == 7) {
                 System.out.println("Exiting...");
+                System.out.println("Press any key to continue...");
+                scanner.nextLine();
                 System.exit(0);
             }
             // Run the choice
@@ -176,6 +182,8 @@ public class DisasterVictimCLI {
 
         // Add closing message
         System.out.println("Disaster victim successfully created!\nView other options in the menu if you wish to add more information.");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void assignRelationships() {
@@ -220,6 +228,8 @@ public class DisasterVictimCLI {
 
         // Add closing message
         System.out.println("Relationship successfully assigned!\nView other options in the menu if you wish to add more information.");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void addMedicalRecords() {
@@ -264,6 +274,8 @@ public class DisasterVictimCLI {
 
         // Add closing message
         System.out.println("Medical records successfully added!\nView other options in the menu if you wish to add more information.");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void viewAll() {
@@ -277,6 +289,8 @@ public class DisasterVictimCLI {
         System.out.println("All disaster victims in your location: ");
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void addSupplies() {
@@ -325,7 +339,8 @@ public class DisasterVictimCLI {
 
         // Add closing message
         System.out.println("Supplies successfully added!\nView other options in the menu if you wish to add more information.");
-
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void addDietaryRestrictions() {
@@ -353,6 +368,8 @@ public class DisasterVictimCLI {
 
         // Add closing message
         System.out.println("Dietary restrictions successfully added!\nView other options in the menu if you wish to add more information.");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void viewDisasterVictimInfo() {
@@ -401,5 +418,7 @@ public class DisasterVictimCLI {
         disasterVictim.getPersonalBelongings().forEach((belonging) -> {
             System.out.println("Type: " + belonging.getType() + "\nQuantity: " + belonging.getQuantity());
         });
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 }

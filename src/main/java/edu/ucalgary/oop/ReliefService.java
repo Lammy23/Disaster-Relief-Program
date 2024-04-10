@@ -7,14 +7,17 @@ import java.util.PriorityQueue;
 /**
  * Class that represents a relief service for disaster victims
  *
- *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class ReliefService {
     private Inquirer inquirer;                                                              // The main character, gotten from the sql directly
     private PriorityQueue<DisasterVictim> missingPersons = new PriorityQueue<>(
             Comparator.comparingInt(DisasterVictim::getPriority).reversed()
     );
-    private ArrayList<InquiryLog> logs = new ArrayList<>();                                 // REQ 5: To ensure multiple interaction with inquirer
+    private ArrayList<InquiryLog> logs = new ArrayList<>();
 
     /*---------------Constructor---------------*/
 

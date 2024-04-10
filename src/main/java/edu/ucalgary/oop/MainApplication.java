@@ -1,22 +1,20 @@
 package edu.ucalgary.oop;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
-
-// TODO: Create more Tests for functions that implement database access
-// and input and output (printing), and those that interface with the
-// stored locations. Phew!
 
 /**
  * MainApplication class that contains the main method to run the application
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class MainApplication {
 
     public static String workerType = "central"; // default value
     public static HashSet<Location> storedLocations = new HashSet<>();
-    public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";  // TODO: Add file path to README documentation
+    public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";
     public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
     public static Location locationWorkerLocation;
 

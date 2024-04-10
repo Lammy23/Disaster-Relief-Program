@@ -2,6 +2,11 @@ package edu.ucalgary.oop;
 
 /**
  * Enumerates the dietary restrictions that can be requested by a passenger.
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public enum DietaryRestriction {
     AVML("Asian vegetarian meal"),

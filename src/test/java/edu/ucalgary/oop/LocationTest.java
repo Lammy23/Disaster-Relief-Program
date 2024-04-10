@@ -42,8 +42,6 @@ public class LocationTest {
         assertNotNull(testLocation);
     }
 
-    // TODO: Remove multiple assert statements from test. Only one assert per test is allowed (basically).
-
     /*--------Testing Constructor------------*/
 
     @Test
@@ -140,8 +138,6 @@ public class LocationTest {
         testLocation.removeOccupant(x);
         assertEquals("removeOccupant should not care for the non-existent occupant", 0, testLocation.getOccupants().size());
     }
-
-    // REQ 3: Supply consistency
 
     @Test
     public void testAddOneSupplyToEmpty() {

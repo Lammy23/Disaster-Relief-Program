@@ -50,17 +50,7 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
         }
     }
 
-    // TODO: Replace printStackTrace methods with more 'user-friendly messages' as per her requirements
-
-    // TODO: Consider line endings \n vs \r\n for text I/O
-
-    // TODO: Modify throwing of exceptions so the users don't see unadulterated execption text.
-
-    // TODO: Implement functionality to automatically generate ASSIGNED_ID and ENTRY_DATE
-
     /*-----------------Constructors-----------------*/
-
-    // TODO: What if entry date is not known, then put todays date.
 
     /**
      * Constructor for `DisasterVictim`
@@ -226,7 +216,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
      * @param dateOfBirth the date of birth to set
      */
     public void setDateOfBirth(String dateOfBirth) throws IllegalStateException {
-        // TODO: add functionality to remove approximateAge and add dateOfBirth instead (if possible)
         // Checking if `approximateAge` has been set.
         if (this.approximateAge != null) {
             throw new IllegalStateException("The approximate age has already been set.");
@@ -247,7 +236,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
         if (this.dateOfBirth != null) {
             throw new IllegalStateException("The date of birth has already been set");
         } else {
-            // TODO: Validate possible approximate ages
             if (isValidApproximateAge(approximateAge)) this.approximateAge = approximateAge;
             else throw new IllegalArgumentException("Invalid approximate age provided: Age must be between 0 and 150");
         }
@@ -532,7 +520,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
      * @param medicalRecord the medical record to add
      */
     public void addMedicalRecord(MedicalRecord medicalRecord) {
-        // TODO: make sure all dates are set with the same freaking delimiter to make sure this code works
         if (medicalRecords.contains(medicalRecord)) {
             return;
         }
@@ -542,8 +529,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
     public void removeMedicalRecord(MedicalRecord medicalRecord) {
         medicalRecords.remove(medicalRecord);
     }
-
-    // REQ 3: Supply Consistency
 
     public void addPersonalBelonging(Supply supply) throws IllegalArgumentException {
         if (supply.getSource() == null) {

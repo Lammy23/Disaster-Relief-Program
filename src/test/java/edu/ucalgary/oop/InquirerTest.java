@@ -37,11 +37,4 @@ public class InquirerTest {
     public void testConstructorServicesPhone() {
         assertEquals("Constructor should set the correct services phone", expectedServicesPhone, testInquirer.getServicesPhone());
     }
-
-    /*--------------Testing Methods-----------------*/
-
-    @Test
-    public void testGetLogDetails() {
-        // TODO: Implement function
-    }
 }

@@ -210,8 +210,6 @@ public class DisasterVictimTest {
         testDisasterVictim.setApproximateAge(extremelyUnlikelyApproximateAge);  // Expecting line to fail
     }
 
-    /* REQ 8: Testing approximate age and birthday states */
-
     @Test(expected = IllegalStateException.class)
     public void testSetDateOfBirthWithApproximateAgeAlreadySet() {
         testDisasterVictim.setDateOfBirth(expectedValidDateOfBirth);
@@ -245,8 +243,6 @@ public class DisasterVictimTest {
 
         assertEquals("setFamilyConnections should update the family connections", siblings, testDisasterVictim.getFamilyConnections());
     }
-
-    /* REQ 9: Testing GenderOptions.txt */
 
     @Test
     public void testSetAndGetValidGender() {
@@ -324,8 +320,6 @@ public class DisasterVictimTest {
     }
 
     /*-----------Testing Adders/Removers------------*/
-
-    // TODO: Test for invalid family relationshipTo e.g. "brother" or "cousin"
 
     @Test
     public void testAddValidSiblingToEmpty() {
@@ -421,8 +415,6 @@ public class DisasterVictimTest {
         // Test that x relates to z
         assertTrue("z should relate to y", z.familyConnectionAlreadyExists(r2, "sibling"));
     }
-
-    // TODO: Test Adding family connection that has nothing to do with the DisasterVictim
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddNonRelatedSibling() {
@@ -559,8 +551,6 @@ public class DisasterVictimTest {
 
         assertEquals("x should not be related to z. I.e. it should have only one relationship", 1, x.getFamilyConnections().size());
     }
-
-    // REQ 3: Supply consistency Testing
 
     @Test
     public void testAddOnlyPersonalBelongingToEmpty() {

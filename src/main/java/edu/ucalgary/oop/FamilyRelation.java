@@ -4,6 +4,11 @@ import java.util.HashSet;
 
 /**
  * Class that represents a family relationship of a `DisasterVictim`
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class FamilyRelation {
 

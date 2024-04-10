@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 
-// TODO: Add version and author to every single class
 
 /**
  * Class that represents a location that shelters `DisasterVictim`s
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class Location {
     private String name;

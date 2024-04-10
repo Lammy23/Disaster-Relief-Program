@@ -2,9 +2,13 @@ package edu.ucalgary.oop;
 
 /**
  * Class that represents a log of an inquiry for a missing person
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 
-// TODO: Provide tests for this class
 public class InquiryLog {
     private String dateOfInquiry;                                // The calldate field in the sql table
     private String infoProvided;                                 // the details field in the sql table

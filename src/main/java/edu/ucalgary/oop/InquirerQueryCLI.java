@@ -11,6 +11,11 @@ import static edu.ucalgary.oop.ApplicationUtils.*;
 
 /**
  * This class is responsible for handling the command line interface for the inquirer queries
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class InquirerQueryCLI {
     private final Scanner scanner;
@@ -24,8 +29,6 @@ public class InquirerQueryCLI {
     private ResultSet results;                                                          // ResultSet object for the database
     private String sqlFile = "src/main/resources/project.sql";                   // SQL file to create the database
 
-
-    // TODO: Add these functions to ApplicationUtils
 
     /**
      * Constructor for the InquirerQueryCLI class
@@ -46,18 +49,16 @@ public class InquirerQueryCLI {
         } catch (Exception e) {
             System.out.println("Error accessing database objects.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
         }
     }
 
-    /**
-     * This method is responsible for importing the storedReliefServices from the database
-     */
-    public void importDB() {
-        // Registration
+    public void createDB(String userPassword) {
         try {
             // Connect to the general database
-            dbConnect = DriverManager.getConnection(MAINURL, "postgres", "appleseed"); // TODO: Tell the user to put their own password here
+            dbConnect = DriverManager.getConnection(MAINURL, "postgres", userPassword);
 
             // Database we're concerned with is the ensf380project. We drop it if it exists and then create it
             String dropDB = "DROP DATABASE IF EXISTS ensf380project;";
@@ -89,15 +90,61 @@ public class InquirerQueryCLI {
 
             // Execute the SQL script
             stmt2.executeUpdate(sql);
-
         } catch (SQLException e) {
-            System.out.println("Error connecting to the database.\n" + e.getMessage());
+            System.out.println("Error creating the database.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
         } catch (IOException e) {
             System.out.println("Error reading the SQL file.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
+        }
+    }
+
+    public void connectDB() {
+        try {
+            // Connect to the target database
+            dbConnect = DriverManager.getConnection(DBURL, USERNAME, PASSWORD);
+        } catch (SQLException e) {
+            System.out.println("Error connecting to the database.\n" + e.getMessage());
+            System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
+            System.exit(1);                                                     // Exit the program with an error code
+        }
+    }
+
+    /**
+     * This method is responsible for importing the storedReliefServices from the database
+     */
+    public void importDB() {
+        // Registration
+
+        String userPassword;
+        System.out.println("Enter the password for your admin database: ");
+        userPassword = scanner.nextLine();
+
+
+        System.out.println("Do you want to create a new database?\nThis will have the default values from the SQL file. (yes/no)");
+
+        String choice;
+        while (true) {
+            choice = scanner.nextLine();
+            if (choice.equals("yes") || choice.equals("no")) {
+                break;
+            }
+            System.out.println("Invalid input provided. Please enter 'yes' or 'no'.");
+        }
+
+        // If the user wants to create a new database
+        if (choice.equals("yes")) {
+            createDB(userPassword);
+        } else {
+            connectDB();
         }
     }
 
@@ -132,10 +179,14 @@ public class InquirerQueryCLI {
         } catch (SQLException e) {
             System.out.println("Error connecting to database.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
         } catch (Exception e) {
             System.out.println("Error creating inquirers object.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
         }
     }
@@ -179,10 +230,14 @@ public class InquirerQueryCLI {
         } catch (SQLException e) {
             System.out.println("Error connecting to database.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
         } catch (Exception e) {
             System.out.println("Error creating inquirers object.\n" + e.getMessage());
             System.out.println("Exiting...");
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
             System.exit(1);                                                     // Exit the program with an error code
         }
     }
@@ -223,6 +278,8 @@ public class InquirerQueryCLI {
                 exportDB();
 
                 System.out.println("Exiting...");
+                System.out.println("Press any key to continue...");
+                scanner.nextLine();
                 System.exit(0);
             }
 
@@ -291,6 +348,8 @@ public class InquirerQueryCLI {
 
         // Add closing message
         System.out.println("Inquirer created successfully!\nView other options in the menus if you with to perform more actions.");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     /**
@@ -311,6 +370,8 @@ public class InquirerQueryCLI {
 
         // Add closing message
         System.out.println("Inquirer deleted successfully!\nView other options in the menus if you with to perform more actions.");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void viewInquirerLogs() {
@@ -328,6 +389,8 @@ public class InquirerQueryCLI {
             System.out.println("Details: " + log.getInfoProvided());
             System.out.println();
         }
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
     public void logInquires() {
@@ -350,7 +413,7 @@ public class InquirerQueryCLI {
 
         // Add closing message
         System.out.println("Inquirer logs added successfully!\nView other options in the menus if you with to perform more actions.");
-        System.out.println("Press any key to continue..."); // TODO: Implement this everywhere
+        System.out.println("Press any key to continue...");
         scanner.nextLine();
     }
 
@@ -407,16 +470,33 @@ public class InquirerQueryCLI {
 
         // Add the missing person to the service
         chosenService.addMissingPerson(missingPerson);
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
 
     public void exportDB() {
+        System.out.println("Do you want to save your changes to the database? (yes/no)");
+
+        String choice;
+        while (true) {
+            choice = scanner.nextLine();
+            if (choice.equals("yes") || choice.equals("no")) {
+                if (choice.equals("no")) {
+                    return;
+                }
+                break;
+            }
+            System.out.println("Invalid input provided. Please enter 'yes' or 'no'.");
+        }
+
 
         try {
+
             for (ReliefService service : storedServices) {
 
                 // Ensure that ReliefService is not already in the database
-                String checkService = "SELECT * FROM inquirer WHERE firstName = ? AND lastName = ?";
+                String checkService = "SELECT * FROM inquirer WHERE firstName = ? OR lastName = ?";
 
                 try (PreparedStatement pstmt = dbConnect.prepareStatement(checkService)) {
                     pstmt.setString(1, service.getInquirer().getFirstName());
@@ -497,12 +577,16 @@ public class InquirerQueryCLI {
             }
         } catch (SQLException ex) {
             System.out.println("Error exporting the storedInquirers to the database.\n" + ex.getMessage());
+            System.out.println("Press any key to continue...");
+            scanner.nextLine();
         }
 
         close();
 
         // Add closing message
-        System.out.println("Inquirers saved to database successfully!\nExiting...");
+        System.out.println("Inquirers saved to database successfully!");
+        System.out.println("Press any key to continue...");
+        scanner.nextLine();
     }
 
 }

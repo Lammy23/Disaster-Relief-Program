@@ -2,6 +2,11 @@ package edu.ucalgary.oop;
 
 /**
  * Class that represents a `DisasterVictim`'s medical record
+ *
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
  */
 public class MedicalRecord {
     private Location location;

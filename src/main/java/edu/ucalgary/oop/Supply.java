@@ -1,8 +1,5 @@
 package edu.ucalgary.oop;
 
-// TODO: Use the below comment as an example to write the Javadoc for classes
-
-// TODO: Last thing todo, add null exception for strings ("") and negative numbers
 
 /**
  * Class to represent a supply

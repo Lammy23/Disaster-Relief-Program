@@ -2,7 +2,13 @@ package edu.ucalgary.oop;
 
 import java.sql.ResultSet;
 
-
+/**
+ * Class that represents an inquirer for a missing person
+ * @author Olamikun Aluko
+ * <a href="mailto:lammyaluko@gmail.com">Email me</a> for any comments
+ * @version 1.1
+ * @since 1.0
+ */
 public class Inquirer {
     private final String FIRST_NAME;
     private final String LAST_NAME;

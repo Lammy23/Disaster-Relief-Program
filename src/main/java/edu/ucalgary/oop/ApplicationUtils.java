@@ -109,7 +109,6 @@ public class ApplicationUtils {
      */
     public static String parseDate(String date) {
         // Replacing any non-digit characters with a dash
-        // TODO: Confirm that \\D is the right symbol
         return date.replaceAll("\\D", "-");
     }
 
