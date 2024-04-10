@@ -37,6 +37,12 @@ public class DisasterVictimCLI {
         return hashMap;
     }
 
+    private <T> void printHashMap(HashMap<Integer, T> hashMap) {
+        for (int i = 0; i < hashMap.size(); i++) {
+            System.out.println(i + ". " + hashMap.get(i));
+        }
+    }
+
     private void printDisasterVictims(HashMap<Integer, DisasterVictim> hashMap) {
         for (int i = 0; i < hashMap.size(); i++) {
             System.out.println(i + ". " + hashMap.get(i).getFirstName() + " " + hashMap.get(i).getLastName());
@@ -71,7 +77,7 @@ public class DisasterVictimCLI {
             while (true) {
                 try {
                     choice = Integer.parseInt(scanner.nextLine());
-                    while (choice < 1 || choice > 4) {
+                    while (choice < 1 || choice > 7) {
                         System.out.println("Invalid choice provided");
                         System.out.println("Please choose a valid option: ");
                         choice = Integer.parseInt(scanner.nextLine());
@@ -81,7 +87,7 @@ public class DisasterVictimCLI {
                     System.out.println("Invalid input provided.\n" + e.getMessage());
                 }
             }
-            if (choice == 4) {
+            if (choice == 7) {
                 System.out.println("Exiting...");
                 System.exit(0);
             }
@@ -90,6 +96,9 @@ public class DisasterVictimCLI {
             choiceMap.put(1, this::createDisasterVictim);
             choiceMap.put(2, this::assignRelationships);
             choiceMap.put(3, this::addMedicalRecords);
+            choiceMap.put(4, this::viewAll);
+            choiceMap.put(5, this::addSupplies);
+            choiceMap.put(6, this::viewDisasterVictimInfo);
             choiceMap.get(choice).run();
         }
     }
@@ -102,7 +111,9 @@ public class DisasterVictimCLI {
         System.out.println("2. Assign relationships to a disaster victim");
         System.out.println("3. Add medical records to a disaster victim");
         System.out.println("4. View all disaster victims");
-        System.out.println("5. Exit Application");
+        System.out.println("5. Add supplies to a disaster victim");
+        System.out.println("6. View specific Disaster Victim Information");
+        System.out.println("7. Exit Application");
     }
 
     public void createDisasterVictim() {
@@ -197,69 +208,16 @@ public class DisasterVictimCLI {
 
         System.out.println("Enter the gender of the disaster victim:\nSelect a number from the following options: ");
 
-        // Create gender HashMap
-        HashMap<Integer, String> genderMap = new HashMap<>();
-
-        int i = 1;
-        // Loop through MainApplication.validGenders, print and add to genderMap
-        for (String validGender : MainApplication.validGenders) {
-            System.out.println(i + ". " + validGender);
-            genderMap.put(i, validGender);
-            i++;
-        }
-
-        // Get the user's choice
-        int choice;
-        while (true) {
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                while (choice < 1 || choice > MainApplication.validGenders.size()) {
-                    System.out.println("Invalid choice provided");
-                    System.out.println("Please choose a valid option: ");
-                    choice = Integer.parseInt(scanner.nextLine());
-                }
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        // Use functions
+        HashMap<Integer, String> genderMap = hashMapHashSet(MainApplication.validGenders);
+        printHashMap(genderMap);
+        String gender = getChoiceFromHashMap(genderMap);
 
         // Assign choice to disasterVictim
-        disasterVictim.setGender(genderMap.get(choice));
+        disasterVictim.setGender(gender);
 
-        // Add disaster victim to a location
-        if (MainApplication.workerType.equals("central")) {
-            System.out.println("What location do you want to add the disaster victim to?\nSelect a number from the following options: ");
-
-            // Create location HashMap
-            HashMap<Integer, Location> locationMap = new HashMap<>();
-
-            i = 1;
-            // Loop through MainApplication.storedLocations, print and add to locationMap
-            for (Location location : MainApplication.storedLocations) {
-                System.out.println(i + ". " + location.getName());
-                locationMap.put(i, location);
-                i++;
-            }
-
-            // Get the user's choice
-            while (true) {
-                try {
-                    choice = Integer.parseInt(scanner.nextLine());
-                    while (choice < 1 || choice > MainApplication.storedLocations.size()) {
-                        System.out.println("Invalid choice provided");
-                        System.out.println("Please choose a valid option: ");
-                        choice = Integer.parseInt(scanner.nextLine());
-                    }
-                    break;
-                } catch (Exception e) {
-                    System.out.println("Invalid input provided.\n" + e.getMessage());
-                }
-            }
-
-            // Assign choice to disasterVictim
-            locationMap.get(choice).addOccupant(disasterVictim);
-        }
+        // Add disaster victim to a workerLocation
+        MainApplication.locationWorkerLocation.addOccupant(disasterVictim);
 
         // Add closing message
         System.out.println("Disaster victim successfully created!\nView other options in the menu if you wish to add more information.");
@@ -306,5 +264,109 @@ public class DisasterVictimCLI {
 
     public void addMedicalRecords() {
 
+        ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
+        if (allDisasterVictims.isEmpty()) {
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            return;
+        }
+
+        System.out.println("Which Disaster Victim would you like to add medical records to?\nSelect a number from the following options: ");
+
+        // Use functions
+        HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
+        printDisasterVictims(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+
+        MedicalRecord medicalRecord = new MedicalRecord();
+        medicalRecord.setLocation(MainApplication.locationWorkerLocation);
+
+        System.out.println("Enter the treatment details.\nWhat treatment was provided to the disaster victim?");
+        while (true) {
+            try {
+                medicalRecord.setTreatmentDetails(scanner.nextLine());
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());
+            }
+        }
+
+        System.out.println("Enter the date of treatment");
+        while (true) {
+            try {
+                medicalRecord.setDateOfTreatment(scanner.nextLine());
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());
+            }
+        }
+
+        disasterVictim.addMedicalRecord(medicalRecord);
+
+        // Add closing message
+        System.out.println("Medical records successfully added!\nView other options in the menu if you wish to add more information.");
     }
+
+    public void viewAll() {
+
+        ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
+        if (allDisasterVictims.isEmpty()) {
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            return;
+        }
+
+        System.out.println("All disaster victims in your location: ");
+        HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
+        printDisasterVictims(allDisasterVictimsMap);
+    }
+
+    public void addSupplies() {
+
+        ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
+        if (allDisasterVictims.isEmpty()) {
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            return;
+        }
+
+        System.out.println("Which Disaster Victim would you like to add supplies to?\nSelect a number from the following options: ");
+
+        // Use functions
+        HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
+        printDisasterVictims(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+
+        // Check if there are any supplies in your location
+        if (MainApplication.locationWorkerLocation.getSupplies().isEmpty()) {
+            System.out.println("No supplies found in your location.\nExiting...");
+            return;
+        }
+
+        System.out.println("Which supply would you like to add from your location.\nSelect a number from the following options: ");
+
+        // Use functions
+        HashMap<Integer, Supply> allSuppliesMap = hashMapHashSet(MainApplication.locationWorkerLocation.getSupplies());
+        printHashMap(allSuppliesMap);
+        Supply supply = getChoiceFromHashMap(allSuppliesMap);
+
+        Supply newSupply = new Supply();
+        newSupply.setType(supply.getType());
+
+        System.out.println("Enter the quantity of " + newSupply.getType() + " you would like to add: ");
+        while (true) {
+            try {
+                newSupply.setQuantity(Integer.parseInt(scanner.nextLine()));
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());
+            }
+        }
+
+        newSupply.setSource(MainApplication.locationWorkerLocation);
+        disasterVictim.addPersonalBelonging(newSupply);
+
+        // Add closing message
+        System.out.println("Supplies successfully added!\nView other options in the menu if you wish to add more information.");
+
+    }
+
+    public void viewDisaster
 }
