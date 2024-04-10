@@ -1,4 +1,4 @@
-boy 
+boy
 gender queer
 girl
 man

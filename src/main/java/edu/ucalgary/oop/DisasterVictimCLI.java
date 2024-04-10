@@ -220,9 +220,9 @@ public class DisasterVictimCLI {
 
         // Use functions
         printDisasterVictims(allDisasterVictimsMap);
-        disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
+        DisasterVictim disasterVictim2 = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
-        familyRelation.setPersonTwo(disasterVictim);
+        familyRelation.setPersonTwo(disasterVictim2);
 
         disasterVictim.addFamilyConnection(familyRelation);
 
