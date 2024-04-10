@@ -20,3 +20,4 @@ I must explain everything in the README.
 * Name your submissions zip with your UCID
 * No interfaces required
 * Central workers don't work on disasterVictims, only local workers do.
+* Maybe dont refresh the database every launch. 

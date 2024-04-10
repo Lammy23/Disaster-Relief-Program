@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
 
+import static edu.ucalgary.oop.ApplicationUtils.*;
+
 /**
  * This class is responsible for handling the command line interface for the disaster victims
  */
@@ -19,54 +21,6 @@ public class DisasterVictimCLI {
         relationshipMap.put(1, "parent");
         relationshipMap.put(2, "child");
         relationshipMap.put(3, "sibling");
-    }
-
-    private <T> HashMap<Integer, T> hashMapArrayList(ArrayList<T> disasterVictims) {
-        HashMap<Integer, T> hashMap = new HashMap<>();
-        for (int i = 0; i < disasterVictims.size(); i++) {
-            hashMap.put(i + 1, disasterVictims.get(i));
-        }
-        return hashMap;
-    }
-
-    private <T> HashMap<Integer, T> hashMapHashSet(HashSet<T> disasterVictims) {
-        HashMap<Integer, T> hashMap = new HashMap<>();
-        int i = 1;
-        for (T disasterVictim : disasterVictims) {
-            hashMap.put(i, disasterVictim);
-            i++;
-        }
-        return hashMap;
-    }
-
-    private <T> void printHashMap(HashMap<Integer, T> hashMap) {
-        for (int i = 0; i < hashMap.size(); i++) {
-            System.out.println(i + 1 + ". " + hashMap.get(i));
-        }
-    }
-
-    private void printDisasterVictims(HashMap<Integer, DisasterVictim> hashMap) {
-        for (int i = 0; i < hashMap.size(); i++) {
-            System.out.println(i + 1 + ". " + hashMap.get(i).getFirstName() + " " + hashMap.get(i).getLastName());
-        }
-    }
-
-    private <T> T getChoiceFromHashMap(HashMap<Integer, T> hashMap) {
-        int choice;
-        while (true) {
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-                while (choice < 1 || choice > hashMap.size()) {
-                    System.out.println("Invalid choice provided");
-                    System.out.println("Please choose a valid option: ");
-                    choice = Integer.parseInt(scanner.nextLine());
-                }
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
-        return hashMap.get(choice);
     }
 
     /**
@@ -106,8 +60,7 @@ public class DisasterVictimCLI {
     }
 
     private void displayMenu() {
-        System.out.println("\n\nWelcome Local Worker!\nThis is the new Disaster Victim Command Line Interface.\nYour Location: " + MainApplication.locationWorkerLocation.getName() +
-                "\nAddress: " + MainApplication.locationWorkerLocation.getAddress() + "\n\n");
+        System.out.println("\n\nWelcome Local Worker!\nThis is the new Disaster Victim Command Line Interface.\nYour Location: " + MainApplication.locationWorkerLocation.getName() + "\nAddress: " + MainApplication.locationWorkerLocation.getAddress() + "\n\n");
         System.out.println("Please select an option from the following: ");
         System.out.println("1. Create a disaster victim");
         System.out.println("2. Assign relationships to a disaster victim");
@@ -170,8 +123,7 @@ public class DisasterVictimCLI {
         }
 
         if (cliKeywords.get(dobChoice)) {
-            System.out.println("Enter the date of birth of the disaster victim.\nValid Formats are: " +
-                    "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\nEnter here: " );
+            System.out.println("Enter the date of birth of the disaster victim.\nValid Formats are: " + "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\nEnter here: ");
             while (true) {
                 try {
                     disasterVictim.setDateOfBirth(scanner.nextLine());
@@ -214,7 +166,7 @@ public class DisasterVictimCLI {
         // Use functions
         HashMap<Integer, String> genderMap = hashMapHashSet(MainApplication.validGenders);
         printHashMap(genderMap);
-        String gender = getChoiceFromHashMap(genderMap);
+        String gender = getChoiceFromHashMap(genderMap, scanner);
 
         // Assign choice to disasterVictim
         disasterVictim.setGender(gender);
@@ -231,10 +183,10 @@ public class DisasterVictimCLI {
 
         ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
         if (allDisasterVictims.isEmpty()) {
-            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
             return;
         } else if (allDisasterVictims.size() == 1) {
-            System.out.println("Only one disaster victim found in your location.\nPlease add another disaster victim first.\nExiting...");
+            System.out.println("Only one disaster victim found in your location.\nPlease add another disaster victim first.\nReturning to Menu...");
             return;
         }
         System.out.println("Which Disaster Victim would you like to assign as the first person in the relationship?\nSelect a number from the following options: ");
@@ -242,7 +194,7 @@ public class DisasterVictimCLI {
         // Use functions
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
-        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
         familyRelation.setPersonOne(disasterVictim);
 
@@ -253,14 +205,14 @@ public class DisasterVictimCLI {
             System.out.println(i + ". " + relationshipMap.get(i));
         }
 
-        String relationship = getChoiceFromHashMap(relationshipMap);
+        String relationship = getChoiceFromHashMap(relationshipMap, scanner);
         familyRelation.setRelationshipTo(relationship);
 
         System.out.println("Which Disaster Victim would you like to assign as the second person in the relationship?\nSelect a number from the following options: ");
 
         // Use functions
         printDisasterVictims(allDisasterVictimsMap);
-        disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+        disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
         familyRelation.setPersonTwo(disasterVictim);
 
@@ -274,7 +226,7 @@ public class DisasterVictimCLI {
 
         ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
         if (allDisasterVictims.isEmpty()) {
-            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
             return;
         }
 
@@ -283,7 +235,7 @@ public class DisasterVictimCLI {
         // Use functions
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
-        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
         MedicalRecord medicalRecord = new MedicalRecord();
         medicalRecord.setLocation(MainApplication.locationWorkerLocation);
@@ -318,7 +270,7 @@ public class DisasterVictimCLI {
 
         ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
         if (allDisasterVictims.isEmpty()) {
-            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
             return;
         }
 
@@ -331,7 +283,7 @@ public class DisasterVictimCLI {
 
         ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
         if (allDisasterVictims.isEmpty()) {
-            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
             return;
         }
 
@@ -340,11 +292,11 @@ public class DisasterVictimCLI {
         // Use functions
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
-        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
         // Check if there are any supplies in your location
         if (MainApplication.locationWorkerLocation.getSupplies().isEmpty()) {
-            System.out.println("No supplies found in your location.\nExiting...");
+            System.out.println("No supplies found in your location.\nReturning to Menu...");
             return;
         }
 
@@ -353,7 +305,7 @@ public class DisasterVictimCLI {
         // Use functions
         HashMap<Integer, Supply> allSuppliesMap = hashMapHashSet(MainApplication.locationWorkerLocation.getSupplies());
         printHashMap(allSuppliesMap);
-        Supply supply = getChoiceFromHashMap(allSuppliesMap);
+        Supply supply = getChoiceFromHashMap(allSuppliesMap, scanner);
 
         Supply newSupply = new Supply();
         newSupply.setType(supply.getType());
@@ -380,7 +332,7 @@ public class DisasterVictimCLI {
 
         ArrayList<DisasterVictim> allDisasterVictims = MainApplication.locationWorkerLocation.getOccupants();
         if (allDisasterVictims.isEmpty()) {
-            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nExiting...");
+            System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
             return;
         }
 
@@ -389,7 +341,7 @@ public class DisasterVictimCLI {
         // Use functions
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
-        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap);
+        DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
         System.out.println("Disaster Victim Information: ");
         System.out.println("First Name: " + disasterVictim.getFirstName());

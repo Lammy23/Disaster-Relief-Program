@@ -18,7 +18,6 @@ public class MainApplication {
     public static HashSet<Location> storedLocations = new HashSet<>();
     public static String genderOptionsFilePath = "src/main/resources/GenderOptions.txt";  // TODO: Add file path to README documentation
     public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
-    public static HashSet<Inquirer> storedInquirers = new HashSet<>();
     public static Location locationWorkerLocation;
 
 
@@ -48,7 +47,7 @@ public class MainApplication {
             new InquirerQueryCLI().run();
         } else {
             // Ask for location
-            System.out.println("Enter the name of the location you are working at.\nChoose from the following: ");
+            System.out.println("Hello Local Worker.\nEnter the name of the location you are working at.\nChoose from the following: ");
 
             // Create HashMap to store integers and locations
             HashMap<Integer, Location> locationMap = new HashMap<>();

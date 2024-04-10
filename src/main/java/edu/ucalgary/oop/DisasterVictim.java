@@ -561,71 +561,40 @@ public class DisasterVictim {
         }
     }
 
-    /*------------------Interface Methods--------------------*/
+    /**
+     * Gets the priority of the victim
+     *
+     * @return the priority of the victim
+     */
+    public int getPriority() {
+        // Calculate priority based on the entry date and the age of the victim
 
-    // REQ 6: Implementing VictimEntryInterface's functions
+        int priorityWeight = 0;
 
-    public void enterDisasterVictimInfo() {
+        // Calculate the difference in days between the entry date and today: daysSinceEntry
+        double daysSinceEntry = ApplicationUtils.getDaysSince(ENTRY_DATE);
 
-        // TODO: Implement optional entries
-
-        // Instantiate common keywords in HashMap
-        HashMap<String, Boolean> cliKeywords = new HashMap<>();
-        cliKeywords.put("yes", true);
-        cliKeywords.put("y", true);
-        cliKeywords.put("no", false);
-        cliKeywords.put("n", false);
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Disaster Victim Information");
-
-        // Collecting user data
-        System.out.println("Enter first name: ");
-        this.setFirstName(scanner.nextLine());
-
-        System.out.println("Enter last name: ");
-        this.setLastName(scanner.nextLine());
-
-        // Enter either approximate age or date of birth
-        System.out.println("Do you know the victim's date of birth?\nEnter yes/no: ");
-        Boolean birthDateKnown = cliKeywords.get(scanner.nextLine().toLowerCase());
-        if (birthDateKnown) {
-            System.out.println("Enter date of birth.\nValid Formats are: " + "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\n");
-            this.setDateOfBirth(scanner.nextLine());
-        } else {
-            System.out.println("Enter the approximate age: ");
-            this.setApproximateAge(Integer.parseInt(scanner.nextLine()));
+        // Very old people and very young people have high priority
+        if (approximateAge < 5 || approximateAge > 65) {
+            priorityWeight += 20;
         }
 
-        System.out.println("Enter comments: ");
-        this.setComments(scanner.nextLine());
+        // People who have been in the system for a long time have high priority
+        if (daysSinceEntry > 30) {
+            priorityWeight += 5;
+        }
 
-        // Creating family connections. Note to self: Java likely passes objects by reference
-        this.enterFamilyConnectionsInfo();
-    }
+        // People with dietary restrictions have high priority
+        if (!dietaryRestrictions.isEmpty()) {
+            priorityWeight += 1;
+        }
 
+        // People with medical records have high priority
+        if (!medicalRecords.isEmpty()) {
+            priorityWeight += 10;
+        }
 
-    public void enterFamilyConnectionsInfo() {
-        Scanner scanner = new Scanner(System.in);
-        // Relationships HashMap
-        HashMap<Integer, String> relationshipMap = new HashMap<>();
-        relationshipMap.put(1, "sibling");
-        relationshipMap.put(2, "parent");
-        relationshipMap.put(3, "child");
-        relationshipMap.put(4, "spouse");
-
-        // Figure out the DisasterVictim that `this` is related to
-        System.out.println("Please enter info relevant to the disaster victim relative");
-        // Function that returns DisasterVictim object
-//        DisasterVictim relative = searchDisasterVictim();
-
-        System.out.println("We support four types of relationships. Choose a relationship type.\n1. 'sibling'\n2. 'parent'\n3. 'child'\n4. 'spouse'\n\nEnter a number: ");
-        String relationType = relationshipMap.get(Integer.parseInt(scanner.nextLine()));
-
-        // Add connection
-//        this.addFamilyConnection(new FamilyRelation(this, relationType, relative));
-
-
+        return priorityWeight;
     }
 
 }

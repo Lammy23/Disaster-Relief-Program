@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,8 +18,21 @@ import java.util.regex.Pattern;
  */
 public class ApplicationUtils {
 
+    public static double getDaysSince(String date) {
+        // Today's date
+        LocalDate today = LocalDate.now();
+
+        // Date of the inquiry
+        LocalDate inquiryDate = LocalDate.parse(date);
+
+        // Calculate the difference in days
+
+        return java.time.temporal.ChronoUnit.DAYS.between(inquiryDate, today);
+    }
+
     /**
      * Gets the current date
+     *
      * @return the current date
      */
     public static String getCurrentDate() {
@@ -101,6 +117,7 @@ public class ApplicationUtils {
 
     /**
      * Gets the valid genders from GenderOptions.txt
+     *
      * @return a HashSet of valid genders
      */
     public static HashSet<String> getValidGenders() {
@@ -133,6 +150,7 @@ public class ApplicationUtils {
 
     /**
      * Checks if a gender is valid
+     *
      * @param gender gender to check
      * @return `true` if gender is valid, `false` otherwise
      */
@@ -141,5 +159,60 @@ public class ApplicationUtils {
 
         return MainApplication.validGenders.contains(gender);
     }
+
+    public static <T> HashMap<Integer, T> hashMapArrayList(ArrayList<T> disasterVictims) {
+        HashMap<Integer, T> hashMap = new HashMap<>();
+        for (int i = 0; i < disasterVictims.size(); i++) {
+            hashMap.put(i + 1, disasterVictims.get(i));
+        }
+        return hashMap;
+    }
+
+    public static <T> HashMap<Integer, T> hashMapHashSet(HashSet<T> disasterVictims) {
+        HashMap<Integer, T> hashMap = new HashMap<>();
+        int i = 1;
+        for (T disasterVictim : disasterVictims) {
+            hashMap.put(i, disasterVictim);
+            i++;
+        }
+        return hashMap;
+    }
+
+    public static <T> void printHashMap(HashMap<Integer, T> hashMap) {
+        for (int i = 0; i < hashMap.size(); i++) {
+            System.out.println(i + 1 + ". " + hashMap.get(i));
+        }
+    }
+
+    public static void printDisasterVictims(HashMap<Integer, DisasterVictim> hashMap) {
+        for (int i = 0; i < hashMap.size(); i++) {
+            System.out.println(i + 1 + ". " + hashMap.get(i + 1).getFirstName() + " " + hashMap.get(i + 1).getLastName());
+        }
+    }
+
+    public static void printReliefServices(HashMap<Integer, ReliefService> hashMap) {
+        for (int i = 0; i < hashMap.size(); i++) {
+            System.out.println(i + 1 + ". " + hashMap.get(i + 1).getInquirer().getFirstName() + " " + hashMap.get(i + 1).getInquirer().getLastName());
+        }
+    }
+
+    public static  <T> T getChoiceFromHashMap(HashMap<Integer, T> hashMap, Scanner scanner) {
+        int choice;
+        while (true) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+                while (choice < 1 || choice > hashMap.size()) {
+                    System.out.println("Invalid choice provided");
+                    System.out.println("Please choose a valid option: ");
+                    choice = Integer.parseInt(scanner.nextLine());
+                }
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());
+            }
+        }
+        return hashMap.get(choice);
+    }
+
 
 }
