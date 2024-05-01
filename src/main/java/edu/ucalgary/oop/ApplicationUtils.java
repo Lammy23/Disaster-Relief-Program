@@ -6,17 +6,54 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.function.Supplier;
+
 
 /**
  * Class for DRY (Don't Repeat Yourself) implementation of helper functions
  */
 public class ApplicationUtils {
+
+    public static final Map<String, Boolean> cliKeywords = Map.of(                  // TODO: java version might've messed up. check that its not
+            "yes", true,
+            "y", true,
+            "no", false,
+            "n", false
+    );
+
+    /**
+     * Gets the next available ID
+     * @param idPool the pool of IDs
+     * @return the next available ID
+     */
+    public static Integer getNextId(ArrayList<Integer> idPool) {
+        // Get the next available ID
+        if (idPool.isEmpty()) {
+            return 1;
+        } else {
+            return Collections.max(idPool) + 1;
+        }
+    }
+
+    public static void verifyInput(Runnable func, Supplier<Boolean> failCondition, String errorMessage, String prompt) {
+        // App that verifies user input
+        while (true) {
+            try {
+                func.run();                                                 // Function
+                while (failCondition.get()) {                                   // Condition
+                    System.out.println(errorMessage);                       // Error message 1: What user did wrong
+                    System.out.println(prompt);                             // Message: Re-prompt user
+                    func.run();                                             // Function
+                }
+                break;
+            } catch (Exception e) {
+                System.out.println("Invalid input provided.\n" + e.getMessage());           // Generic Error Message
+            }
+        }
+    }
 
     public static double getDaysSince(String date) {
         // Today's date
@@ -163,7 +200,7 @@ public class ApplicationUtils {
     public static HashMap<Integer, DietaryRestriction> hashMapArray(DietaryRestriction[] array) {
         HashMap<Integer, DietaryRestriction> map = new HashMap<>();
         for (int i = 0; i < array.length; i++) {
-            map.put(i+1, array[i]);
+            map.put(i + 1, array[i]);
         }
         return map;
     }
@@ -204,13 +241,13 @@ public class ApplicationUtils {
         }
     }
 
-    public static void printReliefServices(HashMap<Integer, ReliefService> hashMap) {
+    public static void printReliefServices(HashMap<Integer, ReliefServiceDB> hashMap) {
         for (int i = 0; i < hashMap.size(); i++) {
             System.out.println(i + 1 + ". " + hashMap.get(i + 1).getInquirer().getFirstName() + " " + hashMap.get(i + 1).getInquirer().getLastName());
         }
     }
 
-    public static  <T> T getChoiceFromHashMap(HashMap<Integer, T> hashMap, Scanner scanner) {
+    public static <T> T getChoiceFromHashMap(HashMap<Integer, T> hashMap, Scanner scanner) {
         int choice;
         while (true) {
             try {
@@ -226,6 +263,10 @@ public class ApplicationUtils {
             }
         }
         return hashMap.get(choice);
+    }
+
+    public ApplicationUtils() {
+
     }
 
 

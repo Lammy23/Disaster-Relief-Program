@@ -18,6 +18,8 @@ public class Location {
     private String address;
     private ArrayList<DisasterVictim> occupants = new ArrayList<>();                            // Might be useful to know who arrived first at location, we use ArrayList
     private HashSet<Supply> supplies = new HashSet<>();
+    private final Integer LOCATION_ID;
+    private final ArrayList<Integer> idPool = new ArrayList<>();
 
     /*---------Constructor------------*/
 
@@ -28,11 +30,39 @@ public class Location {
      * @param address the address of the location
      */
     public Location(String name, String address) {
+        this.LOCATION_ID = ApplicationUtils.getNextId(idPool);
         this.name = name;
         this.address = address;
+        this.idPool.add(LOCATION_ID);
+    }
+
+    /**
+     * Constructor for `Location`
+     *
+     * @param name      the name of the location
+     * @param address   the address of the location
+     * @param occupants the occupants of the location
+     * @param supplies  the supplies of the location
+     */
+    public Location(Integer LOCATION_ID, String name, String address, ArrayList<DisasterVictim> occupants, HashSet<Supply> supplies) {
+        this.LOCATION_ID = LOCATION_ID;
+        this.name = name;
+        this.address = address;
+        this.occupants = occupants;
+        this.supplies = supplies;
+        this.idPool.add(LOCATION_ID);
     }
 
     /*---------Getters------------*/
+
+    /**
+     * Gets the ID of the location
+     *
+     * @return the ID of the location
+     */
+    public Integer getLocationID() {
+        return LOCATION_ID;
+    }
 
     /**
      * Gets the name of the location
@@ -154,8 +184,9 @@ public class Location {
      * Removes a supply from the location
      *
      * @param supply the supply to remove
+     * @throws IllegalArgumentException if the supply is not found in the location
      */
-    public void removeSupply(Supply supply) {
+    public void removeSupply(Supply supply) throws IllegalArgumentException {
         Optional<Supply> existingSupply = supplies.stream().filter(item -> item.getType().equals(supply.getType())).findFirst();
 
         if (existingSupply.isPresent()) {
@@ -170,6 +201,8 @@ public class Location {
             } else {
                 targetSupply.setQuantity(oldQuantity - newQuantity);
             }
+        } else {
+            throw new IllegalArgumentException("Supply not found in location");
         }
     }
 }

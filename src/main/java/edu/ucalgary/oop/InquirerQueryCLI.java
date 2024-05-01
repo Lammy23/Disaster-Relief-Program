@@ -19,16 +19,9 @@ import static edu.ucalgary.oop.ApplicationUtils.*;
  */
 public class InquirerQueryCLI {
     private final Scanner scanner;
-    private HashSet<ReliefService> storedServices = new HashSet<>();
-    private final String MAINURL = "jdbc:postgresql://localhost/postgres";                      // Hardcoded main URL
-    private final String DBURL = "jdbc:postgresql://localhost/ensf380project";          // Hardcoded database URL
-    private final String USERNAME = "oop";                                              // Hardcoded database username
-    private final String PASSWORD = "ucalgary";                                         // Hardcoded database password
 
-    private Connection dbConnect;                                                       // Connection object for the database
-    private ResultSet results;                                                          // ResultSet object for the database
-    private String sqlFile = "src/main/resources/project.sql";                   // SQL file to create the database
 
+    /*-----------Constructor------------*/
 
     /**
      * Constructor for the InquirerQueryCLI class
@@ -122,8 +115,8 @@ public class InquirerQueryCLI {
      * This method is responsible for importing the storedReliefServices from the database
      */
     public void importDB() {
-        // Registration
 
+        // Registration
         String userPassword;
         System.out.println("Enter the password for your admin database: ");
         userPassword = scanner.nextLine();
@@ -171,10 +164,10 @@ public class InquirerQueryCLI {
                 Inquirer inquirer = new Inquirer(firstName, lastName, servicesPhone);
 
                 // Add the Inquirer object to the storedServices set
-                ReliefService reliefService = new ReliefService();
-                reliefService.setInquirer(inquirer);
+                ReliefServiceDB reliefServiceDB = new ReliefServiceDB();
+                reliefServiceDB.setInquirer(inquirer);
 
-                storedServices.add(reliefService);
+                storedServices.add(reliefServiceDB);
             }
         } catch (SQLException e) {
             System.out.println("Error connecting to database.\n" + e.getMessage());
@@ -215,14 +208,14 @@ public class InquirerQueryCLI {
                 InquiryLog inquiryLog = new InquiryLog(callDate, details);
 
                 // Find the Inquirer object
-                for (ReliefService reliefService : storedServices) {
-                    Inquirer targetInquirer = reliefService.getInquirer();
+                for (ReliefServiceDB reliefServiceDB : storedServices) {
+                    Inquirer targetInquirer = reliefServiceDB.getInquirer();
 
                     boolean firstNameMatch = Objects.equals(firstName, targetInquirer.getFirstName());
                     boolean lastNameMatch = Objects.equals(lastName, targetInquirer.getLastName());
 
                     if (firstNameMatch && lastNameMatch) {
-                        reliefService.addLog(inquiryLog);
+                        reliefServiceDB.addLog(inquiryLog);
                     }
 
                 }
@@ -325,13 +318,13 @@ public class InquirerQueryCLI {
 
         System.out.println("Looking for a service to assign the inquirer to...");
         // Add the Inquirer object to the storedServices set
-        for (ReliefService reliefService : storedServices) {
-            if (Objects.equals(reliefService.getInquirer().getFirstName(), inquirer.getFirstName()) && Objects.equals(reliefService.getInquirer().getLastName(), inquirer.getLastName())) {
+        for (ReliefServiceDB reliefServiceDB : storedServices) {
+            if (Objects.equals(reliefServiceDB.getInquirer().getFirstName(), inquirer.getFirstName()) && Objects.equals(reliefServiceDB.getInquirer().getLastName(), inquirer.getLastName())) {
                 System.out.println("Inquirer already exists in the database.");
                 return;
             }
-            if (reliefService.getInquirer() == null) {
-                reliefService.setInquirer(inquirer);
+            if (reliefServiceDB.getInquirer() == null) {
+                reliefServiceDB.setInquirer(inquirer);
                 System.out.println("Inquirer added to service.");
                 isAssigned = true;
                 break;
@@ -340,9 +333,9 @@ public class InquirerQueryCLI {
 
         if (!isAssigned) {
             System.out.println("No service available to assign the inquirer to. Creating a new service...");
-            ReliefService reliefService = new ReliefService();
-            reliefService.setInquirer(inquirer);
-            storedServices.add(reliefService);
+            ReliefServiceDB reliefServiceDB = new ReliefServiceDB();
+            reliefServiceDB.setInquirer(inquirer);
+            storedServices.add(reliefServiceDB);
             System.out.println("Inquirer added to service.");
         }
 
@@ -359,9 +352,9 @@ public class InquirerQueryCLI {
         // Show all inquirers, ask user to choose
         System.out.println("Choose an inquirer to delete.\nEnter the number of the inquirer you wish to view logs for: ");
 
-        HashMap<Integer, ReliefService> reliefMap = hashMapHashSet(storedServices);
+        HashMap<Integer, ReliefServiceDB> reliefMap = hashMapHashSet(storedServices);
         printReliefServices(reliefMap);
-        ReliefService chosenService = getChoiceFromHashMap(reliefMap, scanner);
+        ReliefServiceDB chosenService = getChoiceFromHashMap(reliefMap, scanner);
 
         System.out.println("Deleting Inquirer...");
         chosenService.setInquirer(null);
@@ -378,9 +371,9 @@ public class InquirerQueryCLI {
         // Show all inquirers, ask user to choose
         System.out.println("Choose an inquirer to view logs for.\nEnter the number of the inquirer you wish to view logs for: ");
 
-        HashMap<Integer, ReliefService> reliefMap = hashMapHashSet(storedServices);
+        HashMap<Integer, ReliefServiceDB> reliefMap = hashMapHashSet(storedServices);
         printReliefServices(reliefMap);
-        ReliefService chosenService = getChoiceFromHashMap(reliefMap, scanner);
+        ReliefServiceDB chosenService = getChoiceFromHashMap(reliefMap, scanner);
 
         // Display the logs
         System.out.println("Inquirer's logs: \n");
@@ -397,9 +390,9 @@ public class InquirerQueryCLI {
         // Show all inquirers, ask user to choose
         System.out.println("Choose an inquirer to log.\nEnter the number of the inquirer you wish to view logs for: ");
 
-        HashMap<Integer, ReliefService> reliefMap = hashMapHashSet(storedServices);
+        HashMap<Integer, ReliefServiceDB> reliefMap = hashMapHashSet(storedServices);
         printReliefServices(reliefMap);
-        ReliefService chosenService = getChoiceFromHashMap(reliefMap, scanner);
+        ReliefServiceDB chosenService = getChoiceFromHashMap(reliefMap, scanner);
 
         // Add the logs
         System.out.println("Enter the date of the inquiry: ");
@@ -463,9 +456,9 @@ public class InquirerQueryCLI {
         // Show all inquirers, ask user to choose
         System.out.println("Choose the inquirer who is interested in this missing person.\nEnter the number of the inquirer you wish to view logs for: ");
 
-        HashMap<Integer, ReliefService> reliefMap = hashMapHashSet(storedServices);
+        HashMap<Integer, ReliefServiceDB> reliefMap = hashMapHashSet(storedServices);
         printReliefServices(reliefMap);
-        ReliefService chosenService = getChoiceFromHashMap(reliefMap, scanner);
+        ReliefServiceDB chosenService = getChoiceFromHashMap(reliefMap, scanner);
 
 
         // Add the missing person to the service
@@ -493,7 +486,7 @@ public class InquirerQueryCLI {
 
         try {
 
-            for (ReliefService service : storedServices) {
+            for (ReliefServiceDB service : storedServices) {
 
                 // Ensure that ReliefService is not already in the database
                 String checkService = "SELECT * FROM inquirer WHERE firstName = ? OR lastName = ?";

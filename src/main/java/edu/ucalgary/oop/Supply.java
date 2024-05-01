@@ -1,6 +1,8 @@
 package edu.ucalgary.oop;
 
 
+import java.util.ArrayList;
+
 /**
  * Class to represent a supply
  *
@@ -20,7 +22,6 @@ public class Supply {
      * Default constructor for the Supply class
      */
     public Supply() {
-
     }
 
     /**

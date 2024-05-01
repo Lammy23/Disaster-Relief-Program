@@ -6,6 +6,7 @@ import java.util.*;
  * Class that represents a victim of a disaster
  */
 public class DisasterVictim implements Comparable<DisasterVictim> {
+    private final Integer VICTIM_ID;                                               // VictimID is assigned once and never changed
     private String firstName;
     private String lastName;
     private String dateOfBirth;
@@ -13,12 +14,13 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
     private String comments;
     private HashSet<FamilyRelation> familyConnections = new HashSet<>();
     private String gender;
-    private HashSet<DietaryRestriction> dietaryRestrictions = new HashSet<>();            // A victim may have more than one dietary restriction
-    private final Integer ASSIGNED_SOCIAL_ID;                               // Social ID is assigned once and never changed
+    private HashSet<DietaryRestriction> dietaryRestrictions = new HashSet<>();              // A victim may have more than one dietary restriction
     private ArrayList<MedicalRecord> medicalRecords = new ArrayList<>();                    // It may be useful to know what the earlier entries are, so we use ArrayList
-    private final String ENTRY_DATE;                                    // A victim can only have one date of entry
+    private final String ENTRY_DATE;                                                        // A victim can only have one date of entry
     private ArrayList<Supply> personalBelongings = new ArrayList<>();                       // It may be useful to know the earlier supplies received, so we use ArrayList
-    private static int counter;
+    private static final ArrayList<Integer> idPool = new ArrayList<>();
+
+    /*-----------------Helper functions ------------------*/
 
     /**
      * Checks if approximateAge is valid and returns a boolean
@@ -27,7 +29,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
      * @return `true` if age is valid else `false`
      */
     private boolean isValidApproximateAge(int approximateAge) {
-
         // If age is within zero and one-hundred and fifty, return `true`
         return (approximateAge >= 0 && approximateAge < 150);
     }
@@ -50,37 +51,72 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
         }
     }
 
+
+
     /*-----------------Constructors-----------------*/
 
     /**
      * Constructor for `DisasterVictim`
      */
     public DisasterVictim() {
-        this.ASSIGNED_SOCIAL_ID = ++counter;
+        this.VICTIM_ID = ApplicationUtils.getNextId(idPool);// TODO: Implement function
         this.ENTRY_DATE = ApplicationUtils.getCurrentDate();  // Set the entry date to the current date
-    }
-
-    public DisasterVictim(String ENTRY_DATE) throws IllegalArgumentException {
-        this.ASSIGNED_SOCIAL_ID = ++counter;
-        if (ApplicationUtils.isValidPastDate(ENTRY_DATE)) this.ENTRY_DATE = ApplicationUtils.parseDate(ENTRY_DATE);
-        else throw new IllegalArgumentException("Invalid date format or future entry day provided");
     }
 
     /**
      * Constructor for `DisasterVictim`
      *
-     * @param firstName  the first name of the victim
-     * @param ENTRY_DATE the date person became a victim
-     * @throws IllegalArgumentException If `ENTRY_DATE` is invalid
+     * @param VICTIM_ID           The ID of the victim
+     * @param ENTRY_DATE          The date of entry
+     * @param firstName           The first name of the victim
+     * @param lastName            The last name of the victim
+     * @param dateOfBirth         The date of birth of the victim
+     * @param approximateAge      The approximate age of the victim
+     * @param comments            The comments of the victim
+     * @param familyConnections   The family connections of the victim
+     * @param gender              The gender of the victim
+     * @param dietaryRestrictions The dietary restrictions of the victim
+     * @param medicalRecords      The medical records of the victim
+     * @param personalBelongings  The personal belongings of the victim
+     * @throws IllegalArgumentException if the date format is invalid or the entry date is in the future
      */
-    public DisasterVictim(String firstName, String ENTRY_DATE) throws IllegalArgumentException {
-        this.firstName = firstName;
-        this.ASSIGNED_SOCIAL_ID = ++counter;
+    public DisasterVictim(Integer VICTIM_ID,
+                          String ENTRY_DATE,
+                          String firstName,
+                          String lastName,
+                          String dateOfBirth,
+                          Integer approximateAge,
+                          String comments,
+                          HashSet<FamilyRelation> familyConnections,
+                          String gender,
+                          HashSet<DietaryRestriction> dietaryRestrictions,
+                          ArrayList<MedicalRecord> medicalRecords,
+                          ArrayList<Supply> personalBelongings) throws IllegalArgumentException {
+        this.VICTIM_ID = VICTIM_ID;
         if (ApplicationUtils.isValidPastDate(ENTRY_DATE)) this.ENTRY_DATE = ApplicationUtils.parseDate(ENTRY_DATE);
         else throw new IllegalArgumentException("Invalid date format or future entry date provided.");
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.setDateOfBirth(dateOfBirth);
+        this.setApproximateAge(approximateAge);
+        this.setComments(comments);
+        this.setFamilyConnections(familyConnections);
+        this.setGender(gender);
+        this.setDietaryRestrictions(dietaryRestrictions);
+        this.setMedicalRecords(medicalRecords);
+        this.setPersonalBelongings(personalBelongings);
+
     }
 
     /*-----------------Getters-----------------*/
+    /**
+     * Gets the assigned social ID of the victim
+     *
+     * @return the assigned social ID of the victim
+     */
+    public int getVictimID() {
+        return VICTIM_ID;
+    }
 
     /**
      * Gets the first name of the victim
@@ -152,15 +188,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
      */
     public HashSet<DietaryRestriction> getDietaryRestrictions() {
         return dietaryRestrictions;
-    }
-
-    /**
-     * Gets the assigned social ID of the victim
-     *
-     * @return the assigned social ID of the victim
-     */
-    public int getAssignedSocialID() {
-        return ASSIGNED_SOCIAL_ID;
     }
 
     /**
@@ -604,6 +631,6 @@ public class DisasterVictim implements Comparable<DisasterVictim> {
 
     @Override
     public int compareTo(DisasterVictim o) {
-        return 0;
+        return this.getPriority() - o.getPriority();
     }
 }

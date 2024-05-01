@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class ReliefServiceTest {
 
-    private ReliefService testReliefService;
+    private ReliefServiceDB testReliefServiceDB;
     private final Inquirer expectedInquirer = new Inquirer("John", "Doe", "403-555-666");
     private final PriorityQueue<DisasterVictim> expectedMissingPersons = new PriorityQueue<>();
     private final ArrayList<InquiryLog> expectedInquiryLogs = new ArrayList<>();
@@ -33,29 +33,29 @@ public class ReliefServiceTest {
         expectedMissingPersons.add(missingPerson1);
         expectedMissingPersons.add(missingPerson2);
 
-        testReliefService = new ReliefService(expectedInquirer, expectedMissingPersons, expectedInquiryLogs);
+        testReliefServiceDB = new ReliefServiceDB(expectedInquirer, expectedMissingPersons, expectedInquiryLogs);
     }
 
     @Test
     public void testObjectCreation() {
-        assertNotNull(testReliefService);
+        assertNotNull(testReliefServiceDB);
     }
 
     /*-----------Testing Constructor----------*/
 
     @Test
     public void testConstructorInquirer() {
-        assertEquals("Constructor should set the correct inquirer", expectedInquirer, testReliefService.getInquirer());
+        assertEquals("Constructor should set the correct inquirer", expectedInquirer, testReliefServiceDB.getInquirer());
     }
 
     @Test
     public void testConstructorMissingPersons() {
-        assertEquals("Constructor should set the correct missing persons", expectedMissingPersons, testReliefService.getMissingPersons());
+        assertEquals("Constructor should set the correct missing persons", expectedMissingPersons, testReliefServiceDB.getMissingPersons());
     }
 
     @Test
     public void testConstructorInquiryLogs() {
-        assertEquals("Constructor should set the correct inquiry logs", expectedInquiryLogs, testReliefService.getLogs());
+        assertEquals("Constructor should set the correct inquiry logs", expectedInquiryLogs, testReliefServiceDB.getLogs());
     }
 
     /*-------------Testing Getters & Setters-----------------*/
@@ -64,8 +64,8 @@ public class ReliefServiceTest {
     public void testSetAndGetInquirer() {
         Inquirer newInquirer = new Inquirer("Jane", "Doe", "403-560-8474");
 
-        testReliefService.setInquirer(newInquirer);
-        assertEquals("setInquirer should update the inquirer", newInquirer, testReliefService.getInquirer());
+        testReliefServiceDB.setInquirer(newInquirer);
+        assertEquals("setInquirer should update the inquirer", newInquirer, testReliefServiceDB.getInquirer());
     }
 
     @Test
@@ -75,8 +75,8 @@ public class ReliefServiceTest {
         DisasterVictim newVictim = new DisasterVictim("Jane", "2024.01.01");
         newQueue.add(newVictim);
 
-        testReliefService.setMissingPersons(newQueue);
-        assertEquals("setMissingPersons should update the missing person", newQueue, testReliefService.getMissingPersons());
+        testReliefServiceDB.setMissingPersons(newQueue);
+        assertEquals("setMissingPersons should update the missing person", newQueue, testReliefServiceDB.getMissingPersons());
     }
 
     @Test
@@ -86,8 +86,8 @@ public class ReliefServiceTest {
         InquiryLog newLog = new InquiryLog("2024.01.01", "Looking for family");
         newLogs.add(newLog);
 
-        testReliefService.setLogs(newLogs);
-        assertEquals("setInquiryLogs should update the inquiry logs", newLogs, testReliefService.getLogs());
+        testReliefServiceDB.setLogs(newLogs);
+        assertEquals("setInquiryLogs should update the inquiry logs", newLogs, testReliefServiceDB.getLogs());
     }
 
     /*-------------Testing Adders and Removers -----------------*/

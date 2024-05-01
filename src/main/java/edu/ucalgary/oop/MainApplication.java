@@ -18,7 +18,6 @@ public class MainApplication {
     public static HashSet<String> validGenders = ApplicationUtils.getValidGenders();
     public static Location locationWorkerLocation;
 
-
     /**
      * Main method to run the application
      *

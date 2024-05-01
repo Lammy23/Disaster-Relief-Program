@@ -25,6 +25,7 @@ public class DisasterVictimCLI {
         relationshipMap.put(1, "parent");
         relationshipMap.put(2, "child");
         relationshipMap.put(3, "sibling");
+        relationshipMap.put(4, "spouse");
     }
 
     /**
@@ -37,7 +38,7 @@ public class DisasterVictimCLI {
             while (true) {
                 try {
                     choice = Integer.parseInt(scanner.nextLine());
-                    while (choice < 1 || choice > 7) {
+                    while (choice < 1 || choice > 8) {
                         System.out.println("Invalid choice provided");
                         System.out.println("Please choose a valid option: ");
                         choice = Integer.parseInt(scanner.nextLine());
@@ -47,7 +48,7 @@ public class DisasterVictimCLI {
                     System.out.println("Invalid input provided.\n" + e.getMessage());
                 }
             }
-            if (choice == 7) {
+            if (choice == 8) {
                 System.out.println("Exiting...");
                 System.out.println("Press any key to continue...");
                 scanner.nextLine();
@@ -58,9 +59,10 @@ public class DisasterVictimCLI {
             choiceMap.put(1, this::createDisasterVictim);
             choiceMap.put(2, this::assignRelationships);
             choiceMap.put(3, this::addMedicalRecords);
-            choiceMap.put(4, this::viewAll);
-            choiceMap.put(5, this::addSupplies);
-            choiceMap.put(6, this::viewDisasterVictimInfo);
+            choiceMap.put(4, this::addDietaryRestrictions);
+            choiceMap.put(5, this::viewAll);
+            choiceMap.put(6, this::addSupplies);
+            choiceMap.put(7, this::viewDisasterVictimInfo);
             choiceMap.get(choice).run();
         }
     }
@@ -78,46 +80,25 @@ public class DisasterVictimCLI {
     }
 
     public void createDisasterVictim() {
-        // Instantiate common keywords in HashMap
-        HashMap<String, Boolean> cliKeywords = new HashMap<>();
-        cliKeywords.put("yes", true);
-        cliKeywords.put("y", true);
-        cliKeywords.put("no", false);
-        cliKeywords.put("n", false);
-
         // Instantiate disaster victim
         DisasterVictim disasterVictim = new DisasterVictim();
 
         // Enter user data
         System.out.println("Enter the first name of the disaster victim: ");
-        while (true) {
-            try {
-                disasterVictim.setFirstName(scanner.nextLine());
-                while (disasterVictim.getFirstName().trim().isEmpty()) {
-                    System.out.println("First name cannot be empty");
-                    System.out.println("Enter the first name of the disaster victim: ");
-                    disasterVictim.setFirstName(scanner.nextLine());
-                }
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        verifyInput(
+                () -> disasterVictim.setFirstName(scanner.nextLine()),
+                () -> disasterVictim.getFirstName().trim().isEmpty(),
+                "First name cannot be empty",
+                "Enter the first name of the disaster victim: "
+        );
 
         System.out.println("Enter the last name of the disaster victim: ");
-        while (true) {
-            try {
-                disasterVictim.setLastName(scanner.nextLine());
-                while (disasterVictim.getLastName().trim().isEmpty()) {
-                    System.out.println("Last name cannot be empty");
-                    System.out.println("Enter the last name of the disaster victim: ");
-                    disasterVictim.setLastName(scanner.nextLine());
-                }
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        verifyInput(
+                () -> disasterVictim.setLastName(scanner.nextLine()),
+                () -> disasterVictim.getLastName().trim().isEmpty(),
+                "Last name cannot be empty",
+                "Enter the last name of the disaster victim: "
+        );
 
         // Enter either approximate age or date of birth
         System.out.println("Do you know the date of birth of the disaster victim? (yes/no)");
@@ -130,40 +111,29 @@ public class DisasterVictimCLI {
 
         if (cliKeywords.get(dobChoice)) {
             System.out.println("Enter the date of birth of the disaster victim.\nValid Formats are: " + "\nYYYY-MM-DD\nYYYY/MM/DD\nYYYY.MM.DD\n\nEnter here: ");
-            while (true) {
-                try {
-                    disasterVictim.setDateOfBirth(scanner.nextLine());
-                    while (disasterVictim.getDateOfBirth().trim().isEmpty()) {
-                        System.out.println("Date of birth cannot be empty");
-                        System.out.println("Enter the date of birth of the disaster victim: ");
-                        disasterVictim.setDateOfBirth(scanner.nextLine());
-                    }
-                    break;
-                } catch (Exception e) {
-                    System.out.println("Invalid input provided.\n" + e.getMessage());
-                }
-            }
+            verifyInput(
+                    () -> disasterVictim.setDateOfBirth(scanner.nextLine()),
+                    () -> disasterVictim.getDateOfBirth().trim().isEmpty(),
+                    "Date of birth cannot be empty",
+                    "Enter the date of birth of the disaster victim: "
+            );
         } else {
             System.out.println("Enter the approximate age of the disaster victim: ");
-            while (true) {
-                try {
-                    disasterVictim.setApproximateAge(Integer.parseInt(scanner.nextLine()));
-                    break;
-                } catch (Exception e) {
-                    System.out.println("Invalid input provided.\n" + e.getMessage());
-                }
-            }
+            verifyInput(
+                    () -> disasterVictim.setApproximateAge(Integer.parseInt(scanner.nextLine())),
+                    () -> disasterVictim.getApproximateAge() < 0,
+                    "Approximate age cannot be negative",
+                    "Enter the approximate age of the disaster victim: "
+            );
         }
 
         System.out.println("Enter comments about the disaster victim: ");
-        while (true) {
-            try {
-                disasterVictim.setComments(scanner.nextLine());
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        verifyInput(
+                () -> disasterVictim.setComments(scanner.nextLine()),
+                () -> disasterVictim.getComments().trim().isEmpty(),
+                "Comments cannot be empty",
+                "Enter comments about the disaster victim: "
+        );
 
         // For later: familyConnections, dietaryRestrictions, medicalRecords, personalBelongings
 
@@ -209,11 +179,9 @@ public class DisasterVictimCLI {
         System.out.println("What type of relationship would you like to assign to the disaster victim?\nSelect a number from the following options: ");
 
         // Use relationshipMap
-        for (int i = 1; i <= relationshipMap.size(); i++) {
-            System.out.println(i + ". " + relationshipMap.get(i));
-        }
-
+        printHashMap(relationshipMap);
         String relationship = getChoiceFromHashMap(relationshipMap, scanner);
+
         familyRelation.setRelationshipTo(relationship);
 
         System.out.println("Which Disaster Victim would you like to assign as the second person in the relationship?\nSelect a number from the following options: ");
@@ -248,27 +216,23 @@ public class DisasterVictimCLI {
         DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
 
         MedicalRecord medicalRecord = new MedicalRecord();
-        medicalRecord.setLocation(MainApplication.locationWorkerLocation);
+        medicalRecord.setLocation(MainApplication.locationWorkerLocation);                      // TODO: Change to valid logic
 
         System.out.println("Enter the treatment details.\nWhat treatment was provided to the disaster victim?");
-        while (true) {
-            try {
-                medicalRecord.setTreatmentDetails(scanner.nextLine());
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        verifyInput(
+                () -> medicalRecord.setTreatmentDetails(scanner.nextLine()),
+                () -> medicalRecord.getTreatmentDetails().trim().isEmpty(),
+                "Treatment details cannot be empty",
+                "Enter the treatment details.\nWhat treatment was provided to the disaster victim?"
+        );
 
         System.out.println("Enter the date of treatment");
-        while (true) {
-            try {
-                medicalRecord.setDateOfTreatment(scanner.nextLine());
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        verifyInput(
+                () -> medicalRecord.setDateOfTreatment(scanner.nextLine()),
+                () -> medicalRecord.getDateOfTreatment().trim().isEmpty(),
+                "Date of treatment cannot be empty",
+                "Enter the date of treatment"
+        );
 
         disasterVictim.addMedicalRecord(medicalRecord);
 
@@ -287,8 +251,10 @@ public class DisasterVictimCLI {
         }
 
         System.out.println("All disaster victims in your location: ");
+
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
+
         System.out.println("Press any key to continue...");
         scanner.nextLine();
     }
@@ -300,6 +266,12 @@ public class DisasterVictimCLI {
             System.out.println("No disaster victims found in your location.\nPlease add a disaster victim first.\nReturning to Menu...");
             return;
         }
+        // Check if there are any supplies in your location
+        if (MainApplication.locationWorkerLocation.getSupplies().isEmpty()) {
+            System.out.println("No supplies found in your location.\nReturning to Menu...");
+            return;
+        }
+
 
         System.out.println("Which Disaster Victim would you like to add supplies to?\nSelect a number from the following options: ");
 
@@ -307,12 +279,6 @@ public class DisasterVictimCLI {
         HashMap<Integer, DisasterVictim> allDisasterVictimsMap = hashMapArrayList(allDisasterVictims);
         printDisasterVictims(allDisasterVictimsMap);
         DisasterVictim disasterVictim = getChoiceFromHashMap(allDisasterVictimsMap, scanner);
-
-        // Check if there are any supplies in your location
-        if (MainApplication.locationWorkerLocation.getSupplies().isEmpty()) {
-            System.out.println("No supplies found in your location.\nReturning to Menu...");
-            return;
-        }
 
         System.out.println("Which supply would you like to add from your location.\nSelect a number from the following options: ");
 
@@ -325,14 +291,12 @@ public class DisasterVictimCLI {
         newSupply.setType(supply.getType());
 
         System.out.println("Enter the quantity of " + newSupply.getType() + " you would like to add: ");
-        while (true) {
-            try {
-                newSupply.setQuantity(Integer.parseInt(scanner.nextLine()));
-                break;
-            } catch (Exception e) {
-                System.out.println("Invalid input provided.\n" + e.getMessage());
-            }
-        }
+        verifyInput(
+                () -> newSupply.setQuantity(Integer.parseInt(scanner.nextLine())),
+                () -> newSupply.getQuantity() < 0,
+                "Quantity cannot be negative",
+                "Enter the quantity of " + newSupply.getType() + " you would like to add: "
+        );
 
         newSupply.setSource(MainApplication.locationWorkerLocation);
         disasterVictim.addPersonalBelonging(newSupply);
@@ -401,7 +365,7 @@ public class DisasterVictimCLI {
         System.out.println("Comments: " + disasterVictim.getComments());
         System.out.println("Family Connections: ");
         disasterVictim.getFamilyConnections().forEach((connection) -> {
-            System.out.println(connection + " of " + connection.getPersonTwo().getFirstName() + " " + connection.getPersonTwo().getLastName());
+            System.out.println(connection.getRelationshipTo() + " of " + connection.getPersonTwo().getFirstName() + " " + connection.getPersonTwo().getLastName());
         });
 
         System.out.println("Dietary Restrictions: ");
