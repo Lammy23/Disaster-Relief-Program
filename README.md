@@ -15,7 +15,7 @@ This manual will guide you through the process of setting up and running the pro
 
 ## About the Program
 
-...
+TODO: Complete this
 
 ## Setting Up the Program
 
@@ -69,13 +69,13 @@ To run the program, follow these steps:
 As mentioned earlier, ensure you have the following folder structure:
 
 Open a terminal window and navigate to the project directory.
-3. Run the following command to compile the program:
+3. Run the following command to compile the program: // Assuming .jar files in lib/
 ```
-javac -cp .:postgresql-42.2.23.jar Main.java
+javac -cp ".;./lib/*;src/main/java/" .\src\main\java\edu\ucalgary\oop\*.java  
 ```
-4. Run the following command to run the program:
+4. Run the following command to run the program: // tag could be "location" or "central"
 ```
-java -cp .:postgresql-42.2.23.jar Main
+java -cp ".;./lib/*;src/main/java/" edu.ucalgary.oop.MainApplication --worker-type=<tag>  
 ```
 5. Follow the on-screen instructions to use the program.
 6. Press `Ctrl + C` to force quit the program.
@@ -87,39 +87,4 @@ java -cp .:postgresql-42.2.23.jar Main
 
 ## Running the Tests
 
-To run the tests, follow these steps:
-
-1. Open a terminal window and navigate to the project directory.
-2. Run the following command to compile the tests:
-```
-javac -cp .:junit-platform-console-standalone-1.8.2.jar:.:postgresql-42.2.23.jar TestRunner.java
-```
-3. Run the following command to run the tests:
-```
-java -jar junit-platform-console-standalone-1.8.2.jar --class-path .:postgresql-42.2.23.jar --scan-class-path
-```
-4. View the test results in the terminal window.
-5. For additional information, refer to the [Additional Information](#additional-information) section.
-
-## Exiting the Program
-
-To exit the program, follow these steps:
-
-1. Press `Ctrl + C` to force quit the program.
-2. Follow the instructions in the [Running the Program](#running-the-program) section to run the program again.
-3. For additional information, refer to the [Additional Information](#additional-information) section.
-4. If you encounter any issues, refer to the [Troubleshooting](#troubleshooting) section.
-
-## Troubleshooting
-
-If you encounter any issues while setting up or running the program, follow these steps:
-
-1. Check that you have installed the necessary software (Java 11, PostgreSQL, JUnit, Hamcrest).
-2. Check that you have followed the instructions in the [Setting Up the Program](#setting-up-the-program) section.
-3. Check that you have followed the instructions in the [Running the Program](#running-the-program) section.
-4. Check that you have followed the instructions in the [Running the Tests](#running-the-tests) section.
-5. If you are still experiencing issues, contact the [project team](#contact-information) for assistance.
-
-## Additional Information
-
-For additional information about the program, refer to the following sections:
+TODO: Complete This
